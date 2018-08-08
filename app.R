@@ -82,20 +82,20 @@ ui <- dashboardPage(skin = "blue",
                            accept = c(
                              "text/csv",
                              "text/comma-separated-values,text/plain",
-                             ".csv",'.txt', options(shiny.maxRequestSize=30*1024^2) )
+                             ".csv",'.txt', options(shiny.maxRequestSize=300*1024^2) )
                  ),
                  
                  fileInput("file2", "2. Choose MaxQuant msmsScans File",
                            accept = c(
                              "text/csv",
                              "text/comma-separated-values,text/plain",
-                             ".csv",'.txt', options(shiny.maxRequestSize=30*1024^2) )
+                             ".csv",'.txt', options(shiny.maxRequestSize=300*1024^2) )
                  ),
                  fileInput("file3", "3. Choose MaxQuant allPeptides File",
                            accept = c(
                              "text/csv",
                              "text/comma-separated-values,text/plain",
-                             ".csv",'.txt', options(shiny.maxRequestSize=170*1024^2) )
+                             ".csv",'.txt', options(shiny.maxRequestSize=970*1024^2) )
                  )
                )
                ),
@@ -118,30 +118,35 @@ ui <- dashboardPage(skin = "blue",
                  box(
                    title = "Parental Ion Fraction", status = "warning", solidHeader = TRUE, 
                    collapsible = TRUE,
-                   plotOutput("plot4", height = 250)
+                   plotOutput("plot4", height = 350)
                  ),
                  
                  box(
                    title = "MS1 Intensity for all z=1 ions", status = "warning", solidHeader = TRUE, 
                    collapsible = TRUE, 
-                   plotOutput("plot11", height = 250)
+                   plotOutput("plot11", height = 350)
                  ),
                  
                  box(
                    title = "M/z distribution for all z=1 ions", status = "warning", solidHeader = TRUE, 
                    collapsible = TRUE, 
-                   plotOutput("plot13", height = 250)
+                   plotOutput("plot13", height = 350)
                  ),
                  box(
                    title = "Number of ions by charge state", status = "warning", solidHeader = TRUE, 
                    collapsible = TRUE, 
-                   plotOutput("plot16", height = 250)
+                   plotOutput("plot16", height = 350)
                  ),
                  
                  box(
                    title = "Total ion current by charge state", status = "warning", solidHeader = TRUE, 
                    collapsible = TRUE, 
-                   plotOutput("plot17", height = 250)
+                   plotOutput("plot17", height = 350)
+                 ),
+                 box(
+                   title = "Intensity of z=1 ions along the gradient", status = "warning", solidHeader = TRUE, 
+                   collapsible = TRUE, 
+                   plotOutput("plot18", height = 350)
                  )
                  
                )
@@ -154,25 +159,25 @@ ui <- dashboardPage(skin = "blue",
                  box(
                    title = "MS1 Intensity for all z>1 ions", status = "success", solidHeader = TRUE, 
                    collapsible = TRUE, 
-                   plotOutput("plot12", height = 250)
+                   plotOutput("plot12", height = 350)
                  ),
                  
                  box(
                    title = "MS1 Intensity for MS/MSd Ions", status = "success", solidHeader = TRUE, 
                    collapsible = TRUE, 
-                   plotOutput("plot14", height = 250)
+                   plotOutput("plot14", height = 350)
                  ),
                  
                  box(
                    title = "MS1 Intensity for IDd Ions", status = "success", solidHeader = TRUE, 
                    collapsible = TRUE,
-                   plotOutput("plot6", height = 250)
+                   plotOutput("plot6", height = 350)
                  ),
                  
                  box(
                    title = "Reporter Ion Intensity (non-normalized)", status = "success", solidHeader = TRUE,
                    collapsible = TRUE,
-                   plotOutput("plot15", height = 250)
+                   plotOutput("plot15", height = 350)
                  )
 
                  #,
@@ -185,7 +190,7 @@ ui <- dashboardPage(skin = "blue",
                  #box(
                   # title = "Intensity by Channel", status = "primary", solidHeader = TRUE, 
                   # collapsible = TRUE,
-                  # plotOutput("plot2", height = 250)
+                  # plotOutput("plot2", height = 350)
                  #),
                  
                )
@@ -198,26 +203,26 @@ ui <- dashboardPage(skin = "blue",
                          box(
                            title = "Number of Confident IDs", status = "primary", solidHeader = TRUE, 
                            collapsible = TRUE,
-                           plotOutput("plot1", height = 250)
+                           plotOutput("plot1", height = 350)
                          ),
                          
                          box(
                            title = "Missed Cleavages (PEP < .01)", status = "primary", solidHeader = TRUE, 
                            collapsible = TRUE,
-                           plotOutput("plot7", height = 250)
+                           plotOutput("plot7", height = 350)
                          ),
                          
                          
                          box(
                            title = "MS2 Injection Times | No PSMs", status = "primary", solidHeader = TRUE, 
                            collapsible = TRUE, 
-                           plotOutput("plot9", height = 250)
+                           plotOutput("plot9", height = 350)
                          ),
                          
                          box(
                            title = "MS2 Injection Times | PSMs", status = "primary", solidHeader = TRUE, 
                            collapsible = TRUE, 
-                           plotOutput("plot10", height = 250)
+                           plotOutput("plot10", height = 350)
                          )
                          
                        )
@@ -229,25 +234,25 @@ ui <- dashboardPage(skin = "blue",
                          box(
                            title = "Precursor Apex Offset", status = "info", solidHeader = TRUE, 
                            collapsible = TRUE, 
-                           plotOutput("plot8", height = 250)
+                           plotOutput("plot8", height = 350)
                          ),
                          
                          box(
                            title = "Retention Lengths (FWHM)", status = "info", solidHeader = TRUE, 
                            collapsible = TRUE,
-                           plotOutput("plot3", height = 250)
+                           plotOutput("plot3", height = 350)
                          ),
                          
                          box(
                            title = "IDs by Retention Time", status = "info", solidHeader = TRUE, 
                            collapsible = TRUE,
-                           plotOutput("plot5", height = 250)
+                           plotOutput("plot5", height = 350)
                          ),
                          
                          box(
                            title = "Retention Lengths for IDd Ions", status = "info", solidHeader = TRUE, 
                            collapsible = TRUE,
-                           plotOutput("plot2", height = 250)
+                           plotOutput("plot2", height = 350)
                          )
                        )
                ),
@@ -479,7 +484,7 @@ server <- function(input, output, session) {
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
       histdata_PEP <- count(histdata,c('Raw.file','PEP'))
       DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(freq)) 
-      ggplot(DF.t, aes(x=PEP, y=cy, colour=Raw.file, group=Raw.file)) + geom_line(size = 1.2) + coord_flip() + scale_x_log10(limits = c(.00009,.1), breaks = c(.0001,.001,.01,.1), labels = scales::trans_format("log10", scales::math_format(10^.x))) + theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + ylab("Number of IDs") +
+      ggplot(DF.t, aes(x=PEP, y=cy, colour=Raw.file, group=Raw.file)) + geom_line(size = 1.2) + coord_flip() + scale_x_log10(limits = c(.00009,.1), breaks = c(.0001,.001,.01,.1), labels = scales::trans_format("log10", scales::math_format(10^.x))) + theme( axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + ylab("Number of IDs") +
         scale_color_brewer(palette = "Paired") 
       
       #ggplot(histdata, aes(x = PEP, y = cumsum(..count..), colour = factor(Raw.file))) + 
@@ -501,7 +506,7 @@ server <- function(input, output, session) {
     histdata <- histdata[histdata$PEP < input$slider,]
     maxRL <- max(histdata$Retention.length)
     #data <- histdata[seq_len(input$slider)]
-    ggplot(histdata, aes(Retention.length, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=120) + coord_flip() + theme(legend.position="none", axis.text.x = element_text(angle = 90,hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + xlab('Retention Lengths at base (sec)') +
+    ggplot(histdata, aes(Retention.length, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=120) + coord_flip() + theme(legend.position="none", axis.text.x = element_text(angle = 90,hjust = 1, vjust = .5), axis.title=element_text(size=rel(.9),face="bold"), axis.text = element_text(size = rel(1.1))) + xlab('Retention Lengths at base (sec)') +
       scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
     })
        
@@ -516,7 +521,7 @@ server <- function(input, output, session) {
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
       histdata$Retention.length..FWHM.[histdata$Retention.length..FWHM. > 45] <- 49
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata, aes(Retention.length..FWHM.,colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins = 49) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5),axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1))) + xlab("Retention Length FWHM (sec)") +
+      ggplot(histdata, aes(Retention.length..FWHM.,colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins = 49) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5),axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab("Retention Length FWHM (sec)") +
         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
        
     })
@@ -542,7 +547,7 @@ server <- function(input, output, session) {
       #levels(histdata$Raw.file) <- raw_Levels_new
       #levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata, aes(PIF,colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5),axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) +
+      ggplot(histdata, aes(PIF,colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5),axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) +
         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
       
       
@@ -553,18 +558,20 @@ server <- function(input, output, session) {
       validate(need(input$file,"Upload evidence.txt"))
       validate(need((input$foo),"Loading"))
       df <- df()
+      #df$Retention.time[df$Retention.time < 15] <- 15
       histdata <- df[,c("Raw.file","Retention.time","PEP")]
       histdata <- histdata[histdata$PEP < input$slider,]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
       maxRT <- max(histdata$Retention.time)
+      #histdata$Retention.time[histdata$Retention.time <= 10] <- 10
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata, aes(Retention.time, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) +
-        scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
+      ggplot(histdata, aes(Retention.time, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) +
+        xlim(10, maxRT)+ scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
       
     })
     
-    #Plot 6:
+    #Plot 6: MS1 Intensity for IDd Ions
     output$plot6 <- renderPlot({
       validate(need(input$file,"Upload evidence.txt"))
       validate(need((input$foo),"Loading"))
@@ -575,8 +582,7 @@ server <- function(input, output, session) {
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
       histdata$Intensity <- log10(histdata$Intensity)
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata, aes(Intensity, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
-        scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
+      ggplot(histdata, aes(Intensity, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab(expression(bold("Log"[10]*" Precursor Intensity"))) + scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
       
     })
     
@@ -593,7 +599,7 @@ server <- function(input, output, session) {
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata, aes(Missed.cleavages, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=10) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + xlab("Missed Cleavages") +
+      ggplot(histdata, aes(Missed.cleavages, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=10) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab("Missed Cleavages") +
         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
       
     })
@@ -610,7 +616,7 @@ server <- function(input, output, session) {
       histdata$Precursor.apex.offset.time[histdata$Precursor.apex.offset.time > 8] <- 9
       histdata$Precursor.apex.offset.time[histdata$Precursor.apex.offset.time < -8] <- -9
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata, aes(Precursor.apex.offset.time, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + xlab("Apex Offset (sec)") +
+      ggplot(histdata, aes(Precursor.apex.offset.time, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab("Apex Offset (sec)") +
         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
       
     })
@@ -625,7 +631,7 @@ server <- function(input, output, session) {
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
       histdata_blank <- histdata[histdata$Sequence == " ",]
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata_blank, aes(Ion.injection.time, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + xlab("Ion Injection Time (ms)") +
+      ggplot(histdata_blank, aes(Ion.injection.time, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab("Ion Injection Time (ms)") +
         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
       
     })
@@ -640,7 +646,7 @@ server <- function(input, output, session) {
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
       histdata_notBlank <- histdata[histdata$Sequence != " ",]
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata_notBlank, aes(Ion.injection.time, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + xlab("Ion Injection Time (ms)") +
+      ggplot(histdata_notBlank, aes(Ion.injection.time, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab("Ion Injection Time (ms)") +
         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
       
     })
@@ -656,7 +662,7 @@ server <- function(input, output, session) {
       histdata$Intensity <- log10(histdata$Intensity)
       histdata_Z1 <- histdata[histdata$Charge == 1,]
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata_Z1, aes(Intensity, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
+      ggplot(histdata_Z1, aes(Intensity, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
       
     })
@@ -672,7 +678,7 @@ server <- function(input, output, session) {
       histdata$Intensity <- log10(histdata$Intensity)
       histdata_Z1 <- histdata[histdata$Charge > 1,]
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata_Z1, aes(Intensity, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
+      ggplot(histdata_Z1, aes(Intensity, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
       
     })
@@ -687,8 +693,9 @@ server <- function(input, output, session) {
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
       histdata_Z1 <- histdata[histdata$Charge == 1,]
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata_Z1, aes(m.z, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + xlab("M/z") +
+      ggplot(histdata_Z1, aes(m.z, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab("M/z") +
         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
+      #panel.grid.major = element_line(colour="lightgrey", size=0.25)
     })
     
     #Plot 14: MS1 Intensity for all z>=1 ions (allPeptides)
@@ -702,7 +709,7 @@ server <- function(input, output, session) {
       histdata$Intensity <- log10(histdata$Intensity)
       histdata_MSMS <- histdata[histdata$MS.MS.Count >= 1,]
       #data <- histdata[seq_len(input$slider)]
-      ggplot(histdata_MSMS, aes(Intensity, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
+      ggplot(histdata_MSMS, aes(Intensity, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
     })
     
@@ -723,7 +730,7 @@ server <- function(input, output, session) {
         xlab("TMT Channel")+             
         ylab(expression(bold("Log"[10]*" RI Intensity")))+ 
         theme_bw()+                     # make white background on plot
-        theme(legend.position = "none",axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + scale_x_discrete(name ="TMT Channel", 
+        theme(legend.position = "none",axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + scale_x_discrete(name ="TMT Channel", 
                                                           labels=plot2Labels) +
         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
     })
@@ -737,16 +744,16 @@ server <- function(input, output, session) {
     lengthLev <- length(levels(histdata$Raw.file))
     levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
     histdata$Charge[histdata$Charge > 3] <- 4
-    histdata_Charge <- count(histdata,c('Raw.file','Charge'))
+    histdata_Charge <- count(histdata,c("Raw.file","Charge"))
     hc <- aggregate(histdata_Charge$freq, by=list(Category=histdata_Charge$Raw.file,histdata_Charge$Charge), FUN=sum)
     colnames(hc) <- c("Raw.file","Charge","Frequency")
     ggplot(hc, aes(x=Raw.file, y=Frequency, colour=factor(Charge), group=Raw.file)) + 
-      geom_point(size = 2)+ theme(axis.text.x =element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + 
-      ylab("Number") + scale_color_hue(labels = c("1","2","3","3+")) + labs(x = "Experiment", y = "Count", col = "Charge State")  + scale_y_log10() +
-      scale_color_manual(labels =c("1","2","3","4+"), values=c("black", "red", "blue","green")) + scale_fill_manual(labels =c("1","2","3","4+"),values=c("black", "red", "blue","green"))
+      geom_point(size = 2)+ theme(axis.text.x =element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + 
+      ylab("Number") + scale_color_hue(labels = c("1","2","3","3+")) + labs(x = "Experiment", y = "Count", col = "Charge State")  
+       #scale_fill_manual(labels =c("1","2","3","4+"),values=c("black", "red", "blue","green"))
       #scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
-    
-    
+      #+ scale_color_hue(labels = c("1","2","3","3+"))
+      #scale_color_manual(labels =c("1","2","3","4+"), values=c("black", "red", "blue","green")) +
     })
     
     #Plot 17: Total Ion Current by Charge State (allPeptides)
@@ -761,12 +768,39 @@ server <- function(input, output, session) {
       hc <- aggregate(histdata$Intensity, by=list(Category=histdata$Raw.file,histdata$Charge), FUN=sum)
       colnames(hc) <- c("Raw.file","Charge","Intensity")
       ggplot(hc, aes(x=Raw.file, y=Intensity, colour=factor(Charge), group=Raw.file)) + 
-        geom_point(size = 2)+ theme(axis.text.x =element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(1.1))) + 
-        ylab("Number") + scale_color_hue(labels = c("1","2","3","3+")) + labs(x = "Experiment", y = "Total Ion Current", col = "Charge State") + scale_y_log10() +
+        geom_point(size = 2)+ theme(axis.text.x =element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + 
+        ylab("Number")  + labs(x = "Experiment", y = "Total Ion Current", col = "Charge State") + scale_y_log10() +  scale_color_hue(labels = c("1","2","3","3+")) + labs(x = "Experiment", y = "Count", col = "Charge State")
         #scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
-        scale_color_manual(labels =c("1","2","3","4+"), values=c("black", "red", "blue","green")) + scale_fill_manual(labels =c("1","2","3","4+"),values=c("black", "red", "blue","green"))
+        #scale_color_manual(labels =c("1","2","3","4+"), values=c("black", "red", "blue","green")) + scale_fill_manual(labels =c("1","2","3","4+"),values=c("black", "red", "blue","green"))
       
     })
+    
+    #Plot 18: Intensity of z=1 ions across the gradient
+    output$plot18 <- renderPlot({
+      validate(need((input$file3),"Upload allPeptides.txt"))
+      validate(need((input$foo),"Loading"))
+      df <- df3()
+      histdata <- df[,c("Raw.file","Charge","Intensity","Retention.time")]
+      lengthLev <- length(levels(histdata$Raw.file))
+      levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+      histdata <- histdata[histdata$Charge == 1,]
+      histdata$Retention.time <- floor(histdata$Retention.time)
+      #histdata$log10Int <- log10(histdata$Intensity)
+      #histdata$Intensity <- log10(histdata$Intensity)
+      #hc <- aggregate(histdata$Intensity, by=list(Category=histdata$Raw.file,histdata$Charge), FUN=sum)
+      #colnames(hc) <- c("Raw.file","Charge","Intensity")
+      #ggplot(hc, aes(x=Raw.file, y=Intensity, colour=factor(Charge), group=Raw.file)) + 
+      #  geom_point(size = 2)+ theme(axis.text.x =element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + 
+      #  ylab("Number") + scale_color_hue(labels = c("1","2","3","3+")) + labs(x = "Experiment", y = "Total Ion Current", col = "Charge State") + scale_y_log10() +
+      #  #scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
+      #  scale_color_manual(labels =c("1","2","3","4+"), values=c("black", "red", "blue","green")) + scale_fill_manual(labels =c("1","2","3","4+"),values=c("black", "red", "blue","green"))
+      #ggplot(histdata, aes(y=log10, x=Retention.time, colour = Raw.file, fill = Raw.file)) + facet_wrap(~Raw.file, nrow = 1)+ geom_col(width=1) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab("Retention Time (min)") + ylab(expression(bold("Log"[10]*" Precursor Intensity"))) +
+      #  scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired") 
+     ggplot(histdata, aes(x = Retention.time, y = Intensity, colour = Raw.file, fill = Raw.file)) + geom_bar(stat = 'identity', width= 1)+ facet_wrap(~Raw.file, nrow = 1) + coord_flip() + theme(legend.position="none",axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(.9))) + xlab("Retention Time (min)") + ylab(expression(bold("Precursor Intensity"))) +
+         scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired") 
+      
+      })
+    
     
     #Box 1
     output$proteinBox <- renderInfoBox({
