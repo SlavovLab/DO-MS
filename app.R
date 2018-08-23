@@ -21,7 +21,7 @@ packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggp
 new.packages <- packages.needed[!(packages.needed %in% installed.packages()[,"Package"])]
 
 #Install those which are absent
-if(length(new.packages)) install.packages(new.packages, dependencies = TRUE)
+if(length(new.packages)) install.packages(new.packages, dependencies = TRUE) 
 
 #Libraries to load
 library(shiny)
@@ -72,6 +72,8 @@ ui <- dashboardPage(skin = "blue",
    shinyWidgets::sliderTextInput("slider","PEP Threshold:" , choices=c(1e-4,0.001,.01,0.1), selected=0.1, grid = T),
    tags$script(HTML("$('body').addClass('fixed');")),
    
+   textInput("Exp_Names", "Exp Names", value = "", width = NULL, placeholder = "Comma Sep Exp Names"),
+   
    downloadButton("report.pdf","Download report")
    ),
    
@@ -112,7 +114,8 @@ ui <- dashboardPage(skin = "blue",
                              "text/csv",
                              "text/comma-separated-values,text/plain",
                              ".csv",'.txt', options(shiny.maxRequestSize=970*1024^2) )
-                 )
+                 ),
+                 textOutput("UserExpList")
                )
                ),
        
@@ -420,6 +423,17 @@ server <- function(input, output, session) {
     #Dynamically determine experiments in evidence.txt
     observe({
       evi <- data()
+      
+      output$UserExpList <- renderText({ input$Exp_Names })
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      print(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      print(levelsLib)
+      
       eviLevels <- levels(evi$Raw.file)
       if(length(eviLevels) > 0){
         eviLevels <- levels(evi$Raw.file)
@@ -446,12 +460,22 @@ server <- function(input, output, session) {
       )
       evi <- data()
       
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      print(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
+      
       eviLevels <- levels(evi$Raw.file)
       #
       length_raw_levels <- length(eviLevels)
       raw_levels <- eviLevels
       raw_Levels_new <- paste0(levelsLib[1:length_raw_levels],": ",raw_levels)
       eviLevels <- raw_Levels_new
+      print(eviLevels)
       levels(evi$Raw.file) <- raw_Levels_new
       #
       #raw_levels <- levels(evi$Raw.file)
@@ -480,6 +504,15 @@ server <- function(input, output, session) {
       )
       msmsScans <- data2()
       msmsLevels <- levels(msmsScans$Raw.file)
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      print(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       #
       length_raw_levels <- length(msmsLevels)
       raw_levels <- msmsLevels
@@ -497,6 +530,15 @@ server <- function(input, output, session) {
       )
       aP <- data3()
       aPLevels <- levels(aP$Raw.file) 
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      print(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       #
       length_raw_levels <- length(aPLevels)
       raw_levels <- aPLevels
@@ -506,11 +548,19 @@ server <- function(input, output, session) {
       filter(aP, Raw.file %in% input$foo)
     })
     
+    
     #Function to generate abbreviated plot labels
     Exp_labeller <- function(variable,value){
       return(exp_list[value])
     }
     #print(exp_list)
+    
+    ##########################
+    # User Inputted Experiments
+    ##########################
+
+  
+   
     
     ######################################################################################
     ######################################################################################
@@ -530,6 +580,14 @@ server <- function(input, output, session) {
       validate(need(input$file,"Upload evidence.txt"))
       validate(need((input$foo),"Loading"))
       df <- df()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","PIF","PEP")]
       histdata <- histdata[histdata$PEP < input$slider,]
       lengthLev <- length(levels(histdata$Raw.file))
@@ -541,7 +599,7 @@ server <- function(input, output, session) {
       #raw_levels <- raw_levels
       #raw_Levels_new <- paste0(levelsLib[1:length_raw_levels],": ",raw_levels)
       #raw_levels$replacement <- raw_Levels_new
-      #levels(histdata$Raw.file) <- raw_Levels_new
+      #levels(histdata$Raw.file) <- raw_Levels_new3k
       #levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
       #data <- histdata[seq_len(input$slider)]
       ggplot(histdata, aes(PIF)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)),axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) 
@@ -555,6 +613,14 @@ server <- function(input, output, session) {
       validate(need(input$file3,"Upload allPeptides.txt"))
       validate(need((input$foo),"Loading"))
       df <- df3()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Charge", "Intensity")]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -571,6 +637,14 @@ server <- function(input, output, session) {
       validate(need(input$file3,"Upload allPeptides.txt"))
       validate(need((input$foo),"Loading"))
       df <- df3()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Charge", "m.z")]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -586,6 +660,14 @@ server <- function(input, output, session) {
       validate(need((input$file3),"Upload allPeptides.txt"))
       validate(need((input$foo),"Loading"))
       df <- df3()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Charge")]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -607,6 +689,14 @@ server <- function(input, output, session) {
       validate(need((input$file3),"Upload allPeptides.txt"))
       validate(need((input$foo),"Loading"))
       df <- df3()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Charge","Intensity")]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -626,6 +716,14 @@ server <- function(input, output, session) {
       validate(need((input$file3),"Upload allPeptides.txt"))
       validate(need((input$foo),"Loading"))
       df <- df3()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Charge","Intensity","Retention.time")]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -655,6 +753,14 @@ server <- function(input, output, session) {
       validate(need(input$file3,"Upload allPeptides.txt"))
       validate(need((input$foo),"Loading"))
       df <- df3()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Charge", "Intensity")]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -670,6 +776,14 @@ server <- function(input, output, session) {
       validate(need(input$file3,"Upload allPeptides.txt"))
       validate(need((input$foo),"Loading"))
       df <- df3()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","MS.MS.Count", "Intensity")]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -685,6 +799,14 @@ server <- function(input, output, session) {
       validate(need(input$file,"Upload evidence.txt"))
       validate(need((input$foo),"Loading"))
       df <- df()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Intensity","PEP")]
       histdata <- histdata[histdata$PEP < input$slider,]
       lengthLev <- length(levels(histdata$Raw.file))
@@ -700,6 +822,14 @@ server <- function(input, output, session) {
       validate(need(input$file,"Upload evidence.txt"))
       validate(need((length(input$foo) == 1),"Please select a single experiment"))
       df <- df()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata2 <- dplyr::select(df,starts_with("Reporter.intensity.corrected"))
       histdata2.m <- melt(histdata2)
       histdata2.m$log10tran <- log10(histdata2.m$value)
@@ -725,6 +855,14 @@ server <- function(input, output, session) {
       validate(need((input$file),"Upload evidence.txt"))
       validate(need((input$foo),"Loading"))
       df <- df()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","PEP")]
       histdata <- histdata[histdata$PEP < input$slider,]
       lengthLev <- length(levels(histdata$Raw.file))
@@ -746,6 +884,14 @@ server <- function(input, output, session) {
       validate(need(input$file,"Upload evidence.txt"))
       validate(need((input$foo),"Loading"))
       df <- df()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Missed.cleavages","PEP")]
       histdata <- histdata[histdata$PEP < .01,]
       histdata <- histdata[histdata$PEP < input$slider,]
@@ -761,6 +907,14 @@ server <- function(input, output, session) {
       validate(need(input$file2,"Upload msmsScans.txt"))
       validate(need((input$foo),"Loading"))
       df <- df2()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Ion.injection.time", "Sequence")]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -775,6 +929,14 @@ server <- function(input, output, session) {
       validate(need(input$file2,"Upload msmsScans.txt"))
       validate(need((input$foo),"Loading"))
       df <- df2()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Ion.injection.time", "Sequence")]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -793,6 +955,14 @@ server <- function(input, output, session) {
       validate(need(input$file2,"Upload msmsScans.txt"))
       validate(need((input$foo),"Loading"))
       df <- df2()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Precursor.apex.offset.time")]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -809,6 +979,14 @@ server <- function(input, output, session) {
       validate(need(input$file3,"Upload allPeptides.txt"))
       validate(need((input$foo),"Loading"))
       df <- df3()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       histdata <- df[,c("Raw.file","Retention.length..FWHM.")]
       lengthLev <- length(levels(histdata$Raw.file))
       levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -823,6 +1001,14 @@ server <- function(input, output, session) {
       validate(need(input$file,"Upload evidence.txt"))
       validate(need((input$foo),"Loading"))
       df <- df()
+      
+      text_to_parse <-  paste(input$Exp_Names)
+      User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+      #User_Exp_vector <- c(User_Exp_vector)
+      if(length(User_Exp_vector) != 0){
+        levelsLib <- User_Exp_vector
+      }
+      
       #df$Retention.time[df$Retention.time < 15] <- 15
       histdata <- df[,c("Raw.file","Retention.time","PEP")]
       histdata <- histdata[histdata$PEP < input$slider,]
@@ -842,6 +1028,14 @@ server <- function(input, output, session) {
     validate(need(input$file,"Upload evidence.txt"))
     validate(need((input$foo),"Loading"))
     df <- df()
+    
+    text_to_parse <-  paste(input$Exp_Names)
+    User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+    #User_Exp_vector <- c(User_Exp_vector)
+    if(length(User_Exp_vector) != 0){
+      levelsLib <- User_Exp_vector
+    }
+    
     histdata <- df[,c("Raw.file","Retention.length","PEP")]
     lengthLev <- length(levels(histdata$Raw.file))
     levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
@@ -860,31 +1054,31 @@ server <- function(input, output, session) {
     ######################################################################################
           
     #Box 1
-    output$proteinBox <- renderInfoBox({
-      df <- df()
-      uniqueRazorCount <- length(unique(df$Leading.razor.protein))
-      infoBox(
-        "Unique Razor Proteins", uniqueRazorCount, icon = icon("list"),
-        color = "green"
-      )})
+    #output$proteinBox <- renderInfoBox({
+    #  df <- df()
+    #  uniqueRazorCount <- length(unique(df$Leading.razor.protein))
+    #  infoBox(
+    #    "Unique Razor Proteins", uniqueRazorCount, icon = icon("list"),
+    #    color = "green"
+    #  )})
    
     #Box 2
-    output$peptideBox <- renderInfoBox({
-      df <- df()
-      uniquePeptides <- length(unique(df$Sequence))
-      infoBox(
-        "Unique Peptides", uniquePeptides, icon = icon("list"),
-        color = "yellow"
-      )})
+    #output$peptideBox <- renderInfoBox({
+    #  df <- df()
+    #  uniquePeptides <- length(unique(df$Sequence))
+    #  infoBox(
+    #    "Unique Peptides", uniquePeptides, icon = icon("list"),
+    #    color = "yellow"
+    #  )})
      
     #Box 3
-    output$geneBox <- renderInfoBox({
-      df <- df()
-      uniquePeptides <- length(unique(df$Gene.names))
-      infoBox(
-        "Unique Genes", uniquePeptides, icon = icon("list"),
-        color = "yellow"
-      )})
+    #output$geneBox <- renderInfoBox({
+    #  df <- df()
+    #  uniquePeptides <- length(unique(df$Gene.names))
+    #  infoBox(
+    #    "Unique Genes", uniquePeptides, icon = icon("list"),
+    #    color = "yellow"
+    #  )})
     
     ######################################################################################
     ######################################################################################
