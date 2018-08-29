@@ -57,24 +57,22 @@ ui <- dashboardPage(skin = "blue",
                 menuSubItem("Sample Quality", tabName = "Sample"),
                 menuSubItem("Instrument Performance", tabName = "Inst")
                 ),
+       menuItem("Generate Report", tabName = "Rep", icon = icon("book", lib="glyphicon")),
        menuItem("Documentation", tabName = "Doc", icon = icon("book", lib="glyphicon"))
    ),
 
    tags$hr(),
    
    #Experimental Subsetting Box
-   selectInput('foo','sets', choices = NULL, multiple = TRUE),
+   selectInput('Exp_Sets','sets', choices = NULL, multiple = TRUE),
    p("(Remove items via backspace)", style="padding:20px;"),
    tags$hr(),
    
    #PEP selection slider
    #sliderInput("slider", "PEP Threshold:",    min = 1e-04, max =1e-01 , value = -10^seq(-2, 2)),
    shinyWidgets::sliderTextInput("slider","PEP Threshold:" , choices=c(1e-4,0.001,.01,0.1), selected=0.1, grid = T),
-   tags$script(HTML("$('body').addClass('fixed');")),
+   tags$script(HTML("$('body').addClass('fixed');"))
    
-   textInput("Exp_Names", "Exp Names", value = "", width = NULL, placeholder = "Comma Sep Exp Names"),
-   
-   downloadButton("report.pdf","Download report")
    ),
    
    dashboardBody(
@@ -114,8 +112,12 @@ ui <- dashboardPage(skin = "blue",
                              "text/csv",
                              "text/comma-separated-values,text/plain",
                              ".csv",'.txt', options(shiny.maxRequestSize=970*1024^2) )
-                 ),
-                 textOutput("UserExpList")
+                 )
+                 ,
+                 tags$hr(),
+                 p("Enter a comma-separated list of short labels for each Raw-file/exp"),
+                 textInput("Exp_Names", "Exp Names", value = "", width = NULL, placeholder = "Comma Sep Exp Names")
+                 #textOutput("UserExpList")
                )
                ),
        
@@ -287,6 +289,27 @@ ui <- dashboardPage(skin = "blue",
                ),
        
        ######################################################################################
+       #Report Tab
+       ######################################################################################
+              
+       tabItem(tabName = "Rep",
+               fluidPage(
+                 h1("Generate a PDF Report"),
+                 p("Once you're happy with how your plots look in the dashboard, press 'download report' to generate a PDF report"),
+                 p("You can also output the figures as .png files alongside your PDF report."),
+                 
+                 tags$hr(),
+                 radioButtons("genPic", "Save figures as .png files?",
+                              c("Yes" = "Y",
+                                "No" = "N")),
+                 downloadButton("report.pdf","Download report"),
+                 textOutput("UserExpList")
+               )
+       ),
+       
+       
+       
+       ######################################################################################
        #Documentation Tab
        ######################################################################################
        
@@ -400,7 +423,7 @@ server <- function(input, output, session) {
     read.delim(file=file1$datapath, header=TRUE)
     #evi <- data()
     #evLevels <- levels(evi$Raw.file)
-    #updateSelectizeInput(session, 'foo', choices = eviLevels, server = TRUE)
+    #updateSelectizeInput(session, 'Exp_Sets', choices = eviLevels, server = TRUE)
     })
   
     #Reactive element for importing msmsScans.txt file
@@ -418,7 +441,7 @@ server <- function(input, output, session) {
     })
     
     #Generic titles for experiments
-    levelsLib <- c("Exp1","Exp2","Exp3","Exp4","Exp5","Exp6","Exp7","Exp8","Exp9","Exp10","Exp11","Exp12","Exp13","Exp14","Exp15","Exp16","Exp17","Exp18","Exp19","Exp20","Exp21","Exp22","Exp23","Exp24","Exp25","Exp26","Exp27","Exp28","Exp29","Exp30")
+    levelsLib <- c("Exp 1","Exp 2","Exp 3","Exp 4","Exp 5","Exp 6","Exp 7","Exp 8","Exp 9","Exp 10","Exp 11","Exp 12","Exp 13","Exp 14","Exp 15","Exp 16","Exp 17","Exp 18","Exp 19","Exp 20","Exp 21","Exp 22","Exp 23","Exp 24","Exp 25","Exp 26","Exp 27","Exp 28","Exp 29","Exp 30")
     
     #Dynamically determine experiments in evidence.txt
     observe({
@@ -450,7 +473,7 @@ server <- function(input, output, session) {
         raw_levels <- ""
       }
 
-      updateSelectInput(session, "foo", "Select Experiments to Display", choices = eviLevels, selected = eviLevels)
+      updateSelectInput(session, "Exp_Sets", "Select Experiments to Display", choices = eviLevels, selected = eviLevels)
     })
     
     #Reactive element to test for the presence of evidence.txt prior to plot generation
@@ -492,8 +515,8 @@ server <- function(input, output, session) {
       #allPep <- data3()
       evi <- filter(evi, !grepl("CON", Leading.razor.protein))
       evi <- filter(evi, !grepl("REV", Leading.razor.protein))
-      #filter(evi, Raw.file %in% input$foo)
-      filter(evi, Raw.file %in% input$foo)
+      #filter(evi, Raw.file %in% input$Exp_Sets)
+      filter(evi, Raw.file %in% input$Exp_Sets)
       #print(levels(evi$Raw.file))
     })
     
@@ -519,7 +542,7 @@ server <- function(input, output, session) {
       raw_Levels_new <- paste0(levelsLib[1:length_raw_levels],": ",raw_levels)
       msmsLevels <- raw_Levels_new
       levels(msmsScans$Raw.file) <- raw_Levels_new
-      filter(msmsScans, Raw.file %in% input$foo)
+      filter(msmsScans, Raw.file %in% input$Exp_Sets)
 
     })
     
@@ -545,7 +568,7 @@ server <- function(input, output, session) {
       raw_Levels_new <- paste0(levelsLib[1:length_raw_levels],": ",raw_levels)
       aPLevels <- raw_Levels_new
       levels(aP$Raw.file) <- raw_Levels_new
-      filter(aP, Raw.file %in% input$foo)
+      filter(aP, Raw.file %in% input$Exp_Sets)
     })
     
     
@@ -557,7 +580,7 @@ server <- function(input, output, session) {
     
     ##########################
     # User Inputted Experiments
-    ##########################
+    ########################## 
 
   
    
@@ -578,7 +601,7 @@ server <- function(input, output, session) {
     output$plot4 <- renderPlot({
       
       validate(need(input$file,"Upload evidence.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -611,7 +634,7 @@ server <- function(input, output, session) {
     #Plot 2: MS1 Intensity for all z=1 ions (allPeptides)
     output$plot11 <- renderPlot({
       validate(need(input$file3,"Upload allPeptides.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df3()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -635,7 +658,7 @@ server <- function(input, output, session) {
     #Plot 3: M/z dist for all z=1 ions (allPeptides)
     output$plot13 <- renderPlot({
       validate(need(input$file3,"Upload allPeptides.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df3()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -658,7 +681,7 @@ server <- function(input, output, session) {
     #Plot 4: Ion Counts by Charge State (allPeptides)
     output$plot16 <- renderPlot({
       validate(need((input$file3),"Upload allPeptides.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df3()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -687,7 +710,7 @@ server <- function(input, output, session) {
     #Plot 5: Total Ion Current by Charge State (allPeptides)
     output$plot17 <- renderPlot({
       validate(need((input$file3),"Upload allPeptides.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df3()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -714,7 +737,7 @@ server <- function(input, output, session) {
     #Plot 6: Intensity of z=1 ions across the gradient
     output$plot18 <- renderPlot({
       validate(need((input$file3),"Upload allPeptides.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df3()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -751,7 +774,7 @@ server <- function(input, output, session) {
     #Plot 7: MS1 Intensity for all z>1 ions (allPeptides)
     output$plot12 <- renderPlot({
       validate(need(input$file3,"Upload allPeptides.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df3()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -774,7 +797,7 @@ server <- function(input, output, session) {
     #Plot 8: MS1 Intensity for all MS/MSd ions (allPeptides)
     output$plot14 <- renderPlot({
       validate(need(input$file3,"Upload allPeptides.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df3()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -797,7 +820,7 @@ server <- function(input, output, session) {
     #Plot 9: MS1 Intensity for IDd Ions
     output$plot6 <- renderPlot({
       validate(need(input$file,"Upload evidence.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -820,7 +843,7 @@ server <- function(input, output, session) {
     #Plot 10: Intensity Information for Single Experiment
     output$plot15 <- renderPlot({
       validate(need(input$file,"Upload evidence.txt"))
-      validate(need((length(input$foo) == 1),"Please select a single experiment"))
+      validate(need((length(input$Exp_Sets) == 1),"Please select a single experiment"))
       df <- df()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -853,7 +876,7 @@ server <- function(input, output, session) {
     #Plot 11: Cumulative sum of peptides that fall at a given PEP value
     output$plot1 <- renderPlot({
       validate(need((input$file),"Upload evidence.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -882,7 +905,7 @@ server <- function(input, output, session) {
     #Plot 12: Missed Cleavages (Evidence)
     output$plot7 <- renderPlot({
       validate(need(input$file,"Upload evidence.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -905,7 +928,7 @@ server <- function(input, output, session) {
     #Plot 13: MS2 Injection Times | No PSMs (msmsScans)
     output$plot9 <- renderPlot({
       validate(need(input$file2,"Upload msmsScans.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df2()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -927,7 +950,7 @@ server <- function(input, output, session) {
     #Plot 14: MS2 Injection Times | PSMs (msmsScans)
     output$plot10 <- renderPlot({
       validate(need(input$file2,"Upload msmsScans.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df2()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -953,7 +976,7 @@ server <- function(input, output, session) {
     #Plot 15: Apex Offset (msmsScans)
     output$plot8 <- renderPlot({
       validate(need(input$file2,"Upload msmsScans.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df2()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -977,7 +1000,7 @@ server <- function(input, output, session) {
     #Plot 16: Retention Length FWHM (allPeptides)
     output$plot3 <- renderPlot({
       validate(need(input$file3,"Upload allPeptides.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df3()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -999,7 +1022,7 @@ server <- function(input, output, session) {
     #Plot 17: IDs By Retention Time 
     output$plot5 <- renderPlot({
       validate(need(input$file,"Upload evidence.txt"))
-      validate(need((input$foo),"Loading"))
+      validate(need((input$Exp_Sets),"Loading"))
       df <- df()
       
       text_to_parse <-  paste(input$Exp_Names)
@@ -1026,7 +1049,7 @@ server <- function(input, output, session) {
     # Plot 18: Retention Lengths for IDd Ions
     output$plot2 <- renderPlot({
     validate(need(input$file,"Upload evidence.txt"))
-    validate(need((input$foo),"Loading"))
+    validate(need((input$Exp_Sets),"Loading"))
     df <- df()
     
     text_to_parse <-  paste(input$Exp_Names)
@@ -1100,7 +1123,7 @@ server <- function(input, output, session) {
 
         
         # Set up parameters to pass to Rmd document
-        params <- list(pep_in = input$slider, set_in = input$foo, evid = input$file, msmsSc = input$file2, aPep = input$file3)
+        params <- list(pep_in = input$slider, set_in = input$Exp_Sets, evid = input$file, msmsSc = input$file2, aPep = input$file3, exp_desc = input$Exp_Names)
         
         # Knit the document, passing in the `params` list, and eval it in a
         # child of the global environment (this isolates the code in the document
