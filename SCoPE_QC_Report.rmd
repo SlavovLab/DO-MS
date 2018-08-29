@@ -1,0 +1,428 @@
+---
+title: SCoPE QC Report
+output: pdf_document
+header-includes:
+  - \usepackage{xcolor}
+  - \usepackage{framed}
+  - \usepackage{color}
+params:
+  pep_in: NA
+  set_in: NA
+  evid: NA
+  msmsSc: NA 
+  aPep: NA
+  exp_desc: NA
+  
+  
+---
+
+```{r, echo=FALSE, warning = TRUE, message = TRUE}
+options( warn = -1 )
+library(gridExtra)
+library(dplyr)
+# include binary parameter that allows for ggsaved plots 
+
+evi_file <- (params$evid)$datapath
+msmsScans_file <- (params$msmsSc)$datapath
+aP_file <- (params$aPep)$datapath
+pep_filt <- params$pep_in
+textVar <- 1.0
+Exp_Names <- params$exp_desc
+#lengthLev <- params$num_exp
+Exp_List <- params$set_in
+
+text_to_parse <-  paste(Exp_Names)
+User_Exp_vector <- unlist(strsplit(text_to_parse, ","))
+
+Exp_List.p <- paste(Exp_List)
+Exp_List.vec <- unlist(strsplit(Exp_List.p, ","))
+
+print(User_Exp_vector)
+print("")
+print(Exp_List.vec)
+
+
+evi <- read.delim(evi_file, header=TRUE)
+msmsScans <- read.delim(msmsScans_file, header=TRUE)
+aP <- read.delim(aP_file, header=TRUE)
+
+
+
+levelsLib <- c("Exp 1","Exp 2","Exp 3","Exp 4","Exp 5","Exp 6","Exp 7","Exp 8","Exp 9","Exp 10","Exp 11","Exp 12","Exp 13","Exp 14","Exp 15","Exp 16","Exp 17","Exp 18","Exp 19","Exp 20","Exp 21","Exp 22","Exp 23","Exp 24","Exp 25","Exp 26","Exp 27","Exp 28","Exp 29","Exp 30")
+
+if(length(User_Exp_vector) != 0){
+    levelsLib <- User_Exp_vector
+}
+
+#evi_selections <- evi[evi$Raw.file %in% User_Exp_vector]
+
+# Concatenating original Raw files with either generic experimental labels or user-specified labels
+eviLevels <- levels(evi$Raw.file)
+#
+length_raw_levels <- length(eviLevels)
+raw_levels <- eviLevels
+raw_Levels_new <- paste0(levelsLib[1:length_raw_levels],": ",raw_levels)
+levels(evi$Raw.file) <- raw_Levels_new
+levels(msmsScans$Raw.file) <- raw_Levels_new
+levels(aP$Raw.file) <- raw_Levels_new
+
+print(levels(aP$Raw.file))
+print("")
+
+evi <- evi[evi$Raw.file %in% Exp_List,]
+msmsScans <- msmsScans[msmsScans$Raw.file %in% Exp_List.vec,]
+aP <- aP[aP$Raw.file %in% Exp_List.vec,]
+factor(evi$Raw.file)
+factor(msmsScans$Raw.file)
+factor(aP$Raw.file)
+
+print("Subset Evi")
+print(levels(evi2$Raw.file))
+print("Subset msms")
+print(levels(msmsScans2$Raw.file))
+print("Subset aP")
+print(levels(aP2$Raw.file))
+
+####################################################
+####################################################
+# Contamination Tab
+# 
+####################################################
+
+
+#####################################
+# Plot 1
+# Parental Ion Fraction
+# Source: evidence.txt
+#####################################
+
+histdata <- evi[,c("Raw.file","PIF","PEP")]
+histdata <- histdata[histdata$PEP < pep_filt,]
+lengthLev <- length(levels(histdata$Raw.file))
+#levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+
+
+plot1 <- ggplot(histdata, aes(PIF)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)),axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) 
+
+#####################################
+# Plot 2
+# MS1 Intensity for all z=1 ions
+# Source: allPeptides.txt
+#####################################
+
+histdata <- aP[,c("Raw.file","Charge", "Intensity")]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata$Intensity <- log10(histdata$Intensity)
+histdata_Z1 <- histdata[histdata$Charge == 1,]
+
+plot2 <- ggplot(histdata_Z1, aes(Intensity)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab(expression(bold("Log"[10]*" Precursor Intensity")))
+
+      
+#####################################
+# Plot 3
+# M/z distribution for all z=1 ions
+# Source: allPeptides.txt
+#####################################     
+      
+histdata <- aP[,c("Raw.file","Charge", "m.z")]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata_Z1 <- histdata[histdata$Charge == 1,]
+
+plot3 <- ggplot(histdata_Z1, aes(m.z)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab("M/z")
+
+      
+#####################################
+# Plot 4
+# Number of ions by charge state
+# Source: allPeptides.txt
+#####################################      
+
+#histdata <- aP[,c("Raw.file","Charge")]
+#lengthLev <- length(levels(histdata$Raw.file))
+#levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+#histdata$Charge[histdata$Charge > 3] <- 4
+#histdata_Charge <- count(histdata,c("Raw.file","Charge"))
+#hc <- aggregate(histdata_Charge$freq, by=list(Category=histdata_Charge$Raw.file,histdata_Charge$Charge), FUN=sum)
+#colnames(hc) <- c("Raw.file","Charge","Frequency")
+
+#plot4 <- ggplot(hc, aes(x=Raw.file, y=Frequency,colour=factor(Charge), group=Raw.file)) +
+#        geom_point(size = 2)+ theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = #element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),axis.text.x =element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) +
+#        ylab("Number") + scale_color_hue(labels = c("1","2","3",">3")) + labs(x = "Experiment", y = "Count", col = "Charge State")
+
+      
+      
+#####################################
+# Plot 5
+# Total ion current by charge state
+# Source: allPeptides.txt
+#####################################  
+      
+# histdata <- aP[,c("Raw.file","Charge","Intensity")]
+# lengthLev <- length(levels(histdata$Raw.file))
+# levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+# histdata$Charge[histdata$Charge > 3] <- 4
+# hc <- aggregate(histdata$Intensity, by=list(Category=histdata$Raw.file, histdata$Charge), FUN=sum)
+# colnames(hc) <- c("Raw.file","Charge","Intensity")
+# plot5 <- ggplot(hc, aes(x=Raw.file, y=Intensity,colour=factor(Charge), group=Raw.file)) +
+#         geom_point(size = 2)+ theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),axis.text.x =element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) +
+#         ylab("Number")  + labs(x = "Experiment", y = "Total Ion Current", col = "Charge State") + scale_y_log10() +  scale_color_hue(labels = c("1","2","3",">3")) + labs(x = "Experiment", y = "Count", col = "Charge State")
+
+      
+      
+#####################################
+# Plot 6
+# Intensity of z=1 ions along the gradient
+# Source: allPeptides.txt
+#####################################     
+
+histdata <- aP[,c("Raw.file","Charge","Intensity","Retention.time")]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata <- histdata[histdata$Charge == 1,]
+histdata$Retention.time <- floor(histdata$Retention.time)
+
+plot6 <- ggplot(histdata, aes(x = Retention.time, y = Intensity)) + geom_bar(stat = 'identity', width= 1)+ facet_wrap(~Raw.file, nrow = 1) + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab("Retention Time (min)") + ylab(expression(bold("Precursor Intensity")))
+
+####################################################
+####################################################
+# Abundance Tab
+# 
+####################################################
+
+#####################################
+# Plot 7
+# MS1 Intensity for z.1 ions
+# Source: allPeptides.txt
+##################################### 
+
+histdata <- aP[,c("Raw.file","Charge", "Intensity")]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata$Intensity <- log10(histdata$Intensity)
+histdata_Z1 <- histdata[histdata$Charge > 1,]
+
+plot7 <- ggplot(histdata_Z1, aes(Intensity)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab(expression(bold("Log"[10]*" Precursor Intensity")))
+      
+#####################################
+# Plot 8
+# MS1 Intensity for all MS/MSd ions
+# Source: allPeptides.txt
+##################################### 
+
+histdata <- aP[,c("Raw.file","MS.MS.Count", "Intensity")]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata$Intensity <- log10(histdata$Intensity)
+histdata_MSMS <- histdata[histdata$MS.MS.Count >= 1,]
+
+plot8 <- ggplot(histdata_MSMS, aes(Intensity)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab(expression(bold("Log"[10]*" Precursor Intensity")))
+
+
+#####################################
+# Plot 9
+# MS1 Intensity for IDd ions
+# Source: Evidence.txt
+#####################################       
+      
+histdata <- evi[,c("Raw.file","Intensity","PEP")]
+histdata <- histdata[histdata$PEP < pep_filt,]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata$Intensity <- log10(histdata$Intensity)
+
+plot9 <- ggplot(histdata, aes(Intensity)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab(expression(bold("Log"[10]*" Precursor Intensity")))
+
+
+#####################################
+# Plot 10
+# Reporter Ion Intensity, non-normalized
+# Source: Evidence.txt
+#####################################     
+      
+# histdata2 <- dplyr::select(evi,starts_with("Reporter.intensity.corrected"))
+# histdata2.m <- melt(histdata2)
+# histdata2.m$log10tran <- log10(histdata2.m$value)
+# uniqueLabelsSize <- length(unique(histdata2.m$variable))
+# TMTlabels <- c("C1","C2","C3","C4","C5","C6","C7","C8","C9","C10","C11")
+# plot2Labels <- TMTlabels[1:uniqueLabelsSize]
+# 
+# plot10 <- ggplot(histdata2.m,aes(x=variable,y=log10tran))+
+# geom_violin(aes(group=variable,colour=variable,fill=variable),alpha=0.5,
+# kernel="rectangular")+    # passes to stat_density, makes violin rectangular
+# xlab("TMT Channel")+
+# ylab(expression(bold("Log"[10]*" RI Intensity")))+
+# theme_bw()+                     
+# theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position = "none",axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + scale_x_discrete(name ="TMT Channel",labels=plot2Labels)
+
+
+
+####################################################
+####################################################
+# Sample Quality Tab
+# 
+####################################################
+
+#####################################
+# Plot 11
+# Number of Confident IDs
+# Source: Evidence.txt
+#####################################
+
+histdata <- evi[,c("Raw.file","PEP")]
+histdata <- histdata[histdata$PEP < pep_filt,]
+lengthLev <- length(levels(histdata$Raw.file))
+
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata_PEP <- count(histdata,c('Raw.file','PEP'))
+DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(freq))
+
+plot11 <- ggplot(DF.t, aes(x=PEP, y=cy, group=Raw.file)) + geom_line(size = 1.2) + coord_flip() + scale_x_log10(limits = c(.00009,.1), breaks = c(.0001,.001,.01,.1), labels = scales::trans_format("log10", scales::math_format(10^.x))) + theme( panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"), axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=textVar)) + ylab("Number of IDs")
+      
+#####################################
+# Plot 12
+# Missed Cleavages (PEP <.01)
+# Source: Evidence.txt
+#####################################
+
+histdata <- evi[,c("Raw.file","Missed.cleavages","PEP")]
+histdata <- histdata[histdata$PEP < .01,]
+histdata <- histdata[histdata$PEP < pep_filt,]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+
+plot12 <- ggplot(histdata, aes(Missed.cleavages)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=10) + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab("Missed Cleavages")
+    
+
+#####################################
+# Plot 13
+# MS2 Injection Times | No PSMs
+# Source: msmsScans.txt
+#####################################        
+
+histdata <- msmsScans[,c("Raw.file","Ion.injection.time", "Sequence")]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata_blank <- histdata[histdata$Sequence == " ",]
+
+plot13 <- ggplot(histdata_blank, aes(Ion.injection.time)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab("Ion Injection Time (ms)")
+
+#####################################
+# Plot 14
+# MS2 Injection Times | PSMs
+# Source: msmsScans.txt
+#####################################        
+                       
+histdata <- msmsScans[,c("Raw.file","Ion.injection.time", "Sequence")]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata_notBlank <- histdata[histdata$Sequence != " ",]
+
+plot14 <- ggplot(histdata_notBlank, aes(Ion.injection.time)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab("Ion Injection Time (ms)")
+      
+
+####################################################
+####################################################
+# Instrument Performance Tab
+# 
+####################################################     
+
+
+#####################################
+# Plot 15
+# Precursor Apex Offset
+# Source: msmsScans.txt
+#####################################        
+
+histdata <- msmsScans[,c("Raw.file","Precursor.apex.offset.time")]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata$Precursor.apex.offset.time <- histdata$Precursor.apex.offset.time*60
+histdata$Precursor.apex.offset.time[histdata$Precursor.apex.offset.time > 8] <- 9
+histdata$Precursor.apex.offset.time[histdata$Precursor.apex.offset.time < -8] <- -9
+
+plot15 <- ggplot(histdata, aes(Precursor.apex.offset.time)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab("Apex Offset (sec)")
+      
+
+
+#####################################
+# Plot 16
+# Retention Lengths (FWHM)
+# Source: msmsScans.txt
+#####################################
+
+histdata <- aP[,c("Raw.file","Retention.length..FWHM.")]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata$Retention.length..FWHM.[histdata$Retention.length..FWHM. > 45] <- 49
+
+plot16 <- ggplot(histdata, aes(Retention.length..FWHM.)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins = 49) + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)),axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab("Retention Length FWHM (sec)")
+       
+    
+#####################################
+# Plot 17
+# IDs by Retention Time
+# Source: Evidence.txt
+#####################################      
+
+histdata <- evi[,c("Raw.file","Retention.time","PEP")]
+histdata <- histdata[histdata$PEP < pep_filt,]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+maxRT <- max(histdata$Retention.time)
+
+plot17 <- ggplot(histdata, aes(Retention.time)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) +
+        xlim(10, maxRT)
+      
+#####################################
+# Plot 18
+# Retention Lengths for IDd Ions
+# Source: Evidence.txt
+#####################################       
+                        
+histdata <- evi[,c("Raw.file","Intensity","PEP")]
+histdata <- histdata[histdata$PEP < pep_filt,]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
+histdata$Intensity <- log10(histdata$Intensity)
+
+plot18 <- ggplot(histdata, aes(Intensity)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab(expression(bold("Log"[10]*" Precursor Intensity")))
+
+```
+```{r, echo=FALSE, warning = FALSE, message = FALSE,fig.height=9.5}
+#\colorlet{shadecolor}{red!10} 
+#\begin{shaded}
+```
+```{r, echo=FALSE, warning = FALSE, message = FALSE,fig.height=9.5}
+#\end{shaded}
+```
+# \colorbox{yellow!30}{Contamination Plots                                            }
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE,fig.height=9.5}
+options( warn = -1 )
+#grid.arrange(plot1, plot2, plot3 , ncol=1)
+```
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE,fig.height=3}
+#grid.arrange(plot6, ncol=1)
+```
+
+# Abundance Plots
+```{r, echo=FALSE, warning = FALSE, message = FALSE,fig.height=10}
+options( warn = -1 )
+#grid.arrange(plot7, plot8, plot9, ncol=1)
+```
+
+# Sample Quality Plots
+```{r, echo=FALSE, warning = FALSE, message = FALSE,fig.height=10}
+options( warn = -1 )
+#grid.arrange(plot11, plot12, plot13, plot14, ncol=1)
+```
+
+# Instrument Performance Plots
+```{r, echo=FALSE, warning = FALSE, message = FALSE,fig.height=10}
+options( warn = -1 )
+#grid.arrange(plot15, plot16, plot17, plot18, ncol=1)
+```      
+```
