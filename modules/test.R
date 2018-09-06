@@ -19,32 +19,32 @@ testModule <- function(input, output, session, data) {
     genPlot(evidence())
   })
   
-  output$downloadPDF <- downloadHandler(
-    filename=function() {
-      'test'
-    },
-    content=function(file) {
-      ggsave(filename=file, genPlot(df()), device=pdf)
-    }
-  )
-  
-  output$downloadPNG <- downloadHandler(
-    filename=function() {
-      'test'
-    },
-    content=function(file) {
-      ggsave(filename=file, genPlot(df()), device=png)
-    }
-  )
-  
-  output$downloadData <- downloadHandler(
-    filename=function() {
-      'test'
-    },
-    content=function(file) {
-      write.table(df()$PEP, file=file)
-    }
-  )
+  # output$downloadPDF <- downloadHandler(
+  #   filename=function() {
+  #     'test'
+  #   },
+  #   content=function(file) {
+  #     ggsave(filename=file, genPlot(df()), device=pdf)
+  #   }
+  # )
+  # 
+  # output$downloadPNG <- downloadHandler(
+  #   filename=function() {
+  #     'test'
+  #   },
+  #   content=function(file) {
+  #     ggsave(filename=file, genPlot(df()), device=png)
+  #   }
+  # )
+  # 
+  # output$downloadData <- downloadHandler(
+  #   filename=function() {
+  #     'test'
+  #   },
+  #   content=function(file) {
+  #     write.table(df()$PEP, file=file)
+  #   }
+  # )
   
   
 }
