@@ -1,0 +1,29 @@
+#Packages to check for
+packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer")
+
+#Checking installed packages against required ones
+new.packages <- packages.needed[!(packages.needed %in% installed.packages()[,"Package"])]
+
+#Install those which are absent
+if(length(new.packages)) install.packages(new.packages, dependencies = TRUE) 
+
+#Libraries to load
+library(shiny)
+library(shinydashboard)
+library(shinyWidgets)
+library(dplyr)
+library(plyr)
+library(ggplot2) 
+library(reshape2)
+library(RColorBrewer)
+
+source('ui_module1.R')
+source('server_module1.R')
+
+textVar <- 1.1
+
+facetHist<-function(DF, X){
+  
+  ggplot(DF, aes_string(X)) + facet_wrap(as.formula(paste("~", "Raw.file")), nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)),axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) 
+  
+}
