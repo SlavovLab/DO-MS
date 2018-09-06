@@ -1,3 +1,4 @@
 # osx files
 .DS*
 Icon/**/*
+.Rproj.user
