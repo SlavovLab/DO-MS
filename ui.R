@@ -23,6 +23,15 @@ source('global.R')
 # )
 # )
 
+linkedScatterUI <- function(id) {
+  ns <- NS(id)
+  
+  fluidRow(
+    #column(4, plotOutput(ns("plot1"), brush = ns("brush"))),
+    #column(4, plotOutput(ns("plot2"), brush = ns("brush"))),
+    column(12, plotOutput(ns('plot3')))
+  )
+}
 
 shinyUI(
   
@@ -39,8 +48,9 @@ shinyUI(
         box(
           
           #dataTableOutput("table")
-          plotOutput("table", height = 370)
+          #plotOutput("plot", height = 370)
           
+          linkedScatterUI("scatters")
         )
       )
     )
