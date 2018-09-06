@@ -2,9 +2,16 @@ genPlot <- function(d) {
   ggplot(d) + geom_histogram(aes(PEP))
 }
 
-testTab <- 'Tab1'
+init <- function() {
+  return(list(
+    tab='asdf',
+    boxTitle='',
+    help='',
+    moduleFunc=testModule
+  ))
+}
 
-testModule <- function(input, output, session, evidence=NULL) {
+testModule <- function(input, output, session, data) {
   
   output$plot <- renderPlot({
     validate(need(evidence(),"Upload evidence.txt"))
@@ -38,4 +45,6 @@ testModule <- function(input, output, session, evidence=NULL) {
       write.table(df()$PEP, file=file)
     }
   )
+  
+  
 }
