@@ -1,4 +1,7 @@
 # osx files
 .DS*
 Icon/**/*
+
+# Rstudio files
 .Rproj.user
+.Rhistory

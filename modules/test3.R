@@ -5,8 +5,8 @@ genPlot <- function(d) {
 init <- function() {
   return(list(
     tab='tab_2',
-    boxTitle='Module 2',
-    help='help for module 2',
+    boxTitle='Module 3',
+    help='help for module 3',
     moduleFunc=testModule
   ))
 }

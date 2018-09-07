@@ -17,15 +17,30 @@ library(ggplot2)
 library(reshape2)
 library(RColorBrewer)
 
+modules <- list()
+
 module_files <- list.files('modules')
-module_names <- gsub('.R', '', module_files)
 for(module in module_files) {
   source(file.path('modules', module))
+  module_name <- gsub('.R', '', module)
+  modules[[module_name]] <- init()
+  modules[[module_name]][['id']] <- module_name
 }
 
-
-source('ui_module1.R')
-source('server_module1.R')
+input_files <- list(
+  evidence=list(
+    name='evidence',
+    help='MaxQuant evidence.txt file'),
+  msms=list(
+    name='msms',
+    help='MaxQuant msms.txt file'),
+  msmsScans=list(
+    name='msmsScans',
+    help='MaxQuant msmsScans.txt file'),
+  allPeptides=list(
+    name='allPeptides',
+    help='MaxQuant allPeptides.txt file')
+)
 
 textVar <- 1.1
 

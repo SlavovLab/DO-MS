@@ -1,12 +1,12 @@
 genPlot <- function(d) {
-  ggplot(d) + geom_histogram(aes(PEP))
+  ggplot(d) + geom_histogram(aes(log10(Intensity)))
 }
 
 init <- function() {
   return(list(
-    tab='asdf',
-    boxTitle='',
-    help='',
+    tab='tab_1',
+    boxTitle='Module 1',
+    help='help for module 1',
     moduleFunc=testModule
   ))
 }
