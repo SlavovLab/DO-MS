@@ -1,25 +1,14 @@
-#
-# This is the server logic of a Shiny web application. You can run the 
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
-
-
 source('global.R')
 
 shinyServer(function(input, output, session) {
   
-  #Reactive element for importing evidence.txt file
-  ## RAW FILES
-  
-  # modularize this?? list of reactives()
-  
-  data <- list()
+  # for each input file, create a form object
+  # which will then be displayed on the import tab page
   input_forms <- list()
   for(file in input_files) {
+    # for now, all files are specified to be csv/tsv files,
+    # but a input file type can be added later so that we can support
+    # multiple file types
     input_forms[[file$name]] <- fileInput(
       file$name, file$help,
       accept = c(
@@ -29,33 +18,41 @@ shinyServer(function(input, output, session) {
       )
     )
   }
-  data <- reactive({
-    .data <- list()
-    for(file in input_files) {
-      .file <- input[[file$name]]
-      if(is.null(.file)){ break }
-      .data[[file$name]] <- read.delim(file=.file$datapath, header=TRUE)
-    }
-    .data
-  })
-  
+  # render the input forms into an HTML object
   output$input_forms <- renderUI({
     do.call(tagList, input_forms)
   })
-
-  ## Apply filters (PEP, experiment subsets, ....)
   
-  ## Rename raw files?
+  # store all data as a reactive named list
+  # this could also be done as a reactiveValues list -- 
+  # but haven't gotten that to work yet.
+  data <- reactive({
+    # create the data list
+    .data <- list()
+    # loop thru all input files and add it to the data list
+    for(file in input_files) {
+      .file <- input[[file$name]]
+      if(is.null(.file)){ break }
+      # TODO: replace with readr read_tsv? or read_csv
+      .data[[file$name]] <- read.delim(file=.file$datapath, header=TRUE)
+    }
+    
+    ## TODO: Apply filters (PEP, experiment subsets, ....)
+    
+    ## Rename raw files?
+    
+    ## Filtered data
+    
+    # evidence_f
+    # allPeptides_f ...
+    
+    # return the data list
+    .data
+  })
   
-  ## Filtered data
-  
-  # evidence_f
-  # allPeptides_f ...
-  
-  # for(module in module_names) {
-  #   a <- callModule(eval(parse(text=paste0(module, 'Module'))), module, 
-  #                   data=data)
-  # }
+  # load each module from the module list via. callModule
+  # each module is loaded by passing the moduleFunc field of the module
+  # data is only in one reactive named list
   for(module in modules) {
     callModule(module$moduleFunc, module$id, data=data)
   }
@@ -68,7 +65,7 @@ shinyServer(function(input, output, session) {
     
     plots <- lapply(modules_in_tab, function(m) {
       ns <- NS(m$id)
-      return(panel(
+      return(box(
         h1(m$id),
         plotOutput(ns('plot'), height=280, width=250)
         # column(4, panel(
@@ -84,40 +81,7 @@ shinyServer(function(input, output, session) {
         # ))
       ))
     })
-    
     output[[tab]] <- renderUI(plots)
   }) }
-  
-  
-  # output$tabs <- renderUI({
-  #   
-  #   
-  #   tab_plots <- list()
-  #   for(tab in tabs) {
-  #     modules_in_tab <- modules[sapply(modules, function(m) { m$tab == tab })]
-  #     tab_plots[[tab]] <- lapply(modules_in_tab, function(m) {
-  #       ns <- NS(m$id)
-  #       return(panel(
-  #         plotOutput(ns('plot'), height=280, width=250)
-  #         # column(4, panel(
-  #         #   fixedRow(
-  #         #     downloadButtonFixed(ns('downloadPDF'), label='Download PDF')
-  #         #   ),
-  #         #   fixedRow(
-  #         #     downloadButtonFixed(ns('downloadPNG'), label='Download PNG')
-  #         #   ),
-  #         #   fixedRow(
-  #         #     downloadButtonFixed(ns('downloadData'), label='Download Data')
-  #         #   )
-  #         # ))
-  #       ))
-  #     })
-  #   }
-  #   
-  #   do.call(tabItems, lapply(tabs, function(tab) {
-  #     tabItem(tab, tab_plots[[tab]])
-  #   }))
-  # })
-  
 })
 
