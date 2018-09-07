@@ -1,38 +1,35 @@
 source('global.R')
 
+menu_items <- list(
+  menuItem('Import', tabName='import')
+)
+for(i in 1:length(tabs)) {
+  menu_items[[i+1]] <- menuItem(tabs[i], tabName=tabs[i])
+}
+
+tab_items <- list(
+  tabItem(tabName='import', fluidPage(
+    uiOutput('input_forms')
+  ))
+)
+for(i in 1:length(tabs)) {
+  tab_items[[i+1]] <- tabItem(tabName=tabs[i], fluidPage(
+    uiOutput(tabs[i])
+  ))
+}
+
 shinyUI(
   
   dashboardPage(
     dashboardHeader(title = "Basic dashboard"),
     dashboardSidebar(
       sidebarMenu(
-        menuItem('Tab1', tabName='tab_1'),
-        menuItem('Tab2', tabName='tab_2')
-      ),
-      #csvFileInput("datafile", "User data (.csv format)")
-      # fileInput("file", "1. Choose MaxQuant Evidence File",
-      #           accept = c(
-      #             "text/csv",
-      #             "text/comma-separated-values,text/plain",
-      #             ".csv",'.txt', options(shiny.maxRequestSize=300*1024^2) )
-      # )
-      uiOutput('input_forms')
+        menu_items
+      )
     ),
     dashboardBody(
-      # tabs here
-      # tablist(
-      # uiOutput('tab1'),
-      # uiOutput('tab2')
-      #)
-      # uiOutput(tab1), tab2 ....
-      #uiOutput("plots")
-      tabItems(
-        uiOutput('tabs')
-      )
-      # tabItems(
-      #   tabItem(tabName='tab_1',fluidPage(h1('1'))),
-      #   tabItem(tabName='tab_2',fluidPage(h1('2')))
-      # )
+      #uiOutput('tabs')
+      div(class='tab-content', tab_items)
     )
   )
   

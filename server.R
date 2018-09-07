@@ -60,41 +60,64 @@ shinyServer(function(input, output, session) {
     callModule(module$moduleFunc, module$id, data=data)
   }
   
-  # collect all tab names
-  tabs <- c()
-  for(module in modules) {
-    tabs <- c(tabs, module$tab)
-  }
-  tabs <- unique(tabs)
-  
-  tab_plots <- list()
-  for(tab in tabs) {
+  # need local({}) to isolate each instance of the for loop - or else the output
+  # of each iteration will default to to the last one.
+  # see: https://gist.github.com/wch/5436415/
+  for(tab in tabs) { local({
     modules_in_tab <- modules[sapply(modules, function(m) { m$tab == tab })]
-    tab_plots[[tab]] <- lapply(modules_in_tab, function(m) {
-       ns <- NS(m$id)
-       return(panel(
-         plotOutput(ns('plot'), height=280, width=250)
-         # column(4, panel(
-         #   fixedRow(
-         #     downloadButtonFixed(ns('downloadPDF'), label='Download PDF')
-         #   ),
-         #   fixedRow(
-         #     downloadButtonFixed(ns('downloadPNG'), label='Download PNG')
-         #   ),
-         #   fixedRow(
-         #     downloadButtonFixed(ns('downloadData'), label='Download Data')
-         #   )
-         # ))
-       ))
+    
+    plots <- lapply(modules_in_tab, function(m) {
+      ns <- NS(m$id)
+      return(panel(
+        h1(m$id),
+        plotOutput(ns('plot'), height=280, width=250)
+        # column(4, panel(
+        #   fixedRow(
+        #     downloadButtonFixed(ns('downloadPDF'), label='Download PDF')
+        #   ),
+        #   fixedRow(
+        #     downloadButtonFixed(ns('downloadPNG'), label='Download PNG')
+        #   ),
+        #   fixedRow(
+        #     downloadButtonFixed(ns('downloadData'), label='Download Data')
+        #   )
+        # ))
+      ))
     })
-  }
+    
+    output[[tab]] <- renderUI(plots)
+  }) }
   
-  output$tabs <- renderUI({
-    data()
-    do.call(tagList, lapply(tabs, function(tab) {
-      tabItem(tab, tab_plots[[tab]])
-    }))
-  })
+  
+  # output$tabs <- renderUI({
+  #   
+  #   
+  #   tab_plots <- list()
+  #   for(tab in tabs) {
+  #     modules_in_tab <- modules[sapply(modules, function(m) { m$tab == tab })]
+  #     tab_plots[[tab]] <- lapply(modules_in_tab, function(m) {
+  #       ns <- NS(m$id)
+  #       return(panel(
+  #         plotOutput(ns('plot'), height=280, width=250)
+  #         # column(4, panel(
+  #         #   fixedRow(
+  #         #     downloadButtonFixed(ns('downloadPDF'), label='Download PDF')
+  #         #   ),
+  #         #   fixedRow(
+  #         #     downloadButtonFixed(ns('downloadPNG'), label='Download PNG')
+  #         #   ),
+  #         #   fixedRow(
+  #         #     downloadButtonFixed(ns('downloadData'), label='Download Data')
+  #         #   )
+  #         # ))
+  #       ))
+  #     })
+  #   }
+  #   
+  #   do.call(tabItems, lapply(tabs, function(tab) {
+  #     tabItem(tab, tab_plots[[tab]])
+  #   }))
+  # })
   
 })
 

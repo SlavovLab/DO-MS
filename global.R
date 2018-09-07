@@ -27,6 +27,13 @@ for(module in module_files) {
   modules[[module_name]][['id']] <- module_name
 }
 
+# collect all tab names
+tabs <- c()
+for(module in modules) {
+  tabs <- c(tabs, module$tab)
+}
+tabs <- unique(tabs)
+
 input_files <- list(
   evidence=list(
     name='evidence',
@@ -42,12 +49,25 @@ input_files <- list(
     help='MaxQuant allPeptides.txt file')
 )
 
+
+
 textVar <- 1.1
 
-facetHist<-function(DF, X){
-  
-  ggplot(DF, aes_string(X)) + facet_wrap(as.formula(paste("~", "Raw.file")), nrow = 1)+ geom_histogram(bins=100) + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)),axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) 
-  
+facetHist <- function(DF, X) {
+  ggplot(DF, aes_string(X)) + 
+    facet_wrap(as.formula(paste("~", "Raw.file")), nrow = 1) + 
+    geom_histogram(bins=100) + 
+    coord_flip() + 
+    theme(
+      panel.background = element_rect(fill="white", colour = "white"), 
+      panel.grid.major = element_line(size=.25, linetype="solid", color="lightgrey"), 
+      panel.grid.minor = element_line(size=.25, linetype="solid", color="lightgrey"),
+      legend.position="none",
+      axis.text.x = element_text(angle=45, hjust = 1, margin=margin(r=45)),
+      axis.title = element_text(size=rel(1.2), face="bold"), 
+      axis.text = element_text(size=rel(textVar)),
+      strip.text = element_text(size=rel(textVar))
+    ) 
 }
 
 
