@@ -43,10 +43,6 @@ shinyServer(function(input, output, session) {
     do.call(tagList, input_forms)
   })
 
-  observe({
-    print(data()[['evidence']])
-  })
-  
   ## Apply filters (PEP, experiment subsets, ....)
   
   ## Rename raw files?
@@ -60,6 +56,9 @@ shinyServer(function(input, output, session) {
   #   a <- callModule(eval(parse(text=paste0(module, 'Module'))), module, 
   #                   data=data)
   # }
+  for(module in modules) {
+    callModule(module$moduleFunc, module$id, data=data)
+  }
   
   # collect all tab names
   tabs <- c()
@@ -67,10 +66,6 @@ shinyServer(function(input, output, session) {
     tabs <- c(tabs, module$tab)
   }
   tabs <- unique(tabs)
-  
-  sapply(modules, function(m) {
-    m$tab == 'tab_2'
-  })
   
   tab_plots <- list()
   for(tab in tabs) {

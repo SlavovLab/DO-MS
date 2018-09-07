@@ -1,7 +1,3 @@
-genPlot <- function(d) {
-  ggplot(d) + geom_histogram(aes(PIF))
-}
-
 init <- function() {
   return(list(
     tab='tab_2',
@@ -14,9 +10,9 @@ init <- function() {
 testModule <- function(input, output, session, data) {
   
   output$plot <- renderPlot({
-    validate(need(evidence(),"Upload evidence.txt"))
+    validate(need(data()[['evidence']],"Upload evidence.txt"))
     #facetHist(df(), 'PIF')
-    genPlot(evidence())
+    ggplot(data()[['evidence']]) + geom_histogram(aes(PIF))
   })
   
   # output$downloadPDF <- downloadHandler(
