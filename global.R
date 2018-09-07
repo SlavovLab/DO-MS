@@ -53,6 +53,9 @@ input_files <- list(
 
 textVar <- 1.1
 
+#Generic titles for experiments
+#levelsLib <- c("Exp 1","Exp 2","Exp 3","Exp 4","Exp 5","Exp 6","Exp 7","Exp 8","Exp 9","Exp 10","Exp 11","Exp 12","Exp 13","Exp 14","Exp 15","Exp 16","Exp 17","Exp 18","Exp 19","Exp 20","Exp 21","Exp 22","Exp 23","Exp 24","Exp 25","Exp 26","Exp 27","Exp 28","Exp 29","Exp 30")
+
 facetHist <- function(DF, X) {
   ggplot(DF, aes_string(X)) + 
     facet_wrap(as.formula(paste("~", "Raw.file")), nrow = 1) + 

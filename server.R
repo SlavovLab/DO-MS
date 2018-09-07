@@ -32,29 +32,79 @@ shinyServer(function(input, output, session) {
     # loop thru all input files and add it to the data list
     for(file in input_files) {
       .file <- input[[file$name]]
-      if(is.null(.file)){ break }
+      if(is.null(.file)){ next }
       # TODO: replace with readr read_tsv? or read_csv
       .data[[file$name]] <- read.delim(file=.file$datapath, header=TRUE)
     }
-    
-    ## TODO: Apply filters (PEP, experiment subsets, ....)
-    
-    ## Rename raw files?
-    
-    ## Filtered data
-    
-    # evidence_f
-    # allPeptides_f ...
-    
     # return the data list
     .data
   })
   
+  # keep track of user-defined experiment names
+  levelsLib <- reactive({
+    User_Exp_vector <- unlist(strsplit(paste(input$Exp_Names), ","))
+    if(length(User_Exp_vector) != 0) {
+      levelsLib <- User_Exp_vector
+    } else {
+      # generic titles
+      levelsLib <- c("Exp 1","Exp 2","Exp 3","Exp 4","Exp 5","Exp 6","Exp 7","Exp 8","Exp 9","Exp 10","Exp 11","Exp 12","Exp 13","Exp 14","Exp 15","Exp 16","Exp 17","Exp 18","Exp 19","Exp 20","Exp 21","Exp 22","Exp 23","Exp 24","Exp 25","Exp 26","Exp 27","Exp 28","Exp 29","Exp 30")
+    }
+    levelsLib
+  })
+  
+  # filtered data
+  filtered_data <- reactive({
+    f_data <- data()
+    
+    ## TODO: Apply filters (PEP, experiment subsets, ....)
+    # for each file, check if it has a raw file column
+    for(file in input_files) {
+      # if no raw file column, then skip and move onto the next file
+      if(!'Raw.file' %in% colnames(f_data[[file$name]])) { next }
+      
+      file_levels <- levels(f_data[[file$name]]$Raw.file)
+      file_levels <- paste0(levelsLib()[1:length(file_levels)], ": ", file_levels)
+      
+      # rename the levels of this file
+      levels(f_data[[file$name]]$Raw.file) <- file_levels
+      
+      ## Filter observations
+      
+      # Filter for experiments as specified by user
+      if('Raw.file' %in% colnames(f_data[[file$name]])) {
+        f_data[[file$name]] <- f_data[[file$name]] %>% 
+          filter(Raw.file %in% input$Exp_Sets)
+      }
+      
+      # Filter out decoys and contaminants, if the leading razor protein column exists
+      if('Leading.razor.protein' %in% colnames(f_data[[file$name]])) {
+        f_data[[file$name]] <- f_data[[file$name]] %>% 
+          filter(!grepl("CON", Leading.razor.protein)) %>%
+          filter(!grepl("REV", Leading.razor.protein))
+      }
+      
+      # Filter by PEP
+      if('PEP' %in% colnames(f_data[[file$name]])) {
+        f_data[[file$name]] <- f_data[[file$name]] %>%
+          filter(PEP < input$slider)
+      }
+    }
+    
+    # while we have this data on hand, let's update the selection input
+    updateSelectInput(session, "Exp_Sets", "Select Experiments to Display", 
+                      choices = file_levels, selected = file_levels)
+    
+    ## Filtered data
+    f_data
+  })
+  
+  output$UserExpList <- renderText({ input$Exp_Names })
+  
   # load each module from the module list via. callModule
   # each module is loaded by passing the moduleFunc field of the module
-  # data is only in one reactive named list
+  # data is only in one reactive named list -- passing in filtered_data
   for(module in modules) {
-    callModule(module$moduleFunc, module$id, data=data)
+    callModule(module$moduleFunc, module$id, data=filtered_data)
   }
   
   # need local({}) to isolate each instance of the for loop - or else the output
@@ -66,7 +116,7 @@ shinyServer(function(input, output, session) {
     plots <- lapply(modules_in_tab, function(m) {
       ns <- NS(m$id)
       return(box(
-        h1(m$id),
+        h3(m$id),
         plotOutput(ns('plot'), height=280, width=250)
         # column(4, panel(
         #   fixedRow(
