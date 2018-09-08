@@ -55,6 +55,7 @@ shinyServer(function(input, output, session) {
   # filtered data
   filtered_data <- reactive({
     f_data <- data()
+    file_levels <- c()
     
     ## TODO: Apply filters (PEP, experiment subsets, ....)
     # for each file, check if it has a raw file column
@@ -88,6 +89,8 @@ shinyServer(function(input, output, session) {
         f_data[[file$name]] <- f_data[[file$name]] %>%
           filter(PEP < input$slider)
       }
+      
+      ## More filters, like PIF? Intensity?
     }
     
     # while we have this data on hand, let's update the selection input
@@ -116,8 +119,10 @@ shinyServer(function(input, output, session) {
     plots <- lapply(modules_in_tab, function(m) {
       ns <- NS(m$id)
       return(box(
-        h3(m$id),
-        plotOutput(ns('plot'), height=280, width=250)
+        title=m$boxTitle,
+        status='info',
+        solidHeader=TRUE, collapsible=TRUE,
+        plotOutput(ns('plot'), height=370)
         # column(4, panel(
         #   fixedRow(
         #     downloadButtonFixed(ns('downloadPDF'), label='Download PDF')
