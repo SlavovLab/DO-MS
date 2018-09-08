@@ -7,7 +7,8 @@ source('documentation_tab.R')
 menu_items <- list()
 # add menu item for each tab
 for(i in 1:length(tabs)) {
-  menu_items[[i]] <- menuSubItem(tabs[i], tabName=tabs[i])
+  # for tabName, replace spaces/whitespace with dashes '-'
+  menu_items[[i]] <- menuSubItem(tabs[i], tabName=gsub('\\s', '-', tabs[i]))
 }
 
 # list of tab items for each tab
@@ -41,7 +42,8 @@ tab_items <- list(
 # each tab has a uiOutput (HTML output) that will be
 # defined in server.R
 for(i in 1:length(tabs)) {
-  tab_items[[i+3]] <- tabItem(tabName=tabs[i], fluidPage(
+  # for tabName, replace spaces/whitespace with dashes '-'
+  tab_items[[i+3]] <- tabItem(tabName=gsub('\\s', '-', tabs[i]), fluidPage(
     uiOutput(tabs[i])
   ))
 }
@@ -68,7 +70,6 @@ shinyUI(
       tags$hr(),
       
       #PEP selection slider
-      #sliderInput("slider", "PEP Threshold:",    min = 1e-04, max =1e-01 , value = -10^seq(-2, 2)),
       shinyWidgets::sliderTextInput("slider", "PEP Threshold:", 
         choices=c(1e-4,0.001,.01,0.1), selected=0.1, grid = T),
       tags$script(HTML("$('body').addClass('fixed');"))
@@ -80,7 +81,6 @@ shinyUI(
         font-family: "Josefin slab", Times, "Times New Roman", serif;
         font-weight: bold; font-size: 24px;
       }'))),
-      #uiOutput('tabs')
       div(class='tab-content', tab_items)
     )
   )
