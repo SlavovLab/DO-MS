@@ -21,7 +21,12 @@ modules <- list()
 
 module_files <- list.files('modules')
 for(module in module_files) {
+  # skip module if it begins with '__'
+  if(substr(module, 1, 2) == '__') { next }
+  
+  # source module to load the init named list
   source(file.path('modules', module))
+  # load the module into the module list
   module_name <- gsub('.R', '', module)
   modules[[module_name]] <- init()
   modules[[module_name]][['id']] <- module_name
@@ -49,17 +54,12 @@ input_files <- list(
     help='MaxQuant allPeptides.txt file')
 )
 
-
-
 textVar <- 1.1
 
-#Generic titles for experiments
-#levelsLib <- c("Exp 1","Exp 2","Exp 3","Exp 4","Exp 5","Exp 6","Exp 7","Exp 8","Exp 9","Exp 10","Exp 11","Exp 12","Exp 13","Exp 14","Exp 15","Exp 16","Exp 17","Exp 18","Exp 19","Exp 20","Exp 21","Exp 22","Exp 23","Exp 24","Exp 25","Exp 26","Exp 27","Exp 28","Exp 29","Exp 30")
-
-facetHist <- function(DF, X) {
+facetHist <- function(DF, X, num_bins=100) {
   ggplot(DF, aes_string(X)) + 
     facet_wrap(as.formula(paste("~", "Raw.file")), nrow = 1) + 
-    geom_histogram(bins=100) + 
+    geom_histogram(bins=num_bins) + 
     coord_flip() + 
     theme(
       panel.background = element_rect(fill="white", colour = "white"), 
@@ -72,7 +72,6 @@ facetHist <- function(DF, X) {
       strip.text = element_text(size=rel(textVar))
     ) 
 }
-
 
 downloadButtonFixed <- function(outputId, label = "Download", class = NULL, ...) {
   aTag <-
