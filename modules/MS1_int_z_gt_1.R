@@ -56,14 +56,11 @@ testModule <- function(input, output, session, data) {
     data.loaded <- data()[[data.choice]]
     
     # Plot:
-    
     histdata <- data.loaded[,c("Raw.file","Charge", "Intensity")]
     histdata$Intensity <- log10(histdata$Intensity)
     histdata_Z1 <- histdata[histdata$Charge > 1,]
-    #data <- histdata[seq_len(input$slider)]
     ggplot(histdata_Z1, aes(Intensity)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab(expression(bold("Log"[10]*" Precursor Intensity"))) 
     
-
   })
   
 }
