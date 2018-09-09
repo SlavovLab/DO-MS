@@ -138,5 +138,40 @@ shinyServer(function(input, output, session) {
     })
     output[[tab]] <- renderUI(plots)
   }) }
+  
+  ######################################################################################
+  ######################################################################################
+  # PDF Report Generation Area 
+  # [structure/code pulled from an official Shiny tutorial]
+  ######################################################################################
+  ######################################################################################
+  
+  output$report.pdf <- downloadHandler(
+    # For PDF output, change this to "report.pdf"
+    filename = "SCoPE_QC_Report.pdf",
+    content = function(file) {
+      # Copy the report file to a temporary directory before processing it, in
+      # case we don't have write permissions to the current working dir (which
+      # can happen when deployed).
+      tempReport <- file.path(tempdir(), "SCoPE_QC_Report.Rmd")
+      file.copy("SCoPE_QC_Report.Rmd", tempReport, overwrite = TRUE)
+      
+      # Set up parameters to pass to Rmd document
+      params <- list(pep_in = input$slider, 
+                     set_in = input$Exp_Sets, 
+                     evid = input$file, 
+                     msmsSc = input$file2, 
+                     aPep = input$file3, 
+                     exp_desc = input$Exp_Names)
+      
+      # Knit the document, passing in the `params` list, and eval it in a
+      # child of the global environment (this isolates the code in the document
+      # from the code in this app).
+      rmarkdown::render(tempReport, output_file = file,
+                        params = params,
+                        envir = new.env(parent = globalenv())
+      )
+    }
+  )
 })
 
