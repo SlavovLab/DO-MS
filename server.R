@@ -120,7 +120,7 @@ shinyServer(function(input, output, session) {
       ns <- NS(m$id)
       return(box(
         title=m$boxTitle,
-        status='info',
+        #status='some-asdf',
         solidHeader=TRUE, collapsible=TRUE,
         plotOutput(ns('plot'), height=370)
         # column(4, panel(

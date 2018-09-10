@@ -1,0 +1,8 @@
+.main-header .logo { 
+  font-family: "Josefin slab", Times, "Times New Roman", serif;
+  font-weight: bold; font-size: 24px;
+}
+
+.box-header .box-tools button.btn.btn-box-tool {
+  color: inherit !important;
+}

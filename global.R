@@ -54,6 +54,9 @@ input_files <- list(
     help='MaxQuant allPeptides.txt file')
 )
 
+# load app.css into string
+app_css <- paste(readLines('app.css'), collapse='')
+
 textVar <- 1.1
 
 facetHist <- function(DF, X, num_bins=100) {
