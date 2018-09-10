@@ -8,7 +8,7 @@ menu_items <- list()
 # add menu item for each tab
 for(i in 1:length(tabs)) {
   # for tabName, replace spaces/whitespace with dashes '-'
-  menu_items[[i]] <- menuSubItem(tabs[i], tabName=gsub('\\s', '-', tabs[i]))
+  menu_items[[i]] <- menuSubItem(tabs[i], tabName=paste0(gsub('\\s', '-', tabs[i]), '-', i))
 }
 
 # list of tab items for each tab
@@ -43,9 +43,11 @@ tab_items <- list(
 # defined in server.R
 for(i in 1:length(tabs)) {
   # for tabName, replace spaces/whitespace with dashes '-'
-  tab_items[[i+3]] <- tabItem(tabName=gsub('\\s', '-', tabs[i]), fluidPage(
-    uiOutput(tabs[i])
-  ))
+  tab_items[[i+3]] <- tabItem(tabName=paste0(gsub('\\s', '-', tabs[i]), '-', i), 
+    fluidPage(
+      uiOutput(tabs[i])
+    )
+  )
 }
 
 
@@ -57,9 +59,12 @@ tab_colors <- rep(tab_colors, 10)
 
 # set a lite regex in the css to override the default box-header colors
 for(i in 1:length(tabs)) {
-  tab_name <- gsub('\\s', '-', tabs[i])
+  tab_name <- paste0(gsub('\\s', '-', tabs[i]), '-', i)
   app_css <- paste0(app_css, ' .tab-pane[id*=\"', tab_name , '\"] .box-header {',
-                              'background-color: ', tab_colors[i], '; color: white; }')
+                    'background-color: ', tab_colors[i], '; color: white; }')
+  # also add a border to the menu item
+  app_css <- paste0(app_css, '.treeview ul.treeview-menu a[data-value*=\"', tab_name , '\"] {',
+                    'border-left: 6px solid ', tab_colors[i], '; }')
 }
 
 shinyUI(

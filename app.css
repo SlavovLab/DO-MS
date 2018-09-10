@@ -6,3 +6,16 @@
 .box-header .box-tools button.btn.btn-box-tool {
   color: inherit !important;
 }
+
+.box-body .shiny-output-error-validation {
+  font-size: 2em;
+  color: #888;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+ul.sidebar-menu ul.treeview-menu {
+  padding-left: 0px;
+  margin-left: 0px !important;
+}
