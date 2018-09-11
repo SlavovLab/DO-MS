@@ -28,6 +28,7 @@ ul.sidebar-menu ul.treeview-menu {
   margin-left: 0px !important;
 }
 
+/* https://projects.lukehaas.me/css-loaders/ */
 .shiny-plot-output.recalculating:not(.shiny-output-error-validation), 
 .shiny-plot-output.recalculating:not(.shiny-output-error-validation):before, 
 .shiny-plot-output.recalculating:not(.shiny-output-error-validation):after {

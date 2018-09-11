@@ -41,15 +41,39 @@ shinyServer(function(input, output, session) {
   })
   
   # keep track of user-defined experiment names
-  levelsLib <- reactive({
-    User_Exp_vector <- unlist(strsplit(paste(input$Exp_Names), ","))
-    if(length(User_Exp_vector) != 0) {
-      levelsLib <- User_Exp_vector
-    } else {
-      # generic titles
-      levelsLib <- c("Exp 1","Exp 2","Exp 3","Exp 4","Exp 5","Exp 6","Exp 7","Exp 8","Exp 9","Exp 10","Exp 11","Exp 12","Exp 13","Exp 14","Exp 15","Exp 16","Exp 17","Exp 18","Exp 19","Exp 20","Exp 21","Exp 22","Exp 23","Exp 24","Exp 25","Exp 26","Exp 27","Exp 28","Exp 29","Exp 30")
+  file_levels <- reactive({
+    f_data <- data()
+    .file_levels <- c()
+    
+    for(file in input_files) {
+      # for each file, check if it has a raw file column
+      if('Raw.file' %in% colnames(f_data[[file$name]])) {
+        level_prefixes <- paste0('Exp ', seq(1, 100))
+        .file_levels <- levels(f_data[[file$name]]$Raw.file)
+        .file_levels <- paste0(level_prefixes[1:length(.file_levels)], ": ", .file_levels)
+        break
+      }
     }
-    levelsLib
+    
+    named_exps <- unlist(strsplit(paste(input$Exp_Names), ","))
+    if(length(named_exps) > 0) {
+      if(length(named_exps) < length(.file_levels)) {
+        .file_levels[1:length(named_exps)] <- named_exps
+      } else if(length(named_exps) > length(.file_levels)) {
+        .file_levels = named_exps[1:length(.file_levels)]
+      } else {
+        # same length
+        .file_levels = named_exps
+      }
+    }
+    
+    .file_levels
+  })
+  
+  observe({
+    # update the selection input
+    updateCheckboxGroupInput(session, 'Exp_Sets', 'Select Experiments to Display',
+                             choices=file_levels(), selected=file_levels())
   })
   
   # filtered data
@@ -58,24 +82,24 @@ shinyServer(function(input, output, session) {
     file_levels <- c()
     
     ## TODO: Apply filters (PEP, experiment subsets, ....)
-    # for each file, check if it has a raw file column
     for(file in input_files) {
-      # if no raw file column, then skip and move onto the next file
-      if(!'Raw.file' %in% colnames(f_data[[file$name]])) { next }
       
-      file_levels <- levels(f_data[[file$name]]$Raw.file)
-      file_levels <- paste0(levelsLib()[1:length(file_levels)], ": ", file_levels)
-      
-      # rename the levels of this file
-      levels(f_data[[file$name]]$Raw.file) <- file_levels
+      # for each file, check if it has a raw file column
+      if('Raw.file' %in% colnames(f_data[[file$name]])) {
+        
+        # rename the levels of this file
+        f_data[[file$name]]$Raw.file <- factor(f_data[[file$name]]$Raw.file,
+          levels=levels(f_data[[file$name]]$Raw.file),
+          labels=file_levels())
+        
+        if(!is.null(input$Exp_Sets)) {
+          # Filter for experiments as specified by user
+          f_data[[file$name]] <- f_data[[file$name]] %>%
+            filter(Raw.file %in% input$Exp_Sets)
+        }
+      }
       
       ## Filter observations
-      
-      # Filter for experiments as specified by user
-      if('Raw.file' %in% colnames(f_data[[file$name]])) {
-        f_data[[file$name]] <- f_data[[file$name]] %>% 
-          filter(Raw.file %in% input$Exp_Sets)
-      }
       
       # Filter out decoys and contaminants, if the leading razor protein column exists
       if('Leading.razor.protein' %in% colnames(f_data[[file$name]])) {
@@ -92,10 +116,6 @@ shinyServer(function(input, output, session) {
       
       ## More filters, like PIF? Intensity?
     }
-    
-    # while we have this data on hand, let's update the selection input
-    updateSelectInput(session, "Exp_Sets", "Select Experiments to Display", 
-                      choices = file_levels, selected = file_levels)
     
     ## Filtered data
     f_data
