@@ -7,6 +7,15 @@ aside.main-sidebar {
   position: absolute !important;
 }
 
+.box-header .tooltip-btn {
+  margin-left: 3px;
+  background: transparent;
+  color: inherit;
+  padding: 0px;
+  font-size: 1em;
+  border: none;
+}
+
 .box-header .box-tools button.btn.btn-box-tool {
   color: inherit !important;
 }
@@ -23,7 +32,7 @@ aside.main-sidebar {
   align-items: center;
 }
 
-.box-body .row .shiny-download-link {
+.box-footer .row .shiny-download-link {
   width: 100%;
 }
 

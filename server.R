@@ -170,26 +170,43 @@ shinyServer(function(input, output, session) {
     
     plots <- lapply(modules_in_tab, function(m) {
       ns <- NS(m$id)
-      return(box(
-        title=m$boxTitle,
-        #status='some-asdf',
-        solidHeader=TRUE, collapsible=TRUE,
-        fixedRow(
-          plotOutput(ns('plot'), height=370)  
+      # instead of using box() as provided by shinydashboard,
+      # we're going to hack in a similar div since we have to shove in additional elements
+      return(div(class='col-sm-6', div(class='box box-solid', 
+        style='',
+        # header
+        div(class='box-header',
+          h3(class='box-title', m$boxTitle),
+          tags$button(class='btn btn-secondary tooltip-btn', 
+                      `data-toggle`='tooltip', `data-placement`='right', title=m$help,
+            icon('question-sign', lib='glyphicon')  
+          ),
+          
+          div(class='box-tools pull-right',
+            tags$button(class='btn btn-box-tool', `data-widget`='collapse',
+                        shiny::icon('minus'))
+          )
+        ),
+        div(class='box-body',
+          fixedRow(
+            plotOutput(ns('plot'), height=370)  
+          )
         ),
         # TODO: conditionalPanel which only displays the buttons when the relevant data is loaded
-        div(class='row', style='height:30px',
-          column(width=4,
-            downloadButtonFixed(ns('downloadPDF'), label='PDF')
-          ),
-          column(width=4,
-            downloadButtonFixed(ns('downloadPNG'), label='PNG')
-          ),
-          column(width=4,
-            downloadButtonFixed(ns('downloadData'), label='Data')
+        div(class='box-footer',
+          div(class='row', style='height:30px',
+            column(width=4,
+              downloadButtonFixed(ns('downloadPDF'), label='PDF')
+            ),
+            column(width=4,
+              downloadButtonFixed(ns('downloadPNG'), label='PNG')
+            ),
+            column(width=4,
+              downloadButtonFixed(ns('downloadData'), label='Data')
+            )
           )
         )
-      ))
+      )))
     })
     output[[tab]] <- renderUI(plots)
   }) }
