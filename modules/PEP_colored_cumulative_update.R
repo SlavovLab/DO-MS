@@ -1,4 +1,4 @@
-title <- 'Number of Confident Identification'
+title <- 'Number of Confident Identifications'
 
 init <- function() {
   return(list(
