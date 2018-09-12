@@ -36,35 +36,53 @@ shinyServer(function(input, output, session) {
       # TODO: replace with readr read_tsv? or read_csv
       #.data[[file$name]] <- read.delim(file=.file$datapath, header=TRUE)
       .data[[file$name]] <- as.data.frame(read_tsv(file=.file$datapath))
-      # rename columns (replace whitespace with '.')
+      # rename columns (replace whitespace or special characters with '.')
       colnames(.data[[file$name]]) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', 
                                            colnames(.data[[file$name]]))
       # coerce raw file names to a factor
       if('Raw.file' %in% colnames(.data[[file$name]])) {
         .data[[file$name]]$Raw.file <- factor(.data[[file$name]]$Raw.file)
       }
-      print(colnames(.data[[file$name]]))
     }
     # return the data list
     .data
   })
   
-  # keep track of user-defined experiment names
-  file_levels <- reactive({
+  raw_files <- reactive({
     f_data <- data()
-    .file_levels <- c()
+    .raw_files <- c()
     
     for(file in input_files) {
       # for each file, check if it has a raw file column
-      # TODO: don't break the loop after the first scan, but check if any raw files
-      #       aren't in the existing list, and add them if they are.
       if('Raw.file' %in% colnames(f_data[[file$name]])) {
-        level_prefixes <- paste0('Exp ', seq(1, 100))
-        .file_levels <- levels(f_data[[file$name]]$Raw.file)
-        .file_levels <- paste0(level_prefixes[1:length(.file_levels)], ": ", .file_levels)
-        break
+        # get the raw files for this input file
+        ..raw_files <- levels(f_data[[file$name]]$Raw.file)
+        for(raw_file in ..raw_files) {
+          # if the raw file is not in the list of raw files, then add it
+          if(!raw_file %in% .raw_files) {
+            .raw_files <- c(.raw_files, raw_file)
+          }
+        }
       }
     }
+    
+    # sort the raw files
+    .raw_files <- sort(.raw_files)
+    
+    .raw_files
+  })
+  
+  # keep track of user-defined experiment names
+  file_levels <- reactive({
+    
+    .raw_files <- raw_files()
+    if(length(.raw_files) == 0) {
+      return(c())
+    }
+    
+    level_prefixes <- paste0('Exp ', seq(1, 100))
+    # create the nickname vector
+    .file_levels <- level_prefixes[1:length(.raw_files)]
     
     named_exps <- unlist(strsplit(paste(input$Exp_Names), ","))
     if(length(named_exps) > 0) {
@@ -82,15 +100,18 @@ shinyServer(function(input, output, session) {
   })
   
   observe({
-    # update the selection input
-    updateCheckboxGroupInput(session, 'Exp_Sets', 'Select Experiments to Display',
-                             choices=file_levels(), selected=file_levels())
+    if(length(file_levels()) > 0 & length(raw_files() > 0)) {
+      # update the selection input
+      # for the selection input only, concatenate the nickname and the raw file name
+      updateCheckboxGroupInput(session, 'Exp_Sets', 'Select Experiments to Display',
+                               choiceNames=paste0(file_levels(), ': ', raw_files()), 
+                               choiceValues=file_levels(), selected=file_levels())
+    }
   })
   
   # filtered data
   filtered_data <- reactive({
     f_data <- data()
-    file_levels <- c()
     
     ## TODO: Apply filters (PEP, experiment subsets, ....)
     for(file in input_files) {

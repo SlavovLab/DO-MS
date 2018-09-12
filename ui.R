@@ -86,7 +86,7 @@ shinyUI(
       #Experimental Subsetting Box
       #selectInput('Exp_Sets', 'sets', choices = NULL, multiple = TRUE),
       #p("(Remove items via backspace)", style="padding:20px;"),
-      checkboxGroupInput('Exp_Sets', 'sets', choices=NULL, selected=NULL,
+      checkboxGroupInput('Exp_Sets', 'Select Experiments to Display', choices=NULL, selected=NULL,
                          choiceNames=NULL, choiceValues=NULL),
       tags$hr(),
       
