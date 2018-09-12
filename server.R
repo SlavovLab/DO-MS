@@ -172,6 +172,7 @@ shinyServer(function(input, output, session) {
       ns <- NS(m$id)
       # instead of using box() as provided by shinydashboard,
       # we're going to hack in a similar div since we have to shove in additional elements
+      # taken from: https://github.com/rstudio/shinydashboard/blob/master/R/boxes.R
       return(div(class='col-sm-6', div(class='box box-solid', 
         style='',
         # header
