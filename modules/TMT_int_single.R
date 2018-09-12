@@ -1,30 +1,24 @@
-title <- 'Reporter ion intensity'
-
 init <- function() {
-  return(list(
-    tab='Abundance',
-    boxTitle=title,
-    help='Plotting the TMT reporter intensities for a single run.',
-    moduleFunc=.module
-  ))
-}
-
-.module <- function(input, output, session, data) {
   
-  .validate <- function() {
-    validate(need(data()[['evidence']],paste0("Upload ", 'evidence',".txt")))
+  tab <- 'Abundance'
+  boxTitle <- 'Reporter ion intensity'
+  help <- 'Plotting the TMT reporter intensities for a single run.'
+  source.file <- 'evidence'
+  
+  .validate <- function(data) {
+    validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
-  .plotdata <- function() {
-    plotdata <- dplyr::select(data()[['evidence']],starts_with("Reporter.intensity.corrected"))
+  .plotdata <- function(data) {
+    plotdata <- dplyr::select(data()[[source.file]],starts_with("Reporter.intensity.corrected"))
     plotdata <- melt(plotdata)
     plotdata$log10tran <- log10(plotdata$value)
     return(plotdata)
   }
   
-  .plot <- function() {
-    .validate()
-    plotdata <- .plotdata()
+  .plot <- function(data) {
+    .validate(data)
+    plotdata <- .plotdata(data)
     
     uniqueLabelsSize <- length(unique(plotdata$variable))
     TMTlabels <- c("C1","C2","C3","C4","C5","C6","C7","C8","C9","C10","C11")
@@ -40,35 +34,13 @@ init <- function() {
       scale_x_discrete(name ="TMT Channel", labels=plot2Labels) 
   }
   
-  output$plot <- renderPlot({
-    .plot()
-  })
-  
-  output$downloadPDF <- downloadHandler(
-    filename=function() { paste0(gsub('\\s', '_', title), '.pdf') },
-    content=function(file) {
-      ggsave(filename=file, plot=.plot(), 
-             device=pdf, width=5, height=5, units='in')
-    }
-  )
-  
-  output$downloadPNG <- downloadHandler(
-    filename=function() { paste0(gsub('\\s', '_', title), '.png') },
-    content=function(file) {
-      ggsave(filename=file, plot=.plot(), 
-             device=png, width=5, height=5, units='in')
-    }
-  )
-  
-  output$downloadData <- downloadHandler(
-    filename=function() { paste0(gsub('\\s', '_', title), '.txt') },
-    content=function(file) {
-      # validate
-      .validate()
-      # get plot data
-      plotdata <- .plotdata()
-      write_tsv(plotdata, path=file)
-    }
-  )
-  
+  return(list(
+    tab=tab,
+    boxTitle=boxTitle,
+    help=help,
+    source.file=source.file,
+    validateFunc=.validate,
+    plotdataFunc=.plotdata,
+    plotFunc=.plot
+  ))
 }

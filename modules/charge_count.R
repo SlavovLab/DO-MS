@@ -1,23 +1,18 @@
-title <- 'Number of ions by charge state'
-
 init <- function() {
-  return(list(
-    tab='Contamination',
-    boxTitle=title,
-    help='Plotting the frequency of charge states observed. This will give an
-if you are seeing mostly peptides or non-peptide species',
-    moduleFunc=.module
-  ))
-}
 
-.module <- function(input, output, session, data) {
+  tab <- 'Contamination'
+  boxTitle <- 'Number of ions by charge state'
+  help <- 'Plotting the frequency of charge states observed. This will give an
+  if you are seeing mostly peptides or non-peptide species'
+  source.file <- 'allPeptides'
+
   
-  .validate <- function() {
-    validate(need(data()[['allPeptides']],paste0("Upload ", 'allPeptides',".txt")))
+  .validate <- function(data) {
+    validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
-  .plotdata <- function() {
-    plotdata <- data()[['allPeptides']][,c("Raw.file","Charge")]
+  .plotdata <- function(data) {
+    plotdata <- data()[[source.file]][,c("Raw.file","Charge")]
     
     plotdata$Charge[plotdata$Charge > 3] <- 4
     plotdata_charge <- count(plotdata, c("Raw.file","Charge"))
@@ -31,11 +26,11 @@ if you are seeing mostly peptides or non-peptide species',
     return(hc)
   }
   
-  .plot <- function() {
+  .plot <- function(data) {
     # validate
-    .validate()
+    .validate(data)
     # get plot data
-    plotdata <- .plotdata()
+    plotdata <- .plotdata(data)
     
     # Plot:
     ggplot(plotdata, aes(x=Raw.file, y=Frequency,colour=factor(Charge), group=Raw.file)) + 
@@ -46,36 +41,13 @@ if you are seeing mostly peptides or non-peptide species',
       theme_base
   }
   
-  output$plot <- renderPlot({
-    .plot()
-  })
-  
-  output$downloadPDF <- downloadHandler(
-    filename=function() { paste0(gsub('\\s', '_', title), '.pdf') },
-    content=function(file) {
-      ggsave(filename=file, plot=.plot(), 
-             device=pdf, width=5, height=5, units='in')
-    }
-  )
-  
-  output$downloadPNG <- downloadHandler(
-    filename=function() { paste0(gsub('\\s', '_', title), '.png') },
-    content=function(file) {
-      ggsave(filename=file, plot=.plot(), 
-             device=png, width=5, height=5, units='in')
-    }
-  )
-  
-  output$downloadData <- downloadHandler(
-    filename=function() { paste0(gsub('\\s', '_', title), '.txt') },
-    content=function(file) {
-      # validate
-      .validate()
-      # get plot data
-      plotdata <- .plotdata()
-      write_tsv(plotdata, path=file)
-    }
-  )
-  
+  return(list(
+    tab=tab,
+    boxTitle=boxTitle,
+    help=help,
+    source.file=source.file,
+    validateFunc=.validate,
+    plotdataFunc=.plotdata,
+    plotFunc=.plot
+  ))
 }
-
