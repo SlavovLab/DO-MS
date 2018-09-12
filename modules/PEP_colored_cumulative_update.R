@@ -40,7 +40,7 @@ init <- function() {
     # Rank the Experiments by most number of peptides observed
     maxnum<-c()
     rawnames<-c()
-    for(X in levels(DF.t$Raw.file)){
+    for(X in unique(DF.t$Raw.file)){
       maxnum<-c(maxnum, max(DF.t$cy[DF.t$Raw.file%in%X]) )
       rawnames<-c(rawnames,X)
     }
