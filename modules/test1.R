@@ -1,11 +1,16 @@
 init <- function() {
   
+  tab<-'Instrument Performance'
+  boxTitle='Retention length of peptides at base'  
+  help='Plotting the retention length of identified peptide peaks at the base.'
+  source.file<-"evidence"
+  
   .validate <- function(data) {
-    validate(need(data()[['evidence']],paste0("Upload ", 'evidence',".txt")))
+    validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
   .plotdata <- function(data) {
-    plotdata <- data()[['evidence']][,c("Raw.file","Retention.length","PEP")]
+    plotdata <- data()[[source.file]][,c("Raw.file","Retention.length","PEP")]
     plotdata$Retention.length <- plotdata$Retention.length*60
     plotdata$Retention.length[plotdata$Retention.length > 120] <- 120
     return(plotdata)
@@ -24,9 +29,10 @@ init <- function() {
   }
   
   return(list(
-    tab='Instrument Performance',
-    boxTitle='Retention length of peptides at base',
-    help='Plotting the retention length of identified peptide peaks at the base.',
+    tab=tab,
+    boxTitle=boxTitle,
+    help=help,
+    source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
     plotFunc=.plot
