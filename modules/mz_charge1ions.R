@@ -1,64 +1,63 @@
-##############################################################################
-## Leave the following code alone:  ##########################################
-##############################################################################
+title <- 'm/z Distribution for +1 ions'
 
 init <- function() {
   return(list(
-    
-##############################################################################
-## Define information about the plot: ########################################
-##############################################################################
-    
-    # What tab in the sidebar the plot will be added to:
     tab='Contamination',
-    
-    # Title for the box drawn around the plot
-    boxTitle='m/z Distribution for +1 ions',
-
-    # Description of the plot and what it accomplishes
+    boxTitle=title,
     help='Plotting the m/z distribution of +1 ions, a diagnostic of 
 non-peptide contaminants',
-
-##############################################################################
-## Leave the following code alone:  ##########################################
-##############################################################################
-
-    moduleFunc=testModule
-  
-    
-    ))
+    moduleFunc=.module
+  ))
 }
 
-testModule <- function(input, output, session, data) {
+.module <- function(input, output, session, data) {
+  
+  .validate <- function() {
+    validate(need(data()[['allPeptides']],paste0("Upload ", 'allPeptides',".txt")))
+  }
+  
+  .plotdata <- function() {
+    plotdata <- data()[['allPeptides']][,c('Raw.file', 'Charge', 'm.z')]
+    return(plotdata)
+  }
+  
+  .plot <- function() {
+    .validate()
+    plotdata <- .plotdata()
+    
+    facetHist(plotdata[plotdata$Charge == 1, ], "m.z")
+  }
   
   output$plot <- renderPlot({
-
-##############################################################################
-## Define what MaxQuant data to use:  ########################################
-##############################################################################
-    
-    # Options include some of the standard MaxQuant outputs:
-    #   'evidence', 'msms', 'msmsScans', 'allPeptides'
-    data.choice<-'allPeptides'
-
-##############################################################################
-## Leave the following code alone:  ##########################################
-##############################################################################
-    
-    validate(need(data()[[data.choice]],paste0("Upload ", data.choice,".txt")))
-    
-##############################################################################
-## Manipulate your data of choice and plot away!  ############################
-##############################################################################
-    
-    # Data that you chose can be called as the variable data.loaded, this an
-    # object of R class 'data frame':
-    data.loaded <- data()[[data.choice]]
-    
-    # Plot:
-    facetHist(data.loaded[data.loaded$Charge == 1, ], "m.z")
-    
+    .plot()
   })
+  
+  output$downloadPDF <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.pdf') },
+    content=function(file) {
+      ggsave(filename=file, plot=.plot(), 
+             device=pdf, width=5, height=5, units='in')
+    }
+  )
+  
+  output$downloadPNG <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.png') },
+    content=function(file) {
+      ggsave(filename=file, plot=.plot(), 
+             device=png, width=5, height=5, units='in')
+    }
+  )
+  
+  output$downloadData <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.txt') },
+    content=function(file) {
+      # validate
+      .validate()
+      # get plot data
+      plotdata <- .plotdata()
+      write_tsv(plotdata, path=file)
+    }
+  )
   
 }
 

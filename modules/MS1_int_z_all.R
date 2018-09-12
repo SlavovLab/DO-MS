@@ -1,68 +1,71 @@
-##############################################################################
-## Leave the following code alone:  ##########################################
-##############################################################################
-
+title <- 'MS1 Intensity for all ions'
+  
 init <- function() {
   return(list(
-    
-    ##############################################################################
-    ## Define information about the plot: ########################################
-    ##############################################################################
-    
-    # What tab in the sidebar the plot will be added to:
     tab='Abundance',
-    
-    # Title for the box drawn around the plot
-    boxTitle='MS1 Intensity for all ions',
-    
-    # Description of the plot and what it accomplishes
+    boxTitle=title,
     help='Plotting the MS1 intensity for all ions observed (not 
     necessarily sent to MS2) across runs.',
-    
-    ##############################################################################
-    ## Leave the following code alone:  ##########################################
-    ##############################################################################
-    
-    moduleFunc=testModule
-    
-    
+    moduleFunc=.module
   ))
 }
 
-testModule <- function(input, output, session, data) {
+.module <- function(input, output, session, data) {
+  
+  .validate <- function() {
+    validate(need(data()[['allPeptides']],paste0("Upload ", 'allPeptides',".txt")))
+  }
+  
+  .plotdata <- function() {
+    plotdata <- data()[['allPeptides']][,c("Raw.file","Charge", "Intensity", 'MS.MS.Count')]
+    plotdata$Intensity <- log10(plotdata$Intensity)
+    plotdata$Intensity <- log10(plotdata$Intensity)
+    plotdata <- plotdata[plotdata$MS.MS.Count >= 1,]
+    return(plotdata)
+  }
+  
+  .plot <- function() {
+    .validate()
+    plotdata <- .plotdata()
+    
+    ggplot(plotdata, aes(Intensity)) + 
+      facet_wrap(~Raw.file, nrow = 1) + 
+      geom_histogram() + 
+      coord_flip() + 
+      xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
+      theme_base
+  }
   
   output$plot <- renderPlot({
-    
-    ##############################################################################
-    ## Define what MaxQuant data to use, manipulate that data, and plot:  ########
-    ##############################################################################
-    
-    # Options include some of the standard MaxQuant outputs:
-    #   'evidence', 'msms', 'msmsScans', 'allPeptides'
-    data.choice<-'allPeptides'
-    
-    ##############################################################################
-    ## Leave the following code alone:  ##########################################
-    ##############################################################################
-    
-    validate(need(data()[[data.choice]],paste0("Upload ", data.choice,".txt")))
-    
-    ##############################################################################
-    ## Manipulate your data of choice and plot away!  ############################
-    ##############################################################################
-    
-    # Data that you chose can be called as the variable data.loaded, this an
-    # object of R class 'data frame':
-    data.loaded <- data()[[data.choice]]
-    
-    # Plot:
-    histdata <- data.loaded[,c("Raw.file","Charge", "Intensity")]
-    histdata$Intensity <- log10(histdata$Intensity)
-    histdata$Intensity <- log10(histdata$Intensity)
-    histdata_MSMS <- histdata[histdata$MS.MS.Count >= 1,]
-    ggplot(histdata_MSMS, aes(Intensity)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab(expression(bold("Log"[10]*" Precursor Intensity"))) 
-    
+    .plot()
   })
+  
+  output$downloadPDF <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.pdf') },
+    content=function(file) {
+      ggsave(filename=file, plot=.plot(), 
+             device=pdf, width=5, height=5, units='in')
+    }
+  )
+  
+  output$downloadPNG <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.png') },
+    content=function(file) {
+      ggsave(filename=file, plot=.plot(), 
+             device=png, width=5, height=5, units='in')
+    }
+  )
+  
+  output$downloadData <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.txt') },
+    content=function(file) {
+      # validate
+      .validate()
+      # get plot data
+      plotdata <- .plotdata()
+      write_tsv(plotdata, path=file)
+    }
+  )
   
 }
 

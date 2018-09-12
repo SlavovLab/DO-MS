@@ -37,11 +37,13 @@ shinyServer(function(input, output, session) {
       #.data[[file$name]] <- read.delim(file=.file$datapath, header=TRUE)
       .data[[file$name]] <- as.data.frame(read_tsv(file=.file$datapath))
       # rename columns (replace whitespace with '.')
-      colnames(.data[[file$name]]) <- gsub('\\s', '.', colnames(.data[[file$name]]))
+      colnames(.data[[file$name]]) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', 
+                                           colnames(.data[[file$name]]))
       # coerce raw file names to a factor
       if('Raw.file' %in% colnames(.data[[file$name]])) {
         .data[[file$name]]$Raw.file <- factor(.data[[file$name]]$Raw.file)
       }
+      print(colnames(.data[[file$name]]))
     }
     # return the data list
     .data

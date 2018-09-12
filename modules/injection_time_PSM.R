@@ -1,68 +1,69 @@
-##############################################################################
-## Leave the following code alone:  ##########################################
-##############################################################################
+title <- 'Injection times, PSM resulting'
 
 init <- function() {
   return(list(
-    
-    ##############################################################################
-    ## Define information about the plot: ########################################
-    ##############################################################################
-    
-    # What tab in the sidebar the plot will be added to:
     tab='Sample Quality',
-    
-    # Title for the box drawn around the plot
-    boxTitle='Injection times, PSM resulting',
-    
-    # Description of the plot and what it accomplishes
+    boxTitle=title,
     help='Plotting distribution of injection times for MS2 events that did
     result in a PSM.',
-    
-    ##############################################################################
-    ## Leave the following code alone:  ##########################################
-    ##############################################################################
-    
-    moduleFunc=testModule
-    
-    
+    moduleFunc=.module
   ))
 }
 
-testModule <- function(input, output, session, data) {
+.module <- function(input, output, session, data) {
+  
+  .validate <- function() {
+    validate(need(data()[['msmsScans']],paste0("Upload ", 'msmsScans',".txt")))
+  }
+  
+  .plotdata <- function() {
+    plotdata <- data()[['msmsScans']][,c("Raw.file","Ion.injection.time", "Sequence")]
+    plotdata <- plotdata[!is.na(plotdata$Sequence),]
+    return(plotdata)
+  }
+  
+  .plot <- function() {
+    .validate()
+    plotdata <- .plotdata()
+    
+    ggplot(plotdata, aes(Ion.injection.time)) + 
+      facet_wrap(~Raw.file, nrow = 1) + 
+      geom_histogram() + 
+      coord_flip() + 
+      xlab("Ion Injection Time (ms)") +
+      theme_base
+  }
   
   output$plot <- renderPlot({
-    
-    ##############################################################################
-    ## Define what MaxQuant data to use, manipulate that data, and plot:  ########
-    ##############################################################################
-    
-    # Options include some of the standard MaxQuant outputs:
-    #   'evidence', 'msms', 'msmsScans', 'allPeptides'
-    data.choice<-'msmsScans'
-    
-    ##############################################################################
-    ## Leave the following code alone:  ##########################################
-    ##############################################################################
-    
-    validate(need(data()[[data.choice]],paste0("Upload ", data.choice,".txt")))
-    #validate(need((length(input$Exp_Sets) == 1),"Please select a single experiment"))
-    
-    ##############################################################################
-    ## Manipulate your data of choice and plot away!  ############################
-    ##############################################################################
-    
-    # Data that you chose can be called as the variable data.loaded, this an
-    # object of R class 'data frame':
-    data.loaded <- data()[[data.choice]]
-    
-    # Plot:
-    histdata <- data.loaded[,c("Raw.file","Ion.injection.time", "Sequence")]
-    histdata_notBlank <- histdata[histdata$Sequence != " ",]
-
-    ggplot(histdata_notBlank, aes(Ion.injection.time)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram() + coord_flip() + theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=rel(textVar))) + xlab("Ion Injection Time (ms)") 
-    
-    })
+    .plot()
+  })
+  
+  output$downloadPDF <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.pdf') },
+    content=function(file) {
+      ggsave(filename=file, plot=.plot(), 
+             device=pdf, width=5, height=5, units='in')
+    }
+  )
+  
+  output$downloadPNG <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.png') },
+    content=function(file) {
+      ggsave(filename=file, plot=.plot(), 
+             device=png, width=5, height=5, units='in')
+    }
+  )
+  
+  output$downloadData <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.txt') },
+    content=function(file) {
+      # validate
+      .validate()
+      # get plot data
+      plotdata <- .plotdata()
+      write_tsv(plotdata, path=file)
+    }
+  )
   
 }
 

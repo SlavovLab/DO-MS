@@ -1,77 +1,71 @@
-##############################################################################
-## Leave the following code alone:  ##########################################
-##############################################################################
+title <- 'Retention Lengths for IDd Ions'
 
 init <- function() {
   return(list(
-
-##############################################################################
-## Define information about the plot: ########################################
-##############################################################################
-    
-    # What tab in the sidebar the plot will be added to:
     tab='Instrument',
-    
-    # Title for the box drawn around the plot
-    boxTitle='Retention Lengths for IDd Ions',
-    
-    # Description of the plot and what it accomplishes
+    boxTitle=title,
     help='help text for module',
-    
-##############################################################################
-## Leave the following code alone:  ##########################################
-##############################################################################
-    
-    moduleFunc=testModule
+    moduleFunc=.module
   ))
 }
 
-testModule <- function(input, output, session, data) {
+.module <- function(input, output, session, data) {
   
-##############################################################################
-## Define what MaxQuant data to use:  ########################################
-##############################################################################
+  .validate <- function() {
+    validate(need(data()[['evidence']],paste0("Upload ", 'evidence', '.txt')))
+  }
   
-  # Options include some of the standard MaxQuant outputs:
-  #   'evidence', 'msms', 'msmsScans', 'allPeptides'
-  data.choice<-'evidence'
-      
-  output$plot <- renderPlot({
+  .plotdata <- function() {
+    plotdata <- data()[['evidence']][,c("Raw.file","Retention.length","PEP")]
+    plotdata$Retention.length <- plotdata$Retention.length*60
+    plotdata$Retention.length[plotdata$Retention.length > 120] <- 120
+    return(plotdata)
+  }
+  
+  .plot <- function() {
+    .validate()
+    plotdata <- .plotdata()
     
-    validate(need(data()[[data.choice]],paste0("Upload ", data.choice, '.txt')))
-    #validate(need((input$Exp_Sets),"Loading"))
+    validate(need(nrow(plotdata) > 0, 'No data available after filtering'))
     
-##############################################################################
-## Manipulate your data of choice and plot away!  ############################
-##############################################################################
-    
-    # Data that you chose can be called as the variable data.loaded, this an
-    # object of R class 'data frame':
-    
-    data.loaded <- data()[[data.choice]]
-    
-    histdata <- data.loaded[,c("Raw.file","Retention.length","PEP")]
-    lengthLev <- length(levels(histdata$Raw.file))
-    #levels(histdata$Raw.file) <- levelsLib[1:lengthLev]
-    histdata$Retention.length <- histdata$Retention.length*60
-    histdata$Retention.length[histdata$Retention.length > 120] <- 120
-    
-    validate(need(nrow(histdata) > 0, 'No data available after filtering'))
-    
-    maxRL <- max(histdata$Retention.length)
-    
-    ggplot(histdata, aes(Retention.length)) + 
+    ggplot(plotdata, aes(Retention.length)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=120) + 
       coord_flip() + 
-      theme(panel.background = element_rect(fill = "white",colour = "white"), 
-            panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), 
-            panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),
-            legend.position="none", 
-            axis.text.x = element_text(angle = 45,hjust = 1, margin=margin(r=45)), 
-            axis.title=element_text(size=rel(textVar),face="bold"), 
-            axis.text = element_text(size = rel(textVar)),
-            strip.text = element_text(size=rel(textVar))) + 
-      xlab('Retention Lengths at base (sec)')
+      xlab('Retention Lengths at base (sec)') +
+      theme_base
+  }
+  
+      
+  output$plot <- renderPlot({
+    .plot()
   })
+  
+  output$downloadPDF <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.pdf') },
+    content=function(file) {
+      ggsave(filename=file, plot=.plot(), 
+             device=pdf, width=5, height=5, units='in')
+    }
+  )
+  
+  output$downloadPNG <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.png') },
+    content=function(file) {
+      ggsave(filename=file, plot=.plot(), 
+             device=png, width=5, height=5, units='in')
+    }
+  )
+  
+  output$downloadData <- downloadHandler(
+    filename=function() { paste0(gsub('\\s', '_', title), '.txt') },
+    content=function(file) {
+      # validate
+      .validate()
+      # get plot data
+      plotdata <- .plotdata()
+      write_tsv(plotdata, path=file)
+    }
+  )
+  
 }
