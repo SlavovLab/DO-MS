@@ -1,41 +1,68 @@
-title <- 'Number of Confident Identification'
+##############################################################################
+## Leave the following code alone:  ##########################################
+##############################################################################
 
 init <- function() {
   return(list(
+    
+    ##############################################################################
+    ## Define information about the plot: ########################################
+    ##############################################################################
+    
+    # What tab in the sidebar the plot will be added to:
     tab='Sample Quality',
-    boxTitle=title,
+    
+    # Title for the box drawn around the plot
+    boxTitle='PEP Histogram',
+    
+    # Description of the plot and what it accomplishes
     help='Plotting the number of peptides identified at each given confidence
     level.',
-    moduleFunc=.module
+    
+    ##############################################################################
+    ## Leave the following code alone:  ##########################################
+    ##############################################################################
+    
+    moduleFunc=testModule
+    
+    
   ))
 }
 
-.module <- function(input, output, session, data) {
+testModule <- function(input, output, session, data) {
   
-  .validate <- function() {
-    validate(need(data()[['evidence']],paste0("Upload ", 'evidence',".txt")))
-  }
-  
-  .plotdata <- function() {
-    plotdata <- data()[['evidence']][,c("Raw.file","PEP")]
-    data.loaded<-plotdata
+  output$plot <- renderPlot({
+    
+    ##############################################################################
+    ## Define what MaxQuant data to use, manipulate that data, and plot:  ########
+    ##############################################################################
+    
+    # Options include some of the standard MaxQuant outputs:
+    #   'evidence', 'msms', 'msmsScans', 'allPeptides'
+    data.choice<-'evidence'
+    
+    ##############################################################################
+    ## Leave the following code alone:  ##########################################
+    ##############################################################################
+    
+    validate(need(data()[[data.choice]],paste0("Upload ", data.choice,".txt")))
+    #validate(need((length(input$Exp_Sets) == 1),"Please select a single experiment"))
+    
+    ##############################################################################
+    ## Manipulate your data of choice and plot away!  ############################
+    ##############################################################################
+    
+    # Data that you chose can be called as the variable data.loaded, this an
+    # object of R class 'data frame':
+    data.loaded <- data()[[data.choice]]
+    
+    # Plot:
     histdata <- data.loaded[,c("Raw.file","PEP")]
     histdata_PEP <- count(histdata,c('Raw.file','PEP'))
     DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(freq))
     
     # Cut off for display
     DF.t<-DF.t[DF.t$PEP<0.1,]
-    
-    plotdata<-DF.t
-    return(plotdata)
-    
-  }
-  
-  .plot <- function() {
-    .validate()
-    plotdata <- .plotdata()
-    
-    DF.t<-plotdata
     
     # Rank the Experiments by most number of peptides observed
     maxnum<-c()
@@ -61,38 +88,8 @@ init <- function() {
       scale_colour_manual(name = "Experiment", values=cc, labels = names(rankExp_ord)) +
       coord_flip() + scale_x_log10(limits = c(.00009,.1), breaks = c(.0001,.001,.01,.1), labels = scales::trans_format("log10", scales::math_format(10^.x))) + theme( legend.key = element_rect(fill = "white"),panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"), axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=textVar)) + ylab("Number of IDs") 
     
-  }
-  
-  output$plot <- renderPlot({
-    .plot()
-  })
-  
-  output$downloadPDF <- downloadHandler(
-    filename=function() { paste0(gsub('\\s', '_', title), '.pdf') },
-    content=function(file) {
-      ggsave(filename=file, plot=.plot(), 
-             device=pdf, width=5, height=5, units='in')
-    }
-  )
-  
-  output$downloadPNG <- downloadHandler(
-    filename=function() { paste0(gsub('\\s', '_', title), '.png') },
-    content=function(file) {
-      ggsave(filename=file, plot=.plot(), 
-             device=png, width=5, height=5, units='in')
-    }
-  )
-  
-  output$downloadData <- downloadHandler(
-    filename=function() { paste0(gsub('\\s', '_', title), '.txt') },
-    content=function(file) {
-      # validate
-      .validate()
-      # get plot data
-      plotdata <- .plotdata()
-      write_tsv(plotdata, path=file)
-    }
-  )
+
+    })
   
 }
 
