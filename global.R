@@ -16,6 +16,7 @@ library(plyr)
 library(ggplot2) 
 library(reshape2)
 library(RColorBrewer)
+library(readr)
 
 modules <- list()
 
