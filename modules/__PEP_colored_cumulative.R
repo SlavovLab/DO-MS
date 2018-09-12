@@ -56,8 +56,6 @@ testModule <- function(input, output, session, data) {
     # object of R class 'data frame':
     data.loaded <- data()[[data.choice]]
     
-    data.loaded<-read.delim("G:/My Drive/MS/SCoPE/mPOP/dat/FP54/evidence.txt")
-    
     # Plot:
     histdata <- data.loaded[,c("Raw.file","PEP")]
     histdata_PEP <- count(histdata,c('Raw.file','PEP'))
