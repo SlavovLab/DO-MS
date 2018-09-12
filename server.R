@@ -34,7 +34,14 @@ shinyServer(function(input, output, session) {
       .file <- input[[file$name]]
       if(is.null(.file)){ next }
       # TODO: replace with readr read_tsv? or read_csv
-      .data[[file$name]] <- read.delim(file=.file$datapath, header=TRUE)
+      #.data[[file$name]] <- read.delim(file=.file$datapath, header=TRUE)
+      .data[[file$name]] <- as.data.frame(read_tsv(file=.file$datapath))
+      # rename columns (replace whitespace with '.')
+      colnames(.data[[file$name]]) <- gsub('\\s', '.', colnames(.data[[file$name]]))
+      # coerce raw file names to a factor
+      if('Raw.file' %in% colnames(.data[[file$name]])) {
+        .data[[file$name]]$Raw.file <- factor(.data[[file$name]]$Raw.file)
+      }
     }
     # return the data list
     .data
@@ -47,6 +54,8 @@ shinyServer(function(input, output, session) {
     
     for(file in input_files) {
       # for each file, check if it has a raw file column
+      # TODO: don't break the loop after the first scan, but check if any raw files
+      #       aren't in the existing list, and add them if they are.
       if('Raw.file' %in% colnames(f_data[[file$name]])) {
         level_prefixes <- paste0('Exp ', seq(1, 100))
         .file_levels <- levels(f_data[[file$name]]$Raw.file)
@@ -142,18 +151,21 @@ shinyServer(function(input, output, session) {
         title=m$boxTitle,
         #status='some-asdf',
         solidHeader=TRUE, collapsible=TRUE,
-        plotOutput(ns('plot'), height=370)
-        # column(4, panel(
-        #   fixedRow(
-        #     downloadButtonFixed(ns('downloadPDF'), label='Download PDF')
-        #   ),
-        #   fixedRow(
-        #     downloadButtonFixed(ns('downloadPNG'), label='Download PNG')
-        #   ),
-        #   fixedRow(
-        #     downloadButtonFixed(ns('downloadData'), label='Download Data')
-        #   )
-        # ))
+        fixedRow(
+          plotOutput(ns('plot'), height=370)  
+        ),
+        # TODO: conditionalPanel which only displays the buttons when the relevant data is loaded
+        div(class='row', style='height:30px',
+          column(width=4,
+            downloadButtonFixed(ns('downloadPDF'), label='PDF')
+          ),
+          column(width=4,
+            downloadButtonFixed(ns('downloadPNG'), label='PNG')
+          ),
+          column(width=4,
+            downloadButtonFixed(ns('downloadData'), label='Data')
+          )
+        )
       ))
     })
     output[[tab]] <- renderUI(plots)
