@@ -110,6 +110,9 @@ ul.sidebar-menu ul.treeview-menu {
   }
 }
 
+#shiny-tab-documentation h1 {
+  margin-top: 5px;
+}
 
 .documentation-tab {
   background-color: white;

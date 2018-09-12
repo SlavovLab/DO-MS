@@ -158,9 +158,40 @@ shinyServer(function(input, output, session) {
   # load each module from the module list via. callModule
   # each module is loaded by passing the moduleFunc field of the module
   # data is only in one reactive named list -- passing in filtered_data
-  for(module in modules) {
-    callModule(module$moduleFunc, module$id, data=filtered_data)
-  }
+  for(module in modules) { local({
+    m <- module
+    ns <- NS(m$id)
+    
+    output[[ns('plot')]] <- renderPlot({ 
+      m$plotFunc(filtered_data)  
+    })
+    
+    output[[ns('downloadPDF')]] <- downloadHandler(
+      filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.pdf') },
+      content=function(file) {
+        ggsave(filename=file, plot=m$plotFunc(filtered_data), 
+               device=pdf, width=5, height=5, units='in')
+      }
+    )
+    
+    output[[ns('downloadPNG')]] <- downloadHandler(
+      filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.png') },
+      content=function(file) {
+        ggsave(filename=file, plot=m$plotFunc(filtered_data), 
+               device=png, width=5, height=5, units='in')
+      }
+    )
+    
+    output[[ns('downloadData')]] <- downloadHandler(
+      filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.txt') },
+      content=function(file) {
+        m$validateFunc(filtered_data)
+        plotdata <- m$plotdataFunc(filtered_data)
+        write_tsv(plotdata, path=file)
+      }
+    )
+    
+  }) }
   
   # need local({}) to isolate each instance of the for loop - or else the output
   # of each iteration will default to to the last one.
@@ -226,24 +257,38 @@ shinyServer(function(input, output, session) {
       # Copy the report file to a temporary directory before processing it, in
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
-      tempReport <- file.path(tempdir(), "SCoPE_QC_Report.Rmd")
-      file.copy("SCoPE_QC_Report.Rmd", tempReport, overwrite = TRUE)
-      
+      #tempReport <- file.path(tempdir(), "SCoPE_QC_Report.Rmd")
+      #file.copy("SCoPE_QC_Report.Rmd", tempReport, overwrite = TRUE)
+
       # Set up parameters to pass to Rmd document
-      params <- list(pep_in = input$slider, 
-                     set_in = input$Exp_Sets, 
-                     evid = input$file, 
-                     msmsSc = input$file2, 
-                     aPep = input$file3, 
-                     exp_desc = input$Exp_Names)
-      
+      # params <- list(pep_in = input$slider,
+      #                set_in = input$Exp_Sets,
+      #                evid = input$file,
+      #                msmsSc = input$file2,
+      #                aPep = input$file3,
+      #                exp_desc = input$Exp_Names)
+
       # Knit the document, passing in the `params` list, and eval it in a
       # child of the global environment (this isolates the code in the document
       # from the code in this app).
-      rmarkdown::render(tempReport, output_file = file,
-                        params = params,
-                        envir = new.env(parent = globalenv())
-      )
+      # rmarkdown::render(tempReport, output_file = file,
+      #                   params = params,
+      #                   envir = new.env(parent = globalenv())
+      # )
+      plst <- list()
+
+      for(t in 1:length(tabs)) {
+        modules_in_tab <- modules[sapply(modules, function(m) { m$tab == tabs[t] })]
+
+        plots <- lapply(modules_in_tab, function(m) {
+          m$plotFunc(filtered_data)
+        })
+        plst[[t]] <- plots
+      }
+
+      print(plst)
+      print(plst[[1]])
+
     }
   )
 })

@@ -1,5 +1,5 @@
 #Packages to check for
-packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer", "readr")
+packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer", "readr", 'rmarkdown')
 
 #Checking installed packages against required ones
 new.packages <- packages.needed[!(packages.needed %in% installed.packages()[,"Package"])]
@@ -17,6 +17,7 @@ library(ggplot2)
 library(reshape2)
 library(RColorBrewer)
 library(readr)
+library(rmarkdown)
 
 modules <- list()
 
