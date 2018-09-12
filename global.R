@@ -40,6 +40,12 @@ for(module in modules) {
 }
 tabs <- unique(tabs)
 
+# to get custom panel heading colors for each tab,
+# need to dynamically inject some CSS into the app_css string
+tab_colors <- RColorBrewer::brewer.pal(9, 'Set1')
+# repeat by 10 so we never run out of tab colors
+tab_colors <- rep(tab_colors, 10)
+
 input_files <- list(
   evidence=list(
     name='evidence',

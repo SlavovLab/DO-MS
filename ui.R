@@ -50,13 +50,6 @@ for(i in 1:length(tabs)) {
   )
 }
 
-
-# to get custom panel heading colors for each tab,
-# need to dynamically inject some CSS into the app_css string
-tab_colors <- RColorBrewer::brewer.pal(9, 'Set1')
-# repeat by 10 so we never run out of tab colors
-tab_colors <- rep(tab_colors, 10)
-
 # set a lite regex in the css to override the default box-header colors
 for(i in 1:length(tabs)) {
   tab_name <- paste0(gsub('\\s', '-', tabs[i]), '-', i)
