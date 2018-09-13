@@ -85,7 +85,7 @@ shinyUI(
       
       #PEP selection slider
       shinyWidgets::sliderTextInput("slider", "PEP Threshold:", 
-        choices=c(1e-4,0.001,.01,0.1), selected=0.1, grid = T),
+        choices=c(1e-4,0.001,.01,0.1,1), selected=0.1, grid = T),
       tags$script(HTML("$('body').addClass('fixed');"))
       
     ),
