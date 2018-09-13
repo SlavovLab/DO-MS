@@ -110,7 +110,9 @@ shinyServer(function(input, output, session) {
   })
   
   # filtered data
-  filtered_data <- reactive({
+  # debounce (throttle) by 1000ms delay, because this expression
+  # is so computationally costly
+  filtered_data <- debounce(reactive({
     f_data <- data()
     
     ## TODO: Apply filters (PEP, experiment subsets, ....)
@@ -151,7 +153,7 @@ shinyServer(function(input, output, session) {
     
     ## Filtered data
     f_data
-  })
+  }), 1000)
   
   output$UserExpList <- renderText({ input$Exp_Names })
   
