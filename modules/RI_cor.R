@@ -55,7 +55,7 @@ init <- function() {
                          axis.text.x = element_text(angle=0, hjust = 0.5),
                          axis.ticks.x=element_blank(),
                          axis.ticks.y=element_blank(),
-                         legend.position = "right") + scale_fill_gradient(low="blue", high="red")
+                         legend.position = "right") + scale_fill_gradient2(low="blue", mid = "white", high="red")
   }
   
   return(list(
