@@ -1,5 +1,5 @@
 #Packages to check for
-packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer", "readr", 'rmarkdown')
+packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer", "readr", 'rmarkdown', 'prettydoc')
 
 #Checking installed packages against required ones
 new.packages <- packages.needed[!(packages.needed %in% installed.packages()[,"Package"])]
@@ -18,6 +18,7 @@ library(reshape2)
 library(RColorBrewer)
 library(readr)
 library(rmarkdown)
+library(prettydoc)
 
 modules <- list()
 
@@ -43,7 +44,7 @@ tabs <- unique(tabs)
 
 # to get custom panel heading colors for each tab,
 # need to dynamically inject some CSS into the app_css string
-tab_colors <- RColorBrewer::brewer.pal(9, 'Set1')
+tab_colors <- c(RColorBrewer::brewer.pal(5, 'Set1'), RColorBrewer::brewer.pal(8, 'Dark2'))
 # repeat by 10 so we never run out of tab colors
 tab_colors <- rep(tab_colors, 10)
 
