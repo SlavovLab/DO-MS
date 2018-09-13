@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- 'Sample Quality'
+  tab <- 'SCoPE-MS Diagnostics'
   boxTitle <- 'Number of Confident Identifications'
   help <- 'Plotting the number of peptides identified at each given confidence
     level.'
