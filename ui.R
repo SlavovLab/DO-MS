@@ -86,7 +86,17 @@ shinyUI(
       #PEP selection slider
       shinyWidgets::sliderTextInput("slider", "PEP Threshold:", 
         choices=c(1e-4,0.001,.01,0.1,1), selected=0.1, grid = T),
-      tags$script(HTML("$('body').addClass('fixed');"))
+      tags$script(HTML("$('body').addClass('fixed');")),
+      
+      tags$hr(),
+      
+      tags$h4('Plot Download Options'),
+      tags$p('Set the width, height, and units of plots when downloading as PDF or PNG'),
+      selectInput('download_figure_units', 'Plot Units', selected='in',
+                  choices=list('Inches'='in', 'Centimeters'='cm', 'Millimeters'='mm')),
+      numericInput('download_figure_width', 'Plot Width', 5, min=1, max=99, step=0.1),
+      numericInput('download_figure_height', 'Plot Height', 5, min=1, max=99, step=0.1)
+
       
     ),
     dashboardBody(

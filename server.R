@@ -173,7 +173,10 @@ shinyServer(function(input, output, session) {
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.pdf') },
       content=function(file) {
         ggsave(filename=file, plot=m$plotFunc(filtered_data), 
-               device=pdf, width=5, height=5, units='in')
+               device=pdf, 
+               units=input$download_figure_units,
+               width=input$download_figure_width, 
+               height=input$download_figure_height)
       }
     )
     
@@ -183,7 +186,10 @@ shinyServer(function(input, output, session) {
         ggsave(filename=file, plot=m$plotFunc(filtered_data), 
                # for some reason, specify the png device with a string instead of the
                # straight device, and it doesn't print a handful of pixels
-               device='png', width=5, height=5, units='in')
+               device='png', 
+               units=input$download_figure_units,
+               width=input$download_figure_width, 
+               height=input$download_figure_height)
       }
     )
     
