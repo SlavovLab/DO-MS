@@ -106,6 +106,7 @@ shinyServer(function(input, output, session) {
       updateCheckboxGroupInput(session, 'Exp_Sets', 'Select Experiments to Display',
                                choiceNames=paste0(file_levels(), ': ', raw_files()), 
                                choiceValues=file_levels(), selected=file_levels())
+    } else {
     }
   })
   
@@ -222,9 +223,7 @@ shinyServer(function(input, output, session) {
           )
         ),
         div(class='box-body',
-          fixedRow(
-            plotOutput(ns('plot'), height=370)  
-          )
+          plotOutput(ns('plot'), height=370)  
         ),
         # TODO: conditionalPanel which only displays the buttons when the relevant data is loaded
         div(class='box-footer',

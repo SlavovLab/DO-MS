@@ -71,7 +71,7 @@ shinyUI(
                  icon = icon("signal", lib = "glyphicon"), startExpanded = TRUE,
           menu_items
         ),
-        menuItem("Generate Report", tabName = "report", icon = icon("book", lib="glyphicon")),
+        menuItem("Generate Report", tabName = "report", icon = icon("file", lib="glyphicon")),
         menuItem("Documentation", tabName = "documentation", icon = icon("book", lib="glyphicon"))
       ),
       
