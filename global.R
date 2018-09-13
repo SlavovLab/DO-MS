@@ -40,7 +40,7 @@ tabs <- c()
 for(module in modules) {
   tabs <- c(tabs, module$tab)
 }
-tabs <- unique(tabs)
+tabs <- sort(unique(tabs))
 
 # to get custom panel heading colors for each tab,
 # need to dynamically inject some CSS into the app_css string
