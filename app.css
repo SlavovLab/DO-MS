@@ -7,6 +7,15 @@ aside.main-sidebar {
   position: absolute !important;
 }
 
+.box .box-solid {
+  box-shadow: 3px 3px 1px #AAA;
+  border-radius: 10px;
+}
+
+.box-header {
+  border-radius: 10px 10px 0px 0px;
+}
+
 .box-header .tooltip-btn {
   margin-left: 6px;
   background: transparent;
@@ -35,6 +44,10 @@ aside.main-sidebar {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.box-footer {
+  border-radius: 0px 0px 10px 10px;
 }
 
 .box-footer .row .shiny-download-link {
