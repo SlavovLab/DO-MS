@@ -80,6 +80,9 @@ for(i in 1:length(tabs)) {
   # also add a border to the menu item
   app_css <- paste0(app_css, '.treeview ul.treeview-menu a[data-value*=\"', tab_name , '\"] {',
                     'border-left: 10px solid ', tab_colors[i], '; }')
+  # and make the color the background when the menuitem is active
+  app_css <- paste0(app_css, '.treeview-menu li.active a[data-value*=\"', tab_name , '\"] {',
+                    'background-color: ', tab_colors[i], '; color: white; }')
 }
 
 shinyUI(
