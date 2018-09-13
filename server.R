@@ -181,7 +181,9 @@ shinyServer(function(input, output, session) {
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.png') },
       content=function(file) {
         ggsave(filename=file, plot=m$plotFunc(filtered_data), 
-               device=png, width=5, height=5, units='in')
+               # for some reason, specify the png device with a string instead of the
+               # straight device, and it doesn't print a handful of pixels
+               device='png', width=5, height=5, units='in')
       }
     )
     
