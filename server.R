@@ -27,14 +27,39 @@ shinyServer(function(input, output, session) {
   # this could also be done as a reactiveValues list -- 
   # but haven't gotten that to work yet.
   data <- reactive({
+    # create a progress bar, only if theres data somewhere
+    all_empty <- TRUE
+    for(file in input_files) {
+      if(!is.null(input[[file$name]])) {
+        progress <- shiny::Progress$new()
+        on.exit(progress$close())
+        progress$set(message='', value=0)
+        all_empty <- FALSE
+        break
+      }
+    }
+    
+    # if no files exist yet, then exit now
+    if(all_empty) {
+      return(list())
+    }
+    
     # create the data list
     .data <- list()
     # loop thru all input files and add it to the data list
     for(file in input_files) {
+      # update progress bar
+      progress$inc(1/length(input_files), detail=paste0('Reading ', file))
+      
+      # get the fileinput object
       .file <- input[[file$name]]
+      
+      # don't read if there's no file there
       if(is.null(.file)){ next }
-      # TODO: replace with readr read_tsv? or read_csv
-      #.data[[file$name]] <- read.delim(file=.file$datapath, header=TRUE)
+      # also don't read if it's already been read
+      if(!is.null(.data[[file$name]])) { next }
+      
+      # read in as data frame (need to convert from tibble)
       .data[[file$name]] <- as.data.frame(read_tsv(file=.file$datapath))
       # rename columns (replace whitespace or special characters with '.')
       colnames(.data[[file$name]]) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', 
