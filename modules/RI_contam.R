@@ -44,7 +44,8 @@ init <- function() {
     plotdata <- .plotdata(data)
     
     ggplot(plotdata, aes_string(x="Highest_Channel", y="Other_Channels")) + xlab("Highest TMT Channel (log10)") +
-      ylab("All Other TMT Channels (log10)") + ggtitle(unique(plotdata$Raw.file)) + geom_point(size = 0.1, alpha = 0.1) + theme_base + theme(axis.text.x = element_text(angle=0, hjust = 0.5))
+      ylab("All Other TMT Channels (log10)") + ggtitle(unique(plotdata$Raw.file)) + geom_point(size = 0.1, alpha = 0.1) + theme_base + theme(axis.text.x = element_text(angle=0, hjust = 0.5)) +
+      geom_abline(intercept = 0, slope = 1, color = "red", size = 1)
     
   }
   

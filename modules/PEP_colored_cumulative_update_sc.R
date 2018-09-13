@@ -18,7 +18,7 @@ init <- function() {
     DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(freq))
     
     # Cut off for display
-    DF.t<-DF.t[DF.t$PEP<0.1,]
+    #DF.t<-DF.t[DF.t$PEP<0.1,]
     
     plotdata<-DF.t
     return(plotdata)
