@@ -284,32 +284,66 @@ shinyServer(function(input, output, session) {
   ######################################################################################
   ######################################################################################
   
-  output$report.pdf <- downloadHandler(
+  output$download_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
-    filename = "SCoPE_QC_Report.html",
+    filename = function() {
+      name <- 'SCoPE_QC_Report'
+      switch(input$report_format,
+             html=paste0(name, '.html'),
+             pdf=paste0(name, '.pdf'))
+    },
     content = function(file) {
       
-      report = paste(
+      # init progress bar
+      progress <- shiny::Progress$new()
+      on.exit(progress$close())
+      progress$set(message='', value=0)
+      
+      # first 5% is init
+      # next 45% will be gathering materials
+      # leave last 50% for rmarkdown rendering
+      progress$inc(5/100, detail='Initializing')
+      
+      report <- paste(
         '---',
         'title: SCoPE QC Report',
         'output:',
-        '  prettydoc::html_pretty:',
-        '    theme: cayman',
-        '    highlight: github',
-        '    fig_width: 7',
-        '    fig_height: 6',
-        '    fig_caption: true',
-        '    dev: png',
-        '    df_print: paged',
-        '  pdf_document:',
-        '    header-includes:',
-        '      - \\usepackage{xcolor}',
-        '      - \\usepackage{framed}',
-        '      - \\usepackage{color}',
+      sep='\n')
+      
+      if(input$report_format == 'pdf') {
+        report <- paste(report,
+          '  pdf_document:',
+          #'    header-includes:',
+          #'      - \\usepackage{xcolor}',
+          #'      - \\usepackage{framed}',
+          #'      - \\usepackage{color}',
+          '    fig_caption: false',
+        sep='\n')
+      } else {
+        # default: HTML
+        .theme <- input$report_theme
+        report <- paste(report,
+          '  html_document:',
+          paste0('    theme: ', .theme),
+          #'    highlight: tango',
+          '    fig_caption: false',
+          '    df_print: paged',            
+        sep='\n')
+      }
+      
+      # add figure options
+      report <- paste(report,
+        paste0('    fig_width: ', input$report_figure_width),
+        paste0('    fig_height: ', input$report_figure_height),
+        paste0('    dev: ', input$report_figure_format),
+      sep='\n')
+      
+      # add params
+      report <- paste(report,
         'params:',
         '  plots: NA',
         '---',
-        '# QC Report {.tabset}',
+        '# {.tabset}',
       sep='\n')
       
       params <- list()
@@ -320,7 +354,7 @@ shinyServer(function(input, output, session) {
         tab <- tabs[.t]
         
         report <<- paste(report,
-          paste0('## ', tab, ' Plots'),
+          paste0('## ', tab),
           sep='\n')
 
         modules_in_tab <- modules[sapply(modules, function(m) { m$tab == tab })]
@@ -329,6 +363,9 @@ shinyServer(function(input, output, session) {
         for(m in 1:length(modules_in_tab)) { local({
           .m <- m
           module <- modules_in_tab[[.m]]
+          
+          # increment progress bar
+          progress$inc(0.45/length(modules), detail=paste0('Adding module ', .m, 'from tab ', .t))
           
           report <<- paste(report,
             paste0('### ', module$boxTitle, ' {.plot-title}'),
@@ -360,13 +397,20 @@ shinyServer(function(input, output, session) {
         
       }) } # end tab loop
       
+      # last 50% of progress
+      progress$inc(5/100, detail='Writing temporary files')
+      
       tempReport <- file.path(tempdir(), "tempReport.Rmd")
       write_file(x=report, path=tempReport, append=FALSE)
+      
+      progress$inc(5/100, detail='Rendering report (this may take a while)')
       
       rmarkdown::render(tempReport, output_file = file,
                         params = params,
                         envir = new.env(parent = globalenv())
       )
+      
+      progress$inc(40/100, detail='Finishing')
 
     }
   )
