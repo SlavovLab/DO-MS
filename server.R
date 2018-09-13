@@ -259,16 +259,19 @@ shinyServer(function(input, output, session) {
           plotOutput(ns('plot'), height=370)  
         ),
         # TODO: conditionalPanel which only displays the buttons when the relevant data is loaded
-        div(class='box-footer',
-          div(class='row', style='height:30px',
-            column(width=4,
-              downloadButtonFixed(ns('downloadPDF'), label='PDF')
-            ),
-            column(width=4,
-              downloadButtonFixed(ns('downloadPNG'), label='PNG')
-            ),
-            column(width=4,
-              downloadButtonFixed(ns('downloadData'), label='Data')
+        div(class='box-footer', 
+          conditionalPanel(
+            condition=paste0('output[\"', ns('plot'),'\"] != undefined'),
+            div(class='row', style='height:30px',
+              column(width=4,
+                downloadButtonFixed(ns('downloadPDF'), label='PDF')
+              ),
+              column(width=4,
+                downloadButtonFixed(ns('downloadPNG'), label='PNG')
+              ),
+              column(width=4,
+                downloadButtonFixed(ns('downloadData'), label='Data')
+              )
             )
           )
         )

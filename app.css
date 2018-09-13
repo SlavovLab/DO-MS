@@ -22,6 +22,7 @@
   font-size: 1em;
   font-weight: bold;
   margin: 5px 15px;
+  margin-top: 10px;
 }
 
 .main-sidebar .shiny-input-container {
@@ -30,7 +31,7 @@
 }
 
 
-.box .box-solid {
+.box.box-solid {
   box-shadow: 3px 3px 1px #AAA;
   border-radius: 10px;
 }
@@ -70,6 +71,7 @@
 }
 
 .box-footer {
+  height: 55px;
   border-radius: 0px 0px 10px 10px;
 }
 

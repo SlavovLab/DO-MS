@@ -79,7 +79,7 @@ for(i in 1:length(tabs)) {
                     'background-color: ', tab_colors[i], '; color: white; }')
   # also add a border to the menu item
   app_css <- paste0(app_css, '.treeview ul.treeview-menu a[data-value*=\"', tab_name , '\"] {',
-                    'border-left: 6px solid ', tab_colors[i], '; }')
+                    'border-left: 10px solid ', tab_colors[i], '; }')
 }
 
 shinyUI(
