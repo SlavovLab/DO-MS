@@ -252,42 +252,87 @@ shinyServer(function(input, output, session) {
   
   output$report.pdf <- downloadHandler(
     # For PDF output, change this to "report.pdf"
-    filename = "SCoPE_QC_Report.pdf",
+    filename = "SCoPE_QC_Report.html",
     content = function(file) {
-      # Copy the report file to a temporary directory before processing it, in
-      # case we don't have write permissions to the current working dir (which
-      # can happen when deployed).
-      #tempReport <- file.path(tempdir(), "SCoPE_QC_Report.Rmd")
-      #file.copy("SCoPE_QC_Report.Rmd", tempReport, overwrite = TRUE)
+      
+      report = paste(
+        '---',
+        'title: SCoPE QC Report',
+        'output:',
+        '  prettydoc::html_pretty:',
+        '    theme: cayman',
+        '    highlight: github',
+        '    fig_width: 7',
+        '    fig_height: 6',
+        '    fig_caption: true',
+        '    dev: png',
+        '    df_print: paged',
+        '  pdf_document:',
+        '    header-includes:',
+        '      - \\usepackage{xcolor}',
+        '      - \\usepackage{framed}',
+        '      - \\usepackage{color}',
+        'params:',
+        '  plots: NA',
+        '---',
+        '# QC Report {.tabset}',
+      sep='\n')
+      
+      params <- list()
+      params[['plots']] <- list()
 
-      # Set up parameters to pass to Rmd document
-      # params <- list(pep_in = input$slider,
-      #                set_in = input$Exp_Sets,
-      #                evid = input$file,
-      #                msmsSc = input$file2,
-      #                aPep = input$file3,
-      #                exp_desc = input$Exp_Names)
+      for(t in 1:length(tabs)) { local({
+        .t <- t
+        tab <- tabs[.t]
+        
+        report <<- paste(report,
+          paste0('## ', tab, ' Plots'),
+          sep='\n')
 
-      # Knit the document, passing in the `params` list, and eval it in a
-      # child of the global environment (this isolates the code in the document
-      # from the code in this app).
-      # rmarkdown::render(tempReport, output_file = file,
-      #                   params = params,
-      #                   envir = new.env(parent = globalenv())
-      # )
-      plst <- list()
+        modules_in_tab <- modules[sapply(modules, function(m) { m$tab == tab })]
+        plots <- list()
 
-      for(t in 1:length(tabs)) {
-        modules_in_tab <- modules[sapply(modules, function(m) { m$tab == tabs[t] })]
+        for(m in 1:length(modules_in_tab)) { local({
+          .m <- m
+          module <- modules_in_tab[[.m]]
+          
+          report <<- paste(report,
+            paste0('### ', module$boxTitle, ' {.plot-title}'),
+            '',
+            module$help,
+            '',
+            '```{r, echo=FALSE, warning = FALSE, message = FALSE}',
+            'options( warn = -1 )',
+            paste0('params[["plots"]][[', .t, ']][[', .m, ']]'),
+            sep='\n')
 
-        plots <- lapply(modules_in_tab, function(m) {
-          m$plotFunc(filtered_data)
-        })
-        plst[[t]] <- plots
-      }
-
-      print(plst)
-      print(plst[[1]])
+          plots[[.m]] <<- tryCatch(module$plotFunc(filtered_data),
+            error = function(e) {
+              # dummy plot
+              #qplot(0, 0)
+              paste0('Plot failed to render. Reason: ', e)
+            },
+            finally={}
+          )
+          
+          report <<- paste(report, '```', '', sep='\n')
+        }) } # end module loop
+        
+        params[['plots']][[.t]] <<- plots
+        
+        report <<- paste(report,
+          '',
+          sep='\n')
+        
+      }) } # end tab loop
+      
+      tempReport <- file.path(tempdir(), "tempReport.Rmd")
+      write_file(x=report, path=tempReport, append=FALSE)
+      
+      rmarkdown::render(tempReport, output_file = file,
+                        params = params,
+                        envir = new.env(parent = globalenv())
+      )
 
     }
   )
