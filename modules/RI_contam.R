@@ -7,13 +7,13 @@ init <- function() {
   channel (median intensity).'
   source.file<-"msms"
   
-  .validate <- function(data) {
+  .validate <- function(data, input) {
     validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
     plotdata <- data()[[source.file]]
     validate(need((length(unique(plotdata[,"Raw.file"])) == 1),"Please select a single experiment"))
   }
   
-  .plotdata <- function(data) {
+  .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]]
   
     uniqRaw<-unique(plotdata$Raw.file)
@@ -37,14 +37,19 @@ init <- function() {
     return(plotdata)
   }
   
-  .plot <- function(data) {
+  .plot <- function(data, input) {
     # validate
-    .validate(data)
+    .validate(data, input)
     # get plot data
-    plotdata <- .plotdata(data)
+    plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes_string(x="Highest_Channel", y="Other_Channels")) + xlab("Highest TMT Channel (log10)") +
-      ylab("All Other TMT Channels (log10)") + ggtitle(unique(plotdata$Raw.file)) + geom_point(size = 0.1, alpha = 0.1) + theme_base + theme(axis.text.x = element_text(angle=0, hjust = 0.5)) +
+    ggplot(plotdata, aes(x=Highest_Channel, y=Other_Channels)) + 
+      xlab("Highest TMT Channel (log10)") +
+      ylab("All Other TMT Channels (log10)") + 
+      ggtitle(unique(plotdata$Raw.file)) + 
+      geom_point(size = 0.1, alpha = 0.1) + 
+      theme_base(input=input) + 
+      theme(axis.text.x = element_text(angle=0, hjust = 0.5)) +
       geom_abline(intercept = 0, slope = 1, color = "red", size = 1)
     
   }

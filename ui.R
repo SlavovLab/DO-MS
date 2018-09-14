@@ -115,14 +115,20 @@ shinyUI(
       
       tags$hr(),
       
-      tags$h4('Plot Download Options'),
+      tags$h4('Plot Display Options'),
       tags$p('Set the width, height, and units of plots when downloading as PDF or PNG'),
       selectInput('download_figure_units', 'Plot Units', selected='in',
                   choices=list('Inches'='in', 'Centimeters'='cm', 'Millimeters'='mm')),
-      numericInput('download_figure_width', 'Plot Width', 5, min=1, max=99, step=0.1),
-      numericInput('download_figure_height', 'Plot Height', 5, min=1, max=99, step=0.1)
-
-      
+      fluidRow(
+        column(6, numericInput('download_figure_width', 'Plot Width', 5, min=1, max=99, step=0.1)),
+        column(6, numericInput('download_figure_height', 'Plot Height', 5, min=1, max=99, step=0.1))
+      ),
+      fluidRow(
+        column(12, sliderInput('figure_font_size', 'Font Size', min=4, max=48, step=1, value=12))
+      ),
+      fluidRow(
+        column(12, sliderInput('figure_line_width', 'Line Width', min=1, max=10, step=0.25, value=1))
+      )
     ),
     dashboardBody(
       tags$head(tags$style(HTML(app_css))),

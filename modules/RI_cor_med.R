@@ -7,11 +7,11 @@ init <- function() {
   intensity for that channel.'
   source.file<-"evidence"
   
-  .validate <- function(data) {
+  .validate <- function(data, input) {
     validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
   }
   
-  .plotdata <- function(data) {
+  .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]]
   
     uniqRaw<-unique(plotdata$Raw.file)
@@ -56,20 +56,21 @@ init <- function() {
     return(plotdata)
   }
   
-  .plot <- function(data) {
+  .plot <- function(data, input) {
     # validate
-    .validate(data)
+    .validate(data, input)
     # get plot data
-    plotdata <- .plotdata(data)
+    plotdata <- .plotdata(data, input)
     
     ggplot(plotdata, aes(x = Correlation, y = MedianRI, color = Experiment)) +
       geom_point(size = 1.5, alpha = 0.5) +
-      theme_base + theme(axis.text.x = element_text(angle=0, hjust = 0.5),
-                         axis.ticks.x=element_blank(),
-                         axis.ticks.y=element_blank(),
-                         legend.position = "right",
-                         legend.key = element_rect(fill = "white"),
-                         panel.background = element_rect(fill = "white",colour = "white")) + 
+      theme_base(input=input) + 
+      theme(axis.text.x = element_text(angle=0, hjust = 0.5),
+            axis.ticks.x=element_blank(),
+            axis.ticks.y=element_blank(),
+            legend.position = "right",
+            legend.key = element_rect(fill = "white"),
+            panel.background = element_rect(fill = "white",colour = "white")) + 
       ylab("Median Reporter Ion Intensity (log10)")
       
     

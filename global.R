@@ -66,25 +66,31 @@ input_files <- list(
 # load app.css into string
 app_css <- paste(readLines('app.css'), collapse='')
 
-textVar <- 1.1
+#textVar <- 1.1
 
-theme_base <- theme(
-  panel.background = element_rect(fill="white", colour = "white"), 
-  panel.grid.major = element_line(size=.25, linetype="solid", color="lightgrey"), 
-  panel.grid.minor = element_line(size=.25, linetype="solid", color="lightgrey"),
-  legend.position="none",
-  axis.text.x = element_text(angle=45, hjust = 1, margin=margin(r=45)),
-  axis.title = element_text(size=rel(1.2), face="bold"), 
-  axis.text = element_text(size=rel(textVar)),
-  strip.text = element_text(size=rel(textVar))
-)
+theme_base <- function(input=list()) {
+  
+  # default values
+  fontSize <- ifelse(is.null(input[['figure_font_size']]), 12, input[['figure_font_size']])
+  
+  theme(
+    panel.background = element_rect(fill="white", colour = "white"), 
+    panel.grid.major = element_line(size=0.25, linetype="solid", color="lightgrey"), 
+    panel.grid.minor = element_line(size=0.25, linetype="solid", color="lightgrey"),
+    legend.position="none",
+    axis.text.x = element_text(angle=45, hjust=1, margin=margin(r=45)),
+    axis.title = element_text(size=fontSize*1.1, face="bold"), 
+    axis.text = element_text(size=fontSize),
+    strip.text = element_text(size=fontSize)
+  )
+}
 
 facetHist <- function(DF, X, num_bins=100) {
   ggplot(DF, aes_string(X)) + 
     facet_wrap(as.formula(paste("~", "Raw.file")), nrow = 1) + 
     geom_histogram(bins=num_bins) + 
     coord_flip() + 
-    theme_base
+    theme_base()
 }
 
 downloadButtonFixed <- function(outputId, label = "Download", class = NULL, ...) {

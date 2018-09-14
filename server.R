@@ -191,13 +191,13 @@ shinyServer(function(input, output, session) {
     ns <- NS(m$id)
     
     output[[ns('plot')]] <- renderPlot({ 
-      m$plotFunc(filtered_data)  
+      m$plotFunc(filtered_data, input)
     })
     
     output[[ns('downloadPDF')]] <- downloadHandler(
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.pdf') },
       content=function(file) {
-        ggsave(filename=file, plot=m$plotFunc(filtered_data), 
+        ggsave(filename=file, plot=m$plotFunc(filtered_data, input), 
                device=pdf, 
                units=input$download_figure_units,
                width=input$download_figure_width, 
@@ -208,7 +208,7 @@ shinyServer(function(input, output, session) {
     output[[ns('downloadPNG')]] <- downloadHandler(
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.png') },
       content=function(file) {
-        ggsave(filename=file, plot=m$plotFunc(filtered_data), 
+        ggsave(filename=file, plot=m$plotFunc(filtered_data, input), 
                # for some reason, specify the png device with a string instead of the
                # straight device, and it doesn't print a handful of pixels
                device='png', 
@@ -221,8 +221,8 @@ shinyServer(function(input, output, session) {
     output[[ns('downloadData')]] <- downloadHandler(
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.txt') },
       content=function(file) {
-        m$validateFunc(filtered_data)
-        plotdata <- m$plotdataFunc(filtered_data)
+        m$validateFunc(filtered_data, input)
+        plotdata <- m$plotdataFunc(filtered_data, input)
         write_tsv(plotdata, path=file)
       }
     )

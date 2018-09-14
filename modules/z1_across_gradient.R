@@ -7,11 +7,11 @@ init <- function() {
   in the gradient'
   source.file <- 'allPeptides'
   
-  .validate <- function(data) {
+  .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
-  .plotdata <- function(data) {
+  .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]][,c("Raw.file","Charge","Intensity","Retention.time")]
     
     plotdata <- plotdata[plotdata$Charge == 1,]
@@ -20,9 +20,9 @@ init <- function() {
     return(plotdata)
   }
   
-  .plot <- function(data) {
-    .validate(data)
-    plotdata <- .plotdata(data)
+  .plot <- function(data, input) {
+    .validate(data, input)
+    plotdata <- .plotdata(data, input)
     
     ggplot(plotdata, aes(x = Retention.time, y = Intensity)) + 
       geom_bar(stat = 'identity', width= 1) + 
@@ -30,7 +30,7 @@ init <- function() {
       coord_flip() + 
       xlab("Retention Time (min)") + 
       ylab(expression(bold("Precursor Intensity"))) +
-      theme_base
+      theme_base(input=input)
   }
   
   return(list(

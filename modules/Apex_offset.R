@@ -6,11 +6,11 @@ init <- function() {
     events were executed.'
   source.file<-"msmsScans"
   
-  .validate <- function(data) {
+  .validate <- function(data, input) {
     validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
   }
   
-  .plotdata <- function(data) {
+  .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]][,c("Raw.file","Precursor.apex.offset.time")]
     
     plotdata$Precursor.apex.offset.time <- plotdata$Precursor.apex.offset.time * 60
@@ -20,18 +20,18 @@ init <- function() {
     return(plotdata)
   }
   
-  .plot <- function(data) {
+  .plot <- function(data, input) {
     # validate
-    .validate(data)
+    .validate(data, input)
     # get plot data
-    plotdata <- .plotdata(data)
+    plotdata <- .plotdata(data, input)
     
     ggplot(plotdata, aes(Precursor.apex.offset.time)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram() + 
       coord_flip() + 
       xlab("Apex Offset (sec)") + 
-      theme_base
+      theme_base(input=input)
   }
   
   return(list(
