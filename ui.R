@@ -58,14 +58,46 @@ tab_items <- list(
       )
     )
   )),
-  documentation_tab
+  documentation_tab,
+  tabItem(tabName='settings', fluidPage(
+    h1('Plotting Options'),
+    panel(
+      h3('Figure Download Options'),
+      tags$p('Set the width, height, and units of plots when downloading as PDF or PNG'),
+      selectInput('download_figure_units', 'Plot Units', selected='in',
+                  choices=list('Inches'='in', 'Centimeters'='cm', 'Millimeters'='mm')),
+      fluidRow(
+        column(6, numericInput('download_figure_width', 'Plot Width', 5, min=1, max=99, step=0.1)),
+        column(6, numericInput('download_figure_height', 'Plot Height', 5, min=1, max=99, step=0.1))
+      )
+    ),
+    panel(
+      h3('Figure Display Options'),
+      tags$p('Change the visual appearance of figures'),
+      fluidRow(
+        column(4, numericInput('figure_title_font_size', 'Label Font Size', 
+                                min=4, max=48, step=1, value=16)),
+        column(4, numericInput('figure_axis_font_size', 'Axis Font Size', 
+                               min=4, max=48, step=1, value=12)),
+        column(4, numericInput('figure_facet_font_size', 'Facet Font Size', 
+                               min=4, max=48, step=1, value=12))
+      ),
+      fluidRow(
+        column(12, numericInput('figure_line_width', 'Line Width', 
+                                min=1, max=10, step=0.25, value=1))
+      ),
+      fluidRow(
+        column(12, checkboxInput('figure_show_grid', 'Show Background Grid', value=TRUE))
+      )
+    )
+  ))
 )
 # add tab item for each tab
 # each tab has a uiOutput (HTML output) that will be
 # defined in server.R
 for(i in 1:length(tabs)) {
   # for tabName, replace spaces/whitespace with dashes '-'
-  tab_items[[i+3]] <- tabItem(tabName=paste0(gsub('\\s', '-', tabs[i]), '-', i), 
+  tab_items[[i+length(tab_items)]] <- tabItem(tabName=paste0(gsub('\\s', '-', tabs[i]), '-', i), 
     fluidPage(
       uiOutput(tabs[i])
     )
@@ -97,7 +129,8 @@ shinyUI(
           menu_items
         ),
         menuItem("Generate Report", tabName = "report", icon = icon("file", lib="glyphicon")),
-        menuItem("Documentation", tabName = "documentation", icon = icon("book", lib="glyphicon"))
+        menuItem("Documentation", tabName = "documentation", icon = icon("book", lib="glyphicon")),
+        menuItem("Plot Settings", tabName = "settings", icon = icon("cog", lib="glyphicon"))
       ),
       
       tags$hr(),
@@ -111,24 +144,7 @@ shinyUI(
       #PEP selection slider
       shinyWidgets::sliderTextInput("slider", "PEP Threshold:", 
         choices=c(1e-4,0.001,.01,0.1,1), selected=0.1, grid = T),
-      tags$script(HTML("$('body').addClass('fixed');")),
-      
-      tags$hr(),
-      
-      tags$h4('Plot Display Options'),
-      tags$p('Set the width, height, and units of plots when downloading as PDF or PNG'),
-      selectInput('download_figure_units', 'Plot Units', selected='in',
-                  choices=list('Inches'='in', 'Centimeters'='cm', 'Millimeters'='mm')),
-      fluidRow(
-        column(6, numericInput('download_figure_width', 'Plot Width', 5, min=1, max=99, step=0.1)),
-        column(6, numericInput('download_figure_height', 'Plot Height', 5, min=1, max=99, step=0.1))
-      ),
-      fluidRow(
-        column(12, sliderInput('figure_font_size', 'Font Size', min=4, max=48, step=1, value=12))
-      ),
-      fluidRow(
-        column(12, sliderInput('figure_line_width', 'Line Width', min=1, max=10, step=0.25, value=1))
-      )
+      tags$script(HTML("$('body').addClass('fixed');"))
     ),
     dashboardBody(
       tags$head(tags$style(HTML(app_css))),

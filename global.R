@@ -71,18 +71,38 @@ app_css <- paste(readLines('app.css'), collapse='')
 theme_base <- function(input=list()) {
   
   # default values
-  fontSize <- ifelse(is.null(input[['figure_font_size']]), 12, input[['figure_font_size']])
+  axis_font_size <- ifelse(is.null(input[['figure_axis_font_size']]), 
+                     12, input[['figure_axis_font_size']])
+  title_font_size <- ifelse(is.null(input[['figure_title_font_size']]),
+                            16, input[['figure_title_font_size']])
+  facet_font_size <- ifelse(is.null(input[['figure_facet_font_size']]),
+                            12, input[['figure_facet_font_size']])
   
-  theme(
+  show_grid <- ifelse(is.null(input[['figure_show_grid']]),
+                      TRUE, input[['figure_show_grid']])
+  
+  .theme <- theme(
     panel.background = element_rect(fill="white", colour = "white"), 
-    panel.grid.major = element_line(size=0.25, linetype="solid", color="lightgrey"), 
-    panel.grid.minor = element_line(size=0.25, linetype="solid", color="lightgrey"),
     legend.position="none",
     axis.text.x = element_text(angle=45, hjust=1, margin=margin(r=45)),
-    axis.title = element_text(size=fontSize*1.1, face="bold"), 
-    axis.text = element_text(size=fontSize),
-    strip.text = element_text(size=fontSize)
+    axis.title = element_text(size=title_font_size, face="bold"), 
+    axis.text = element_text(size=axis_font_size),
+    strip.text = element_text(size=facet_font_size)
   )
+  
+  if(show_grid) {
+    .theme <- .theme + theme(
+      panel.grid.major = element_line(size=0.25, linetype="solid", color="lightgrey"), 
+      panel.grid.minor = element_line(size=0.25, linetype="solid", color="lightgrey")
+    )
+  } else {
+    .theme <- .theme + theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank()
+    )
+  }
+  
+  return(.theme)
 }
 
 facetHist <- function(DF, X, num_bins=100) {

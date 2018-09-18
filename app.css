@@ -134,7 +134,7 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   }
 }
 
-#shiny-tab-documentation h1 {
+.tab-pane h1 {
   margin-top: 5px;
 }
 
@@ -157,4 +157,8 @@ https://codepen.io/TrasherDK/pen/XRzgOR
 }
 .documentation-tab .documentation-module h4 {
   font-weight: bold;
+}
+
+#shiny-tab-settings h3 {
+  margin-top: 0px;
 }
