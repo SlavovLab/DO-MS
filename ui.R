@@ -1,6 +1,10 @@
 source('global.R')
 
-source('documentation_tab.R')
+source('documentation_tab.R') # loads documentation_tab var
+source('report_tab.R') # loads report_tab var
+source('import_tab.R') # loads import_tab var
+source('settings_tab.R') # loads settings
+
 
 # list of menu items for switching tabs
 # add static items for static tabs first
@@ -14,83 +18,10 @@ for(i in 1:length(tabs)) {
 # list of tab items for each tab
 # add static items for static tabs first
 tab_items <- list(
-  tabItem(tabName='import', fluidPage(
-    h1("Import your data"),
-    p("After uploading your evidence.txt file, please wait for your experiments to appear in the sidebar before uploading msmsScans.txt and allPeptides.txt"),
-    p("You can then explore your data in the Dashboard."),
-    uiOutput('input_forms'),
-    tags$hr(),
-    p("Enter a comma-separated list of short labels for each Raw-file/exp"),
-    textInput("Exp_Names", "Exp Names", value = "", 
-              width = NULL, placeholder = "Comma Sep Exp Names")
-  )),
-  tabItem(tabName = "report", fluidPage(
-    h1("Generate a Report"),
-    panel(
-      p("Once you're happy with how your plots look in the dashboard, press 'download report' to generate a PDF report"),
-      p("You can also output the figures as .png files alongside your PDF report."),
-      tags$hr(),
-      fluidRow(
-        column(3, selectInput('report_format', 'Report Format',
-                              choices=c("HTML" = "html", "PDF" = "pdf"), selected='html')
-        ),
-        column(3, selectInput('report_figure_format', 'Plot Format', 
-                               choices=c("PDF" = "pdf", "PNG" = "png"), selected='png')
-        ), 
-        # https://bootswatch.com/3/
-        column(3, selectInput('report_theme', 'Report Theme (HTML only)',
-           choices=c('Default'='default', 'Cerulean'='cerulean', 'Flatly'='flatly',
-                     'Darkly'='darkly', 'Readable'='readable', 'Spacelab'='spacelab',
-                     'United'='united', 'Cosmo'='cosmo', 'Lumen'='lumen', 'Paper'='paper',
-                     'Sandstone'='sandstone', 'Simplex'='simplex', 'Yeti'='yeti'),
-           selected='readable')), 
-        column(3)
-      ),
-      fluidRow(
-        column(3, numericInput('report_figure_width', 'Plot Width (in)', 5, min=1, max=99, step=0.1)),
-        column(3, numericInput('report_figure_height', 'Plot Height (in)', 5, min=1, max=99, step=0.1)),
-        column(3), column(3)
-      ),
-      fluidRow(
-        column(3, tags$a(id='download_report',
-                      class='btn btn-primary shiny-download-link', href='', target='_blank',
-                      download=NA, icon("download"), 'Download Report'))
-      )
-    )
-  )),
+  import_tab,
+  report_tab,
   documentation_tab,
-  tabItem(tabName='settings', fluidPage(
-    h1('Plotting Options'),
-    panel(
-      h3('Figure Download Options'),
-      tags$p('Set the width, height, and units of plots when downloading as PDF or PNG'),
-      selectInput('download_figure_units', 'Plot Units', selected='in',
-                  choices=list('Inches'='in', 'Centimeters'='cm', 'Millimeters'='mm')),
-      fluidRow(
-        column(6, numericInput('download_figure_width', 'Plot Width', 5, min=1, max=99, step=0.1)),
-        column(6, numericInput('download_figure_height', 'Plot Height', 5, min=1, max=99, step=0.1))
-      )
-    ),
-    panel(
-      h3('Figure Display Options'),
-      tags$p('Change the visual appearance of figures'),
-      fluidRow(
-        column(4, numericInput('figure_title_font_size', 'Label Font Size', 
-                                min=4, max=48, step=1, value=16)),
-        column(4, numericInput('figure_axis_font_size', 'Axis Font Size', 
-                               min=4, max=48, step=1, value=12)),
-        column(4, numericInput('figure_facet_font_size', 'Facet Font Size', 
-                               min=4, max=48, step=1, value=12))
-      ),
-      fluidRow(
-        column(12, numericInput('figure_line_width', 'Line Width', 
-                                min=1, max=10, step=0.25, value=1))
-      ),
-      fluidRow(
-        column(12, checkboxInput('figure_show_grid', 'Show Background Grid', value=TRUE))
-      )
-    )
-  ))
+  settings_tab
 )
 # add tab item for each tab
 # each tab has a uiOutput (HTML output) that will be
