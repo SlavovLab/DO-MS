@@ -5,3 +5,6 @@ Icon/**/*
 # Rstudio files
 .Rproj.user
 .Rhistory
+
+# test modules folder
+_modules/**/*
