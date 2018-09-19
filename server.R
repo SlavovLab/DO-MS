@@ -27,14 +27,39 @@ shinyServer(function(input, output, session) {
   # this could also be done as a reactiveValues list -- 
   # but haven't gotten that to work yet.
   data <- reactive({
+    # create a progress bar, only if theres data somewhere
+    all_empty <- TRUE
+    for(file in input_files) {
+      if(!is.null(input[[file$name]])) {
+        progress <- shiny::Progress$new()
+        on.exit(progress$close())
+        progress$set(message='', value=0)
+        all_empty <- FALSE
+        break
+      }
+    }
+    
+    # if no files exist yet, then exit now
+    if(all_empty) {
+      return(list())
+    }
+    
     # create the data list
     .data <- list()
     # loop thru all input files and add it to the data list
     for(file in input_files) {
+      # update progress bar
+      progress$inc(1/length(input_files), detail=paste0('Reading ', file))
+      
+      # get the fileinput object
       .file <- input[[file$name]]
+      
+      # don't read if there's no file there
       if(is.null(.file)){ next }
-      # TODO: replace with readr read_tsv? or read_csv
-      #.data[[file$name]] <- read.delim(file=.file$datapath, header=TRUE)
+      # also don't read if it's already been read
+      if(!is.null(.data[[file$name]])) { next }
+      
+      # read in as data frame (need to convert from tibble)
       .data[[file$name]] <- as.data.frame(read_tsv(file=.file$datapath))
       # rename columns (replace whitespace or special characters with '.')
       colnames(.data[[file$name]]) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', 
@@ -106,6 +131,7 @@ shinyServer(function(input, output, session) {
       updateCheckboxGroupInput(session, 'Exp_Sets', 'Select Experiments to Display',
                                choiceNames=paste0(file_levels(), ': ', raw_files()), 
                                choiceValues=file_levels(), selected=file_levels())
+    } else {
     }
   })
   
@@ -165,30 +191,38 @@ shinyServer(function(input, output, session) {
     ns <- NS(m$id)
     
     output[[ns('plot')]] <- renderPlot({ 
-      m$plotFunc(filtered_data)  
+      m$plotFunc(filtered_data, input)
     })
     
     output[[ns('downloadPDF')]] <- downloadHandler(
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.pdf') },
       content=function(file) {
-        ggsave(filename=file, plot=m$plotFunc(filtered_data), 
-               device=pdf, width=5, height=5, units='in')
+        ggsave(filename=file, plot=m$plotFunc(filtered_data, input), 
+               device=pdf, 
+               units=input$download_figure_units,
+               width=input$download_figure_width, 
+               height=input$download_figure_height)
       }
     )
     
     output[[ns('downloadPNG')]] <- downloadHandler(
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.png') },
       content=function(file) {
-        ggsave(filename=file, plot=m$plotFunc(filtered_data), 
-               device=png, width=5, height=5, units='in')
+        ggsave(filename=file, plot=m$plotFunc(filtered_data, input), 
+               # for some reason, specify the png device with a string instead of the
+               # straight device, and it doesn't print a handful of pixels
+               device='png', 
+               units=input$download_figure_units,
+               width=input$download_figure_width, 
+               height=input$download_figure_height)
       }
     )
     
     output[[ns('downloadData')]] <- downloadHandler(
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.txt') },
       content=function(file) {
-        m$validateFunc(filtered_data)
-        plotdata <- m$plotdataFunc(filtered_data)
+        m$validateFunc(filtered_data, input)
+        plotdata <- m$plotdataFunc(filtered_data, input)
         write_tsv(plotdata, path=file)
       }
     )
@@ -222,21 +256,22 @@ shinyServer(function(input, output, session) {
           )
         ),
         div(class='box-body',
-          fixedRow(
-            plotOutput(ns('plot'), height=370)  
-          )
+          plotOutput(ns('plot'), height=370)  
         ),
         # TODO: conditionalPanel which only displays the buttons when the relevant data is loaded
-        div(class='box-footer',
-          div(class='row', style='height:30px',
-            column(width=4,
-              downloadButtonFixed(ns('downloadPDF'), label='PDF')
-            ),
-            column(width=4,
-              downloadButtonFixed(ns('downloadPNG'), label='PNG')
-            ),
-            column(width=4,
-              downloadButtonFixed(ns('downloadData'), label='Data')
+        div(class='box-footer', 
+          conditionalPanel(
+            condition=paste0('output[\"', ns('plot'),'\"] != undefined'),
+            div(class='row', style='height:30px',
+              column(width=4,
+                downloadButtonFixed(ns('downloadPDF'), label='PDF')
+              ),
+              column(width=4,
+                downloadButtonFixed(ns('downloadPNG'), label='PNG')
+              ),
+              column(width=4,
+                downloadButtonFixed(ns('downloadData'), label='Data')
+              )
             )
           )
         )
@@ -252,32 +287,66 @@ shinyServer(function(input, output, session) {
   ######################################################################################
   ######################################################################################
   
-  output$report.pdf <- downloadHandler(
+  output$download_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
-    filename = "SCoPE_QC_Report.html",
+    filename = function() {
+      name <- 'SCoPE_QC_Report'
+      switch(input$report_format,
+             html=paste0(name, '.html'),
+             pdf=paste0(name, '.pdf'))
+    },
     content = function(file) {
       
-      report = paste(
+      # init progress bar
+      progress <- shiny::Progress$new()
+      on.exit(progress$close())
+      progress$set(message='', value=0)
+      
+      # first 5% is init
+      # next 45% will be gathering materials
+      # leave last 50% for rmarkdown rendering
+      progress$inc(5/100, detail='Initializing')
+      
+      report <- paste(
         '---',
         'title: SCoPE QC Report',
         'output:',
-        '  prettydoc::html_pretty:',
-        '    theme: cayman',
-        '    highlight: github',
-        '    fig_width: 7',
-        '    fig_height: 6',
-        '    fig_caption: true',
-        '    dev: png',
-        '    df_print: paged',
-        '  pdf_document:',
-        '    header-includes:',
-        '      - \\usepackage{xcolor}',
-        '      - \\usepackage{framed}',
-        '      - \\usepackage{color}',
+      sep='\n')
+      
+      if(input$report_format == 'pdf') {
+        report <- paste(report,
+          '  pdf_document:',
+          #'    header-includes:',
+          #'      - \\usepackage{xcolor}',
+          #'      - \\usepackage{framed}',
+          #'      - \\usepackage{color}',
+          '    fig_caption: false',
+        sep='\n')
+      } else {
+        # default: HTML
+        .theme <- input$report_theme
+        report <- paste(report,
+          '  html_document:',
+          paste0('    theme: ', .theme),
+          #'    highlight: tango',
+          '    fig_caption: false',
+          '    df_print: paged',            
+        sep='\n')
+      }
+      
+      # add figure options
+      report <- paste(report,
+        paste0('    fig_width: ', input$report_figure_width),
+        paste0('    fig_height: ', input$report_figure_height),
+        paste0('    dev: ', input$report_figure_format),
+      sep='\n')
+      
+      # add params
+      report <- paste(report,
         'params:',
         '  plots: NA',
         '---',
-        '# QC Report {.tabset}',
+        '# {.tabset}',
       sep='\n')
       
       params <- list()
@@ -288,7 +357,7 @@ shinyServer(function(input, output, session) {
         tab <- tabs[.t]
         
         report <<- paste(report,
-          paste0('## ', tab, ' Plots'),
+          paste0('## ', tab),
           sep='\n')
 
         modules_in_tab <- modules[sapply(modules, function(m) { m$tab == tab })]
@@ -297,6 +366,9 @@ shinyServer(function(input, output, session) {
         for(m in 1:length(modules_in_tab)) { local({
           .m <- m
           module <- modules_in_tab[[.m]]
+          
+          # increment progress bar
+          progress$inc(0.45/length(modules), detail=paste0('Adding module ', .m, 'from tab ', .t))
           
           report <<- paste(report,
             paste0('### ', module$boxTitle, ' {.plot-title}'),
@@ -328,13 +400,20 @@ shinyServer(function(input, output, session) {
         
       }) } # end tab loop
       
+      # last 50% of progress
+      progress$inc(5/100, detail='Writing temporary files')
+      
       tempReport <- file.path(tempdir(), "tempReport.Rmd")
       write_file(x=report, path=tempReport, append=FALSE)
+      
+      progress$inc(5/100, detail='Rendering report (this may take a while)')
       
       rmarkdown::render(tempReport, output_file = file,
                         params = params,
                         envir = new.env(parent = globalenv())
       )
+      
+      progress$inc(40/100, detail='Finishing')
 
     }
   )

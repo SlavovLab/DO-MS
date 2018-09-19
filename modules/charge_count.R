@@ -7,11 +7,11 @@ init <- function() {
   source.file <- 'allPeptides'
 
   
-  .validate <- function(data) {
+  .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
-  .plotdata <- function(data) {
+  .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]][,c("Raw.file","Charge")]
     
     plotdata$Charge[plotdata$Charge > 3] <- 4
@@ -26,11 +26,11 @@ init <- function() {
     return(hc)
   }
   
-  .plot <- function(data) {
+  .plot <- function(data, input) {
     # validate
-    .validate(data)
+    .validate(data, input)
     # get plot data
-    plotdata <- .plotdata(data)
+    plotdata <- .plotdata(data, input)
     
     # Plot:
     ggplot(plotdata, aes(x=Raw.file, y=Frequency,colour=factor(Charge), group=Raw.file)) + 
@@ -38,7 +38,7 @@ init <- function() {
       #ylab("Number") + 
       scale_color_hue(labels = c("1","2","3",">3")) + 
       labs(x = "Experiment", y = "Count", col = "Charge State") +
-      theme_base
+      theme_base(input=input)
   }
   
   return(list(

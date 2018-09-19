@@ -5,18 +5,18 @@ init <- function() {
   help <- 'Plotting the frequency of peptide identification across thechromatographic gradient.'
   source.file <- 'evidence'
   
-  .validate <- function(data) {
+  .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
-  .plotdata <- function(data) {
+  .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]][,c("Raw.file","Retention.time","PEP")]
     return(plotdata)
   }
   
-  .plot <- function(data) {
-    .validate(data)
-    plotdata <- .plotdata(data)
+  .plot <- function(data, input) {
+    .validate(data, input)
+    plotdata <- .plotdata(data, input)
     
     maxRT <- max(plotdata$Retention.time)
     ggplot(plotdata, aes(Retention.time)) + 
@@ -24,7 +24,7 @@ init <- function() {
       geom_histogram(bins=100) + 
       coord_flip() + 
       xlim(10, maxRT) +
-      theme_base
+      theme_base(input=input)
   }
   
   return(list(

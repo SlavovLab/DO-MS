@@ -5,11 +5,11 @@ init <- function() {
   help <- 'Plotting the MS1 intensity for all ions observed (not necessarily sent to MS2) across runs.'
   source.file <- 'allPeptides'
   
-  .validate <- function(data) {
+  .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
-  .plotdata <- function(data) {
+  .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]][,c("Raw.file","Charge", "Intensity", 'MS.MS.Count')]
     plotdata$Intensity <- log10(plotdata$Intensity)
     plotdata$Intensity <- log10(plotdata$Intensity)
@@ -17,16 +17,16 @@ init <- function() {
     return(plotdata)
   }
   
-  .plot <- function(data) {
-    .validate(data)
-    plotdata <- .plotdata(data)
+  .plot <- function(data, input) {
+    .validate(data, input)
+    plotdata <- .plotdata(data, input)
     
     ggplot(plotdata, aes(Intensity)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram() + 
       coord_flip() + 
       xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
-      theme_base
+      theme_base(input=input)
   }
   
   return(list(

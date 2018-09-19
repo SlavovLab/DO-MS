@@ -40,7 +40,7 @@ tabs <- c()
 for(module in modules) {
   tabs <- c(tabs, module$tab)
 }
-tabs <- unique(tabs)
+tabs <- sort(unique(tabs))
 
 # to get custom panel heading colors for each tab,
 # need to dynamically inject some CSS into the app_css string
@@ -66,25 +66,51 @@ input_files <- list(
 # load app.css into string
 app_css <- paste(readLines('app.css'), collapse='')
 
-textVar <- 1.1
+#textVar <- 1.1
 
-theme_base <- theme(
-  panel.background = element_rect(fill="white", colour = "white"), 
-  panel.grid.major = element_line(size=.25, linetype="solid", color="lightgrey"), 
-  panel.grid.minor = element_line(size=.25, linetype="solid", color="lightgrey"),
-  legend.position="none",
-  axis.text.x = element_text(angle=45, hjust = 1, margin=margin(r=45)),
-  axis.title = element_text(size=rel(1.2), face="bold"), 
-  axis.text = element_text(size=rel(textVar)),
-  strip.text = element_text(size=rel(textVar))
-)
+theme_base <- function(input=list()) {
+  
+  # default values
+  axis_font_size <- ifelse(is.null(input[['figure_axis_font_size']]), 
+                     12, input[['figure_axis_font_size']])
+  title_font_size <- ifelse(is.null(input[['figure_title_font_size']]),
+                            16, input[['figure_title_font_size']])
+  facet_font_size <- ifelse(is.null(input[['figure_facet_font_size']]),
+                            12, input[['figure_facet_font_size']])
+  
+  show_grid <- ifelse(is.null(input[['figure_show_grid']]),
+                      TRUE, input[['figure_show_grid']])
+  
+  .theme <- theme(
+    panel.background = element_rect(fill="white", colour = "white"), 
+    legend.position="none",
+    axis.text.x = element_text(angle=45, hjust=1, margin=margin(r=45)),
+    axis.title = element_text(size=title_font_size, face="bold"), 
+    axis.text = element_text(size=axis_font_size),
+    strip.text = element_text(size=facet_font_size)
+  )
+  
+  if(show_grid) {
+    .theme <- .theme + theme(
+      panel.grid.major = element_line(size=0.25, linetype="solid", color="lightgrey"), 
+      panel.grid.minor = element_line(size=0.25, linetype="solid", color="lightgrey")
+    )
+  } else {
+    .theme <- .theme + theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank()
+    )
+  }
+  
+  return(.theme)
+}
 
 facetHist <- function(DF, X, num_bins=100) {
   ggplot(DF, aes_string(X)) + 
     facet_wrap(as.formula(paste("~", "Raw.file")), nrow = 1) + 
     geom_histogram(bins=num_bins) + 
     coord_flip() + 
-    theme_base
+    theme_base()
 }
 
 downloadButtonFixed <- function(outputId, label = "Download", class = NULL, ...) {

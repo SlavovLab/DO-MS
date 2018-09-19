@@ -6,11 +6,11 @@ init <- function() {
   TMT channels for every experiment.'
   source.file<-"evidence"
   
-  .validate <- function(data) {
+  .validate <- function(data, input) {
     validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
   }
   
-  .plotdata <- function(data) {
+  .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]]
   
     uniqRaw<-unique(plotdata$Raw.file)
@@ -44,18 +44,30 @@ init <- function() {
     return(plotdata)
   }
   
-  .plot <- function(data) {
+  .plot <- function(data, input) {
     # validate
-    .validate(data)
+    .validate(data, input)
     # get plot data
-    plotdata <- .plotdata(data)
+    plotdata <- .plotdata(data, input)
     
+<<<<<<< HEAD
     ggplot(plotdata, aes(x=TMT_Channel, y=Experiment, fill=Correlation), color="white") + geom_tile() + 
       theme_base + theme(axis.title.y=element_blank(), 
                          axis.text.x = element_text(angle=0, hjust = 0.5),
                          axis.ticks.x=element_blank(),
                          axis.ticks.y=element_blank(),
                          legend.position = "right") + scale_fill_gradient2(low="blue", midpoint = 0.5, mid = "white", high="red")
+=======
+    ggplot(plotdata, aes(x=TMT_Channel, y=Experiment, fill=Correlation)) + 
+      geom_tile() + 
+      theme_base(input=input) + 
+      theme(axis.title.y=element_blank(), 
+            axis.text.x = element_text(angle=0, hjust = 0.5),
+            axis.ticks.x=element_blank(),
+            axis.ticks.y=element_blank(),
+            legend.position = "right") + 
+      scale_fill_gradient2(low="blue", mid = "white", high="red")
+>>>>>>> c4ef5f977a1b1459b8ed69579703b4c55d0da46d
   }
   
   return(list(
