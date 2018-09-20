@@ -1,18 +1,17 @@
 init <- function() {
   
-  tab <- 'Instrument Performance'
-  boxTitle <- 'Retention length of peptides at base'
-  help <- 'Plotting the retention length of identified peptide peaks at the base.'
-  source.file <- 'evidence'
+  tab <- 'Chromatography'
+  boxTitle <- 'Elution profile: FWHM'
+  help <- 'Plotting the distrution of elution profile widths at half the maximum intensity value for each peak.'
+  source.file <- 'allPeptides'
   
   .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Retention.length","PEP")]
-    plotdata$Retention.length <- plotdata$Retention.length*60
-    plotdata$Retention.length[plotdata$Retention.length > 120] <- 120
+    plotdata <- data()[[source.file]][,c("Raw.file","Retention.length..FWHM.")]
+    plotdata$Retention.length..FWHM.[plotdata$Retention.length..FWHM. > 45] <- 49
     return(plotdata)
   }
   
@@ -20,11 +19,11 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes(Retention.length)) + 
+    ggplot(plotdata, aes(Retention.length..FWHM.)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram(bins=120) + 
-      coord_flip() + 
-      xlab('Retention Lengths at base (sec)') +
+      geom_histogram(bins = 49) + 
+      coord_flip() +  
+      xlab("Retention Length FWHM (sec)") +
       theme_base(input=input)
   }
   
@@ -38,3 +37,4 @@ init <- function() {
     plotFunc=.plot
   ))
 }
+

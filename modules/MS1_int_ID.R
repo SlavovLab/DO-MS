@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- 'Abundance'
+  tab <- 'Instrument Performance'
   boxTitle <- 'MS1 Intensity for identified ions'
   help <- 'Plotting the MS1 intensity for all identified ions across runs.'
   source.file <- 'evidence'

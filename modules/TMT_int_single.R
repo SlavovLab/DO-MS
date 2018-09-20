@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- 'Abundance'
+  tab <- 'Sample Quality'
   boxTitle <- 'Reporter ion intensity'
   help <- 'Plotting the TMT reporter intensities for a single run.'
   source.file <- 'evidence'

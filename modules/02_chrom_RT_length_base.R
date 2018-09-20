@@ -1,8 +1,8 @@
 init <- function() {
   
-  tab <- 'SCoPE-MS Diagnostics'
-  boxTitle <- 'Miscleavage rate'
-  help <- 'Plotting frequency of peptide miscleavages.'
+  tab <- 'Chromatography'
+  boxTitle <- 'Retention length of peptides at base'
+  help <- 'Plotting the retention length of identified peptide peaks at the base.'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -10,7 +10,9 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Missed.cleavages","PEP")]
+    plotdata <- data()[[source.file]][,c("Raw.file","Retention.length","PEP")]
+    plotdata$Retention.length <- plotdata$Retention.length*60
+    plotdata$Retention.length[plotdata$Retention.length > 120] <- 120
     return(plotdata)
   }
   
@@ -18,11 +20,11 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes(Missed.cleavages)) + 
+    ggplot(plotdata, aes(Retention.length)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram(bins=10) + 
+      geom_histogram(bins=120) + 
       coord_flip() + 
-      xlab("Missed Cleavages") +
+      xlab('Retention Lengths at base (sec)') +
       theme_base(input=input)
   }
   
