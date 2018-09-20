@@ -380,7 +380,7 @@ shinyServer(function(input, output, session) {
             paste0('params[["plots"]][[', .t, ']][[', .m, ']]'),
             sep='\n')
 
-          plots[[.m]] <<- tryCatch(module$plotFunc(filtered_data),
+          plots[[.m]] <<- tryCatch(module$plotFunc(filtered_data, input),
             error = function(e) {
               # dummy plot
               #qplot(0, 0)
