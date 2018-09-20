@@ -1,5 +1,5 @@
 #Packages to check for
-packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer", "readr", 'rmarkdown', 'prettydoc')
+packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer", "readr", 'rmarkdown', 'prettydoc', "stats")
 
 #Checking installed packages against required ones
 new.packages <- packages.needed[!(packages.needed %in% installed.packages()[,"Package"])]
@@ -19,6 +19,7 @@ library(RColorBrewer)
 library(readr)
 library(rmarkdown)
 library(prettydoc)
+library(stats)
 
 modules <- list()
 
@@ -60,7 +61,10 @@ input_files <- list(
     help='MaxQuant msmsScans.txt file'),
   allPeptides=list(
     name='allPeptides',
-    help='MaxQuant allPeptides.txt file')
+    help='MaxQuant allPeptides.txt file'),
+  inc=list(
+    name='inc',
+    help='Inclusion list .txt file')
 )
 
 # load app.css into string
