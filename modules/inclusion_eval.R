@@ -21,7 +21,7 @@ init <- function() {
     mz<-inc$mz
     RT.start<-inc$RTstart
     RT.end<-inc$RTend
-    mz.tolerance<-10
+    mz.tolerance<-20
     inc.sequence<-inc$Sequence
     
     # Set up data frame
