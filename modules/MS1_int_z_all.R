@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- 'Abundance'
+  tab <- 'Instrument Performance'
   boxTitle <- 'MS1 Intensity for all ions'
   help <- 'Plotting the MS1 intensity for all ions observed (not necessarily sent to MS2) across runs.'
   source.file <- 'allPeptides'

@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- 'Instrument Performance'
+  tab <- 'Chromatography'
   boxTitle <- 'Identification frequency across gradient'
   help <- 'Plotting the frequency of peptide identification across thechromatographic gradient.'
   source.file <- 'evidence'
