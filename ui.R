@@ -68,17 +68,27 @@ shinyUI(
       #Experimental Subsetting Box
       #selectInput('Exp_Sets', 'sets', choices = NULL, multiple = TRUE),
       #p("(Remove items via backspace)", style="padding:20px;"),
-      checkboxGroupInput('Exp_Sets', 'Select Experiments to Display', choices=NULL, selected=NULL,
+      tags$h4('Select Experiments to Display'),
+      div(class='exp_check_btn_row',
+        tags$button(id='exp_check_all', class='btn exp_check_all',
+               'Select All'),
+        tags$button(id='exp_check_none', class='btn exp_check_none',
+               'Select None')
+      ),
+      checkboxGroupInput('Exp_Sets', '', choices=NULL, selected=NULL,
                          choiceNames=NULL, choiceValues=NULL),
       tags$hr(),
       
       #PEP selection slider
       shinyWidgets::sliderTextInput("slider", "PEP Threshold:", 
-        choices=c(1e-4,0.001,.01,0.1,1), selected=0.1, grid = T),
-      tags$script(HTML("$('body').addClass('fixed');"))
+        choices=c(1e-4,0.001,.01,0.1,1), selected=0.1, grid = T)
+      #tags$script(HTML("$('body').addClass('fixed');"))
     ),
     dashboardBody(
-      tags$head(tags$style(HTML(app_css))),
+      tags$head(
+        tags$style(HTML(app_css)),
+        tags$script(HTML(app_js))
+      ),
       div(class='tab-content', tab_items)
     )
   )

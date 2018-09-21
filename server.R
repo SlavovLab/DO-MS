@@ -128,7 +128,7 @@ shinyServer(function(input, output, session) {
     if(length(file_levels()) > 0 & length(raw_files() > 0)) {
       # update the selection input
       # for the selection input only, concatenate the nickname and the raw file name
-      updateCheckboxGroupInput(session, 'Exp_Sets', 'Select Experiments to Display',
+      updateCheckboxGroupInput(session, 'Exp_Sets', '',
                                choiceNames=paste0(file_levels(), ': ', raw_files()), 
                                choiceValues=file_levels(), selected=file_levels())
     } else {
