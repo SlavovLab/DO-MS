@@ -1,10 +1,8 @@
 #Packages to check for
-<<<<<<< HEAD
+
 packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer", "readr", 'rmarkdown', 'prettydoc', "stats")
 packages.bioc<-c("impute")
-=======
-packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer", "readr", 'rmarkdown', "stats")
->>>>>>> 4e3797cb157357a86102dee0cb6d8e1fc4fd72c7
+
 
 #Checking installed packages against required ones
 new.packages <- packages.needed[!(packages.needed %in% installed.packages()[,"Package"])]
