@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- 'Sample Quality'
+  tab <- '05 SCoPE-MS Diagnostics'
   boxTitle <- 'Reporter ion intensity'
   help <- 'Plotting the TMT reporter intensities for a single run.'
   source.file <- 'evidence'
@@ -25,7 +25,7 @@ init <- function() {
     plot2Labels <- TMTlabels[1:uniqueLabelsSize]
     
     ggplot(plotdata,aes(x=variable,y=log10tran))+ 
-      geom_violin(aes(group=variable,colour=variable,fill=variable), alpha=0.5, 
+      geom_violin(aes(group=variable,colour=variable,fill=variable),alpha=0.5, 
                   kernel="rectangular")+    # passes to stat_density, makes violin rectangular 
       xlab("TMT Channel")+             
       ylab(expression(bold("Log"[10]*" RI Intensity")))+ 

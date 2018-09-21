@@ -57,10 +57,12 @@ for(module in modules) {
   tabs <- c(tabs, module$tab)
 }
 tabs <- sort(unique(tabs))
+tabs <- gsub('([0-9])+(\\s|_)', '', tabs)
 
 # to get custom panel heading colors for each tab,
 # need to dynamically inject some CSS into the app_css string
-tab_colors <- c(RColorBrewer::brewer.pal(5, 'Set1'), RColorBrewer::brewer.pal(8, 'Dark2'))
+tab_colors <- c(RColorBrewer::brewer.pal(5, 'Set1'), 
+                RColorBrewer::brewer.pal(8, 'Dark2')[c(1, 4, 3, 5, 2)])
 # repeat by 10 so we never run out of tab colors
 tab_colors <- rep(tab_colors, 10)
 

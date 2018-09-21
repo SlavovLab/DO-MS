@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- 'Targeting'
+  tab <- '06 Targeting'
   boxTitle <- 'Inclusion List Evaluation'
   help <- 'Showing the success of targeting specific m/z values at specific Retention time (RT) windows.'
   source.file<-"allPeptides"

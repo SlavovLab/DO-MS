@@ -1,19 +1,16 @@
 init <- function() {
   
-  tab <- 'Instrument Performance'
-  boxTitle <- 'MS1 Intensity for all ions'
-  help <- 'Plotting the MS1 intensity for all ions observed (not necessarily sent to MS2) across runs.'
-  source.file <- 'allPeptides'
+  tab <- '00 Sample Quality'
+  boxTitle <- 'Miscleavage rate'
+  help <- 'Plotting frequency of peptide miscleavages.'
+  source.file <- 'evidence'
   
   .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Charge", "Intensity", 'MS.MS.Count')]
-    plotdata$Intensity <- log10(plotdata$Intensity)
-    plotdata$Intensity <- log10(plotdata$Intensity)
-    plotdata <- plotdata[plotdata$MS.MS.Count >= 1,]
+    plotdata <- data()[[source.file]][,c("Raw.file","Missed.cleavages","PEP")]
     return(plotdata)
   }
   
@@ -21,11 +18,11 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes(Intensity)) + 
+    ggplot(plotdata, aes(Missed.cleavages)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram() + 
+      geom_histogram(bins=10) + 
       coord_flip() + 
-      xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
+      xlab("Missed Cleavages") +
       theme_base(input=input)
   }
   

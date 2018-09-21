@@ -1,17 +1,16 @@
 init <- function() {
   
-  tab <- 'Instrument Performance'
-  boxTitle <- 'Injection times, no PSM resulting'
-  help <- 'Plotting distribution of injection times for MS2 events that did not result in a PSM.'
-  source.file <- 'msmsScans'
+  tab <- '01 Chromatography'
+  boxTitle <- 'Identification frequency across gradient'
+  help <- 'Plotting the frequency of peptide identification across thechromatographic gradient.'
+  source.file <- 'evidence'
   
   .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Ion.injection.time", "Sequence")]
-    plotdata <- plotdata[is.na(plotdata$Sequence),]
+    plotdata <- data()[[source.file]][,c("Raw.file","Retention.time","PEP")]
     return(plotdata)
   }
   
@@ -19,11 +18,12 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes(Ion.injection.time)) + 
+    maxRT <- max(plotdata$Retention.time)
+    ggplot(plotdata, aes(Retention.time)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram() + 
+      geom_histogram(bins=100) + 
       coord_flip() + 
-      xlab("Ion Injection Time (ms)") +
+      xlim(10, maxRT) +
       theme_base(input=input)
   }
   
@@ -37,4 +37,3 @@ init <- function() {
     plotFunc=.plot
   ))
 }
-

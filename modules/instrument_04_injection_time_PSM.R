@@ -1,16 +1,17 @@
 init <- function() {
   
-  tab <- 'Contamination'
-  boxTitle <- 'MS1 Intensity, +1 ions'
-  help <- 'Plotting the intensity distribution of +1 ions, a diagnostic of non-peptide contaminants'
-  source.file <- 'allPeptides'
+  tab <- '02 Instrument Performance'
+  boxTitle <- 'Injection times, PSM resulting'
+  help <- 'Plotting distribution of injection times for MS2 events that did result in a PSM.'
+  source.file <- 'msmsScans'
   
   .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c('Raw.file', 'Charge', 'Intensity')]
+    plotdata <- data()[[source.file]][,c("Raw.file","Ion.injection.time", "Sequence")]
+    plotdata <- plotdata[!is.na(plotdata$Sequence),]
     return(plotdata)
   }
   
@@ -18,10 +19,11 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata[plotdata$Charge == 1, ], aes(Intensity)) + 
+    ggplot(plotdata, aes(Ion.injection.time)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram(bins=100) + 
+      geom_histogram() + 
       coord_flip() + 
+      xlab("Ion Injection Time (ms)") +
       theme_base(input=input)
   }
   
@@ -35,5 +37,3 @@ init <- function() {
     plotFunc=.plot
   ))
 }
-
-

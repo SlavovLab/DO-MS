@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- 'Contamination'
+  tab <- '03 Contamination'
   boxTitle <- 'Intensity of z=1 across gradient'
   help <- 'Plotting the intensity of z=1 ions observed. This will give an
   if you are seeing mostly peptides or non-peptide species and where they occur

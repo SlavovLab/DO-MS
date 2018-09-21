@@ -1,18 +1,18 @@
 init <- function() {
   
-  tab <- 'Chromatography'
-  boxTitle <- 'Retention length of peptides at base'
-  help <- 'Plotting the retention length of identified peptide peaks at the base.'
-  source.file <- 'evidence'
+  tab <- '02 Instrument Performance'
+  boxTitle <- 'MS1 Intensity for z>1 ions'
+  help <- 'Plotting the MS1 intensity for all peptide-like ions observed (not necessarily sent to MS2) across runs.'
+  source.file <- 'allPeptides'
   
   .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Retention.length","PEP")]
-    plotdata$Retention.length <- plotdata$Retention.length*60
-    plotdata$Retention.length[plotdata$Retention.length > 120] <- 120
+    plotdata <- data()[[source.file]][,c("Raw.file","Charge", "Intensity")]
+    plotdata$Intensity <- log10(plotdata$Intensity)
+    plotdata <- plotdata[plotdata$Charge > 1,]
     return(plotdata)
   }
   
@@ -20,11 +20,11 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes(Retention.length)) + 
+    ggplot(plotdata, aes(Intensity)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram(bins=120) + 
+      geom_histogram() + 
       coord_flip() + 
-      xlab('Retention Lengths at base (sec)') +
+      xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
       theme_base(input=input)
   }
   

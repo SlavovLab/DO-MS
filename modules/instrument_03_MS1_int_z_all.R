@@ -1,16 +1,19 @@
 init <- function() {
   
-  tab <- 'Chromatography'
-  boxTitle <- 'Identification frequency across gradient'
-  help <- 'Plotting the frequency of peptide identification across thechromatographic gradient.'
-  source.file <- 'evidence'
+  tab <- '02 Instrument Performance'
+  boxTitle <- 'MS1 Intensity for all ions'
+  help <- 'Plotting the MS1 intensity for all ions observed (not necessarily sent to MS2) across runs.'
+  source.file <- 'allPeptides'
   
   .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Retention.time","PEP")]
+    plotdata <- data()[[source.file]][,c("Raw.file","Charge", "Intensity", 'MS.MS.Count')]
+    plotdata$Intensity <- log10(plotdata$Intensity)
+    plotdata$Intensity <- log10(plotdata$Intensity)
+    plotdata <- plotdata[plotdata$MS.MS.Count >= 1,]
     return(plotdata)
   }
   
@@ -18,12 +21,11 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    maxRT <- max(plotdata$Retention.time)
-    ggplot(plotdata, aes(Retention.time)) + 
+    ggplot(plotdata, aes(Intensity)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram(bins=100) + 
+      geom_histogram() + 
       coord_flip() + 
-      xlim(10, maxRT) +
+      xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
       theme_base(input=input)
   }
   

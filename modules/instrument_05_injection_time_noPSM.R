@@ -1,16 +1,17 @@
 init <- function() {
   
-  tab <- 'Sample Quality'
-  boxTitle <- 'Miscleavage rate'
-  help <- 'Plotting frequency of peptide miscleavages.'
-  source.file <- 'evidence'
+  tab <- '02 Instrument Performance'
+  boxTitle <- 'Injection times, no PSM resulting'
+  help <- 'Plotting distribution of injection times for MS2 events that did not result in a PSM.'
+  source.file <- 'msmsScans'
   
   .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Missed.cleavages","PEP")]
+    plotdata <- data()[[source.file]][,c("Raw.file","Ion.injection.time", "Sequence")]
+    plotdata <- plotdata[is.na(plotdata$Sequence),]
     return(plotdata)
   }
   
@@ -18,11 +19,11 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes(Missed.cleavages)) + 
+    ggplot(plotdata, aes(Ion.injection.time)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram(bins=10) + 
+      geom_histogram() + 
       coord_flip() + 
-      xlab("Missed Cleavages") +
+      xlab("Ion Injection Time (ms)") +
       theme_base(input=input)
   }
   
@@ -36,3 +37,4 @@ init <- function() {
     plotFunc=.plot
   ))
 }
+

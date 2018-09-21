@@ -233,7 +233,9 @@ shinyServer(function(input, output, session) {
   # of each iteration will default to to the last one.
   # see: https://gist.github.com/wch/5436415/
   for(tab in tabs) { local({
-    modules_in_tab <- modules[sapply(modules, function(m) { m$tab == tab })]
+    modules_in_tab <- modules[sapply(modules, function(m) { 
+      gsub('([0-9])+(\\s|_)', '', m$tab) == tab 
+    })]
     
     plots <- lapply(modules_in_tab, function(m) {
       ns <- NS(m$id)
@@ -360,7 +362,9 @@ shinyServer(function(input, output, session) {
           paste0('## ', tab),
           sep='\n')
 
-        modules_in_tab <- modules[sapply(modules, function(m) { m$tab == tab })]
+        modules_in_tab <- modules[sapply(modules, function(m) { 
+          gsub('([0-9])+(\\s|_)', '', m$tab) == tab 
+        })]
         plots <- list()
 
         for(m in 1:length(modules_in_tab)) { local({

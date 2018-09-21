@@ -1,7 +1,7 @@
 init <- function() {
   
-  tab <- 'PCA'
-  boxTitle <- 'Principle components 1 vs. 3'
+  tab <- '04 PCA'
+  boxTitle <- 'Principle components 2 vs. 3'
   help <- 'Plotting the principle components for the data matrix of reporter ion signal'
   source.file<-"evidence"
   
@@ -259,14 +259,14 @@ init <- function() {
     #           main = "", xlab=paste0("\nPC1 (",pca1explain*100,"%)"), ylab = paste0("PC2 (",pca2explain*100,"%)\n") ) + scale_colour_manual(values = c("black", "red", "blue")) +
     #   theme(axis.text.x=element_text(angle=45,hjust=1)) + font("xy", size = 28) + font("xy.text", size = 24) + rremove("legend") 
     # 
-    ggscatter(pca12, x = "PC1", y = "PC3", size = 7,
-              main = "", xlab=paste0("\nPC1 (",pca1explain*100,"%)"), ylab = paste0("PC3 (",pca3explain*100,"%)\n") ) + scale_colour_manual(values = c("black", "red", "blue")) +
-      theme(axis.text.x=element_text(angle=45,hjust=1)) + font("xy", size = 28) + font("xy.text", size = 24) + rremove("legend")
-    
-    # ggscatter(pca12, x = "PC2", y = "PC3", size = 7,
-    #           main = "", xlab=paste0("\nPC2 (",pca2explain*100,"%)"), ylab = paste0("PC3 (",pca3explain*100,"%)\n") ) + scale_colour_manual(values = c("black", "red", "blue")) +
+    # ggscatter(pca12, x = "PC1", y = "PC3", size = 7,
+    #           main = "", xlab=paste0("\nPC1 (",pca1explain*100,"%)"), ylab = paste0("PC3 (",pca3explain*100,"%)\n") ) + scale_colour_manual(values = c("black", "red", "blue")) +
     #   theme(axis.text.x=element_text(angle=45,hjust=1)) + font("xy", size = 28) + font("xy.text", size = 24) + rremove("legend")
     # 
+    ggscatter(pca12, x = "PC2", y = "PC3", size = 7,
+              main = "", xlab=paste0("\nPC2 (",pca2explain*100,"%)"), ylab = paste0("PC3 (",pca3explain*100,"%)\n") ) + scale_colour_manual(values = c("black", "red", "blue")) +
+      theme(axis.text.x=element_text(angle=45,hjust=1)) + font("xy", size = 28) + font("xy.text", size = 24) + rremove("legend")
+
   }
   
   return(list(

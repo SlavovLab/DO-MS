@@ -1,17 +1,18 @@
 init <- function() {
   
-  tab <- 'Instrument Performance'
-  boxTitle <- 'Injection times, PSM resulting'
-  help <- 'Plotting distribution of injection times for MS2 events that did result in a PSM.'
-  source.file <- 'msmsScans'
+  tab <- '01 Chromatography'
+  boxTitle <- 'Retention length of peptides at base'
+  help <- 'Plotting the retention length of identified peptide peaks at the base.'
+  source.file <- 'evidence'
   
   .validate <- function(data, input) {
     validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Ion.injection.time", "Sequence")]
-    plotdata <- plotdata[!is.na(plotdata$Sequence),]
+    plotdata <- data()[[source.file]][,c("Raw.file","Retention.length","PEP")]
+    plotdata$Retention.length <- plotdata$Retention.length*60
+    plotdata$Retention.length[plotdata$Retention.length > 120] <- 120
     return(plotdata)
   }
   
@@ -19,11 +20,11 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes(Ion.injection.time)) + 
+    ggplot(plotdata, aes(Retention.length)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram() + 
+      geom_histogram(bins=120) + 
       coord_flip() + 
-      xlab("Ion Injection Time (ms)") +
+      xlab('Retention Lengths at base (sec)') +
       theme_base(input=input)
   }
   

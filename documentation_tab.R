@@ -10,7 +10,9 @@ for(t in 1:length(tabs)) {
     h3(paste(tabs[t], 'Tab'))
   )
   
-  modules_in_tab <- modules[sapply(modules, function(m) { m$tab == tabs[t] })]
+  modules_in_tab <- modules[sapply(modules, function(m) { 
+    gsub('([0-9])+(\\s|_)', '', m$tab) == tabs[t] 
+  })]
   for(m in 1:length(modules_in_tab)) {
     tab_list[[m+1]] <- div(class='documentation-module',
       h4(modules_in_tab[[m]]$boxTitle),

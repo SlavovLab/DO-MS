@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- 'PCA'
+  tab <- '04 PCA'
   boxTitle <- 'Principle components 1 vs. 2'
   help <- 'Plotting the principle components for the data matrix of reporter ion signal'
   source.file<-"evidence"

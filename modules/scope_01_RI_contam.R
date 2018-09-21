@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- 'SCoPE-MS Diagnostics'
+  tab <- '05 SCoPE-MS Diagnostics'
   boxTitle <- 'Reporter Ion Intensities vs. Carrier Intensities'
   help <- 'Comparing the reporter ion intensities for all TMT channels
   to the carrier channel, chosen automatically as the most intense 

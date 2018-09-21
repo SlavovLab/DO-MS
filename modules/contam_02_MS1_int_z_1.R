@@ -1,8 +1,8 @@
 init <- function() {
   
-  tab <- 'Instrument Performance'
-  boxTitle <- 'MS1 Intensity for z>1 ions'
-  help <- 'Plotting the MS1 intensity for all peptide-like ions observed (not necessarily sent to MS2) across runs.'
+  tab <- '03 Contamination'
+  boxTitle <- 'MS1 Intensity, +1 ions'
+  help <- 'Plotting the intensity distribution of +1 ions, a diagnostic of non-peptide contaminants'
   source.file <- 'allPeptides'
   
   .validate <- function(data, input) {
@@ -10,9 +10,7 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Charge", "Intensity")]
-    plotdata$Intensity <- log10(plotdata$Intensity)
-    plotdata <- plotdata[plotdata$Charge > 1,]
+    plotdata <- data()[[source.file]][,c('Raw.file', 'Charge', 'Intensity')]
     return(plotdata)
   }
   
@@ -20,11 +18,10 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes(Intensity)) + 
+    ggplot(plotdata[plotdata$Charge == 1, ], aes(Intensity)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram() + 
+      geom_histogram(bins=100) + 
       coord_flip() + 
-      xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
       theme_base(input=input)
   }
   
@@ -38,3 +35,5 @@ init <- function() {
     plotFunc=.plot
   ))
 }
+
+
