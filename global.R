@@ -1,13 +1,29 @@
 #Packages to check for
-packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer", "readr", 'rmarkdown', "stats")
+
+packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer", "readr", 'rmarkdown', 'prettydoc', "stats")
+packages.bioc<-c("impute")
+
 
 #Checking installed packages against required ones
 new.packages <- packages.needed[!(packages.needed %in% installed.packages()[,"Package"])]
+new.packages.bioc <- packages.bioc[!(packages.bioc %in% installed.packages()[,"Package"])]
 
 #Install those which are absent
 if(length(new.packages)) install.packages(new.packages, dependencies = TRUE) 
 
+if(length(new.packages.bioc)) {
+  
+  source("https://bioconductor.org/biocLite.R")
+  
+  for(X in new.packages.bioc){
+    
+    biocLite(X)
+  
+    }
+}
+
 #Libraries to load
+library(impute)
 library(shiny)
 library(shinydashboard)
 library(shinyWidgets)
