@@ -146,7 +146,7 @@ ggsave("ContamsByRetentionTime.png", width = plot_width, height = plot_height, u
 
 ############################################
 ############################################
-#     Contam 2 - maybe not necessary
+#     PEP cdf for Contam - maybe not necessary
 ############################################
 ############################################
 
