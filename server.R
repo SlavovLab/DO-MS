@@ -14,7 +14,9 @@ shinyServer(function(input, output, session) {
       accept = c(
         "text/csv",
         "text/comma-separated-values,text/plain",
-        ".csv",'.txt', options(shiny.maxRequestSize=300*1024^2) 
+        ".csv",'.txt', options(shiny.maxRequestSize=1000*1024^2) 
+        #".csv",'.txt', options(shiny.maxRequestSize=300*1024^2) # Changed 20180924 due to Toni break
+        
       )
     )
   }

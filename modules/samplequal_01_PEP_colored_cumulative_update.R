@@ -58,6 +58,7 @@ init <- function() {
       scale_x_log10(limits = c(.00009,.1), breaks = c(.0001,.001,.01,.1), 
                     labels = scales::trans_format("log10", scales::math_format(10^.x))) + 
       theme_base(input=input) +
+      theme(legend.position = "right") + 
       theme(legend.key = element_rect(fill = "white")) +
       ylab("Number of IDs") 
     

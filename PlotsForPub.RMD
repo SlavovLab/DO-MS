@@ -205,7 +205,9 @@ histdata <- contam_Selections
       annotate("text", x=.00185, y=1250, label= paste0(unique(DF.t$Raw.file)[1]), color = "red", size = 5*textVar) +
       annotate("text", x=.00055, y=1250, label= paste0(unique(DF.t$Raw.file)[2]), color = "blue", size = 5*textVar) +
        ylab("Number of IDs") 
-    
+
+    ggsave("ContamsByPEP.png", width = plot_width, height = plot_height, units = "in", dpi = 300)
+
 
 ```
 
