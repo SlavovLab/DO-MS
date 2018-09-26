@@ -2,79 +2,241 @@ source('global.R')
 
 shinyServer(function(input, output, session) {
   
-  # for each input file, create a form object
-  # which will then be displayed on the import tab page
-  input_forms <- list()
-  for(file in input_files) {
-    # for now, all files are specified to be csv/tsv files,
-    # but a input file type can be added later so that we can support
-    # multiple file types
-    input_forms[[file$name]] <- fileInput(
-      file$name, file$help,
-      accept = c(
-        "text/csv",
-        "text/comma-separated-values,text/plain",
-        ".csv",'.txt', options(shiny.maxRequestSize=300*1024^2) 
-      )
-    )
-  }
-  # render the input forms into an HTML object
-  output$input_forms <- renderUI({
-    do.call(tagList, input_forms)
-  })
+  folders <- reactiveVal(data.frame(
+    Folder.Name=as.character(c()),
+    Path=as.character(c())
+  ))
   
-  # store all data as a reactive named list
-  # this could also be done as a reactiveValues list -- 
-  # but haven't gotten that to work yet.
-  data <- reactive({
-    # create a progress bar, only if theres data somewhere
-    all_empty <- TRUE
-    for(file in input_files) {
-      if(!is.null(input[[file$name]])) {
-        progress <- shiny::Progress$new()
-        on.exit(progress$close())
-        progress$set(message='', value=0)
-        all_empty <- FALSE
-        break
-      }
+  if(file.exists('folder_list.txt')) {
+    folders <- reactiveVal(as.data.frame(read_tsv('folder_list.txt')))
+  }
+  
+  observeEvent(input$choose_folder, {
+    
+    # get a copy of the current list of folders
+    .folders <- isolate(folders())
+    # list of selected files
+    .input_files <- isolate(input$input_files)
+    
+    # trigger native OS UI for choosing a folder, and store the directory it returns
+    directories <- choose_dir()
+    
+    # if the user cancelled the OS UI, then break out
+    if(length(directories) == 0 | is.null(directories)) {
+      return()
     }
     
-    # if no files exist yet, then exit now
-    if(all_empty) {
-      return(list())
+    for(directory in directories) {
+      # if folder chosen by user is already in the list, then ignore
+      # also display a little notification letting the user know
+      # that we're ignoring their input
+      if(directory %in% .folders$Path) {
+        showNotification(paste0('Folder ', basename(directory), ' already in list. Skipping...'), 
+                         type='warning')
+        next
+      }
+      
+      # check if the folder has all of the files specified by the user
+      # won't prevent the user from adding it, but warn them at least
+      .files <- list.files(directory)
+      counter <- 0
+      for(.file in .files) {
+        if(.file %in% .input_files) { counter <- counter + 1 }
+      }
+      if(counter < length(.input_files)) {
+        showNotification(paste0('Folder ', basename(directory), ' does not contain some of',
+                                ' the specified files.'))
+      }
+      
+      # add folder to list
+      .folders <- rbind(.folders, data.frame(
+        Folder.Name=basename(directory),
+        Path=directory
+      ))
     }
+
+    # set temp variable into reactive value
+    folders(.folders)
+  })
+  
+  # have a debounced version of folders, so we can do more
+  # expensive operations when the list changes
+  folders_d <- folders %>% debounce(3000) # by 3 seconds
+  
+  # react when folders_d (debounced version) is updated
+  observe({
+    showNotification('Writing folder list to file...', type='message')
+    # write folder list to file (overwrite previous)
+    write_tsv(folders_d(), path='folder_list.txt')
+  })
+  
+  output$data_status <- renderUI({
+    if(is.null(selected_folders())) {
+      return(HTML('<b>No Data Loaded</b>.<br/>Please select files from <span style="color:#3c8dbc;">Input File Selection</span> and folders from <span style="color:#3c8dbc;">Folder List</span>, and then click \"Upload Data\"'))
+    }
+    if(is.null(selected_files())) {
+      return(HTML())
+    }
+    paste(selected_folders(), collapse=', ')
+  })
+  
+  output$folder_table <- DT::renderDataTable({
+    folders()
+  }, options=list(
+    pageLength=10,
+    dom='lftp',
+    lengthMenu=c(5, 10, 15, 20, 50)
+  ))
+  
+  output$selected_folders <- renderUI({
+    selected <- input$folder_table_rows_selected
+    .folders <- folders()
+    HTML(paste(
+      paste0(length(selected), ' folders selected'),
+      paste(.folders[selected, 'Folder.Name'], collapse=', '),
+    sep='<br/>'))
+  })
+  
+  observeEvent(input$clear_folder_selection, {
+    DT::dataTableProxy('folder_table') %>% DT::selectRows(NULL)
+  })
+  observeEvent(input$folder_select_all, {
+    .folders <- isolate(folders())
+    DT::dataTableProxy('folder_table') %>% DT::selectRows(1:nrow(.folders))
+  })
+  
+  observeEvent(input$delete_folders, {
+    selected <- isolate(input$folder_table_rows_selected)
+    
+    # if no folders are selected, break out
+    if(length(selected) == 0 | is.null(selected)) {
+      showNotification('No folders selected', type='warning')
+      return()
+    }
+    
+    .folders <- folders()
+    .folders <- .folders[-selected,]
+    folders(.folders)
+    showNotification(paste0(length(selected), ' folder(s) deleted'), type='warning')
+  })
+  
+  data <- reactiveVal(NULL)
+  selected_folders <- reactiveVal(NULL)
+  selected_files <- reactiveVal(NULL)
+  
+  observeEvent(input$confirm_folders, {
+    selected <- isolate(input$folder_table_rows_selected)
+    .folders <- isolate(folders())
+    .input_files <- isolate(input$input_files)
+    
+    # if no folders are selected, break out
+    if(length(selected) == 0 | is.null(selected)) {
+      showNotification('No folders selected', type='warning')
+      return()
+    }
+    
+    # if no MQ files are selected, break out
+    if(length(.input_files) == 0 | is.null(.input_files)) {
+      showNotification('No input files selected', type='warning')
+      return()
+    }
+    
+    # set selected folders, selected files
+    selected_folders(.folders$Folder.Name[selected])
+    selected_files(.input_files)
+    
+    showNotification(paste0('Loading files...'), type='message')
+    
+    # create progress bar
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message='', value=0)
+    
+    # each progress step will be per folder, per file.
+    progress_step <- (1 / (length(selected) * length(.input_files)))
     
     # create the data list
     .data <- list()
-    # loop thru all input files and add it to the data list
-    for(file in input_files) {
-      # update progress bar
-      progress$inc(1/length(input_files), detail=paste0('Reading ', file))
+    
+    # loop thru input files
+    for(file in .input_files) {
+      # get the input file object as defined in global.R
+      file <- input_files[[file]]
       
-      # get the fileinput object
-      .file <- input[[file$name]]
-      
-      # don't read if there's no file there
-      if(is.null(.file)){ next }
-      # also don't read if it's already been read
-      if(!is.null(.data[[file$name]])) { next }
-      
-      # read in as data frame (need to convert from tibble)
-      .data[[file$name]] <- as.data.frame(read_tsv(file=.file$datapath))
-      # rename columns (replace whitespace or special characters with '.')
-      colnames(.data[[file$name]]) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', 
-                                           colnames(.data[[file$name]]))
-      # coerce raw file names to a factor
-      if('Raw.file' %in% colnames(.data[[file$name]])) {
-        .data[[file$name]]$Raw.file <- factor(.data[[file$name]]$Raw.file)
+      # loop thru selected folders
+      for(s in selected) {
+        folder <- .folders[s,]
+        
+        # update progress bar
+        progress$inc(progress_step, detail=paste0('Reading ', file[['file']], 
+                                                  ' from ', folder$Folder.Name))
+        
+        # if file doesn't exist, skip
+        if(!file.exists(file.path(folder$Path, file[['file']]))) {
+          showNotification(paste0(file.path(folder$Path, file[['file']]), ' does not exist'),
+                           type='error')
+          next
+        }
+        
+        # read data into temporary data.frame
+        .dat <- as.data.frame(read_tsv(file=file.path(folder$Path, file[['file']])))
+        
+        # rename columns (replace whitespace or special characters with '.')
+        colnames(.dat) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', colnames(.dat))
+        # coerce raw file names to a factor
+        if('Raw.file' %in% colnames(.dat)) {
+          .dat$Raw.file <- factor(.dat$Raw.file)
+        }
+        
+        # if field is not initialized yet, set field
+        if(is.null(.data[[file$name]])) {
+          .data[[file$name]] <- .dat
+        }
+        # otherwise, append to existing data.frame
+        else {
+          .data[[file$name]] <- rbind(.data[[file$name]], .dat)
+        }
       }
     }
-    # return the data list
-    .data
+    
+    #print(.data)
+    
+    # set the data
+    data(.data)
+    
+    showNotification(paste0('Loading Complete!'), type='message')
   })
   
+  # for each input file, create a form object
+  # which will then be displayed on the import tab page
+  # input_forms <- list()
+  # for(file in input_files) {
+  #   # for now, all files are specified to be csv/tsv files,
+  #   # but a input file type can be added later so that we can support
+  #   # multiple file types
+  #   input_forms[[file$name]] <- fileInput(
+  #     file$name, file$help,
+  #     accept = c(
+  #       "text/csv",
+  #       "text/comma-separated-values,text/plain",
+  #       ".csv",'.txt', options(shiny.maxRequestSize=300*1024^2) 
+  #     )
+  #   )
+  # }
+  
+  # render the input forms into an HTML object
+  # output$input_forms <- renderUI({
+  #   do.call(tagList, input_forms)
+  # })
+   
   raw_files <- reactive({
     f_data <- data()
+    
+    # if no data has been loaded yet, break out
+    if(is.null(f_data)) {
+      return(NULL)
+    }
+    
     .raw_files <- c()
     
     for(file in input_files) {
@@ -99,9 +261,10 @@ shinyServer(function(input, output, session) {
   
   # keep track of user-defined experiment names
   file_levels <- reactive({
-    
     .raw_files <- raw_files()
-    if(length(.raw_files) == 0) {
+    
+    # if raw files (i.e., data) haven't been loaded yet, break
+    if(length(.raw_files) == 0 | is.null(.raw_files)) {
       return(c())
     }
     
@@ -129,8 +292,8 @@ shinyServer(function(input, output, session) {
       # update the selection input
       # for the selection input only, concatenate the nickname and the raw file name
       updateCheckboxGroupInput(session, 'Exp_Sets', '',
-                               choiceNames=paste0(file_levels(), ': ', raw_files()), 
-                               choiceValues=file_levels(), selected=file_levels())
+        choiceNames=paste0(file_levels(), ': ', raw_files()), 
+        choiceValues=file_levels(), selected=file_levels())
     } else {
     }
   })
@@ -198,7 +361,7 @@ shinyServer(function(input, output, session) {
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.pdf') },
       content=function(file) {
         ggsave(filename=file, plot=m$plotFunc(filtered_data, input), 
-               device=pdf, 
+               device='pdf', 
                units=input$download_figure_units,
                width=input$download_figure_width, 
                height=input$download_figure_height)
