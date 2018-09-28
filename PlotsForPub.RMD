@@ -1,0 +1,279 @@
+---
+title: "PlotsForPublication"
+author: "Gray Huffman"
+date: "September 19, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+#Load Packages
+library(dplyr)
+library(plyr)
+library(ggplot2) 
+library(reshape2)
+library(RColorBrewer)
+```
+
+```{r}
+#Global Variables
+textVar <- 1
+plot_col <- 'royalblue'
+plot_fill_col <- 'royalblue'
+  
+plot_width <- 7
+plot_height <- 4
+plot_units <- "in"
+plot_rez <- 300
+
+theme_fig<-function(){
+  
+theme(panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"),legend.position="none",axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2*textVar),face="bold"), axis.text = element_text(size = rel(1.2*textVar)),strip.text = element_text(size=rel(1.2*textVar)), plot.title = element_text(size=20*textVar))
+  
+}
+
+```
+
+
+```{r}
+############################################
+############################################
+#           Clean-up Methods
+############################################
+############################################
+
+# Reading in data
+stageTip <- read.delim('G:/My Drive/2018_QC-MS/Fig_Data/Ids_Along_RT_U937/evidence.txt')
+
+# filter out contaminants
+stageTip_nC <- stageTip[ grep("CON", stageTip$Proteins, invert = TRUE) , ]
+stageTip_nCnR <- stageTip_nC[ grep("REV", stageTip_nC$Leading.razor.protein, invert = TRUE) , ]
+
+############################################
+# Data Subsetting
+############################################
+
+# Select Experiments
+list_of_ST_exps <- as.data.frame(levels(stageTip_nCnR$Raw.file))
+selected_ST_exps <- as.data.frame(list_of_ST_exps[c(1,3,6,7),1])
+names(selected_ST_exps) <- "expNames"
+stageTip_Selections <- stageTip_nCnR[stageTip_nCnR$Raw.file %in% selected_ST_exps$expNames,]
+
+histdata <- stageTip_Selections[,c("Raw.file","Retention.time","PEP")]
+#histdata <- histdata[histdata$PEP < input$slider,]
+lengthLev <- length(levels(histdata$Raw.file))
+
+# Renaming Levels
+levels(histdata$Raw.file) <- c("Stage Tip 3","ST3b","Stage Tip 2","ST2b","mPOP2","mPOP","Stage Tip 1","ST1b")
+maxRT <- max(histdata$Retention.time)
+
+# Changing Factor order
+histdata$Raw.file <- factor(histdata$Raw.file,levels=c("Stage Tip 1","ST1b","Stage Tip 2","ST2b","Stage Tip 3","ST3b","mPOP2","mPOP"))
+
+############################################
+# Plot generation
+############################################
+
+ggplot(histdata, aes(Retention.time)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(bins=100,color=plot_col, fill=plot_fill_col) + coord_flip() +
+
+theme_fig() +
+
+xlim(10, maxRT) + xlab("Retention Time (minutes)") + ylab("Number of IDs") + ggtitle("Peptide Identifications by Retention Time")
+
+# Saving Output Figure as .png
+ggsave("IDsByRetentionTime.png", width = plot_width, height = plot_height, units = "in", dpi = 300)
+
+```
+
+
+```{r}
+############################################
+############################################
+#           Chemical Contaminants
+############################################
+############################################
+
+# Reading in data
+contam <- read.delim('G:/My Drive/2018_QC-MS/Fig_Data/PEG_Contam_QC44/allPeptides.txt')
+
+
+############################################
+# Data Subsetting
+############################################
+
+# Select Experiments
+list_of_Con_exps <- as.data.frame(levels(contam$Raw.file))
+selected_Con_exps <- as.data.frame(list_of_Con_exps[c(1,5),1])
+names(selected_Con_exps) <- "expNames"
+contam_Selections <- contam[contam$Raw.file %in% selected_Con_exps$expNames,]
+
+
+histdata <- contam_Selections[,c("Raw.file","Charge","Intensity","Retention.time")]
+lengthLev <- length(levels(histdata$Raw.file))
+
+histdata <- histdata[histdata$Charge == 1,]
+histdata$Retention.time <- floor(histdata$Retention.time)
+
+# Renaming Levels
+levels(histdata$Raw.file) <- c("Sample A - 817 IDs","2","3","4","Sample A - Contaminated - 383 IDs","6","7","8","9","10")
+maxRT <- max(histdata$Retention.time)
+
+# Changing Factor order
+#histdata$Raw.file <- factor(histdata$Raw.file,levels=c("Stage Tip 1","ST1b","Stage Tip 2","ST2b","Stage Tip 3","ST3b","mPOP2","mPOP"))
+ggplot(histdata, aes(x = Retention.time, y = Intensity)) + geom_bar(stat = 'identity', width= 1,color=plot_col, fill=plot_fill_col)+ facet_wrap(~Raw.file, nrow = 1) + coord_flip() +
+  
+  theme_fig() +
+  
+  xlab("Retention Time (min)") + ylab(expression(bold("Precursor Intensity"))) + ggtitle("Hydrophobicity of Contaminant Ions")
+
+
+# Saving Output Figure as .png
+ggsave("ContamsByRetentionTime.png", width = plot_width, height = plot_height, units = "in", dpi = 300)
+```
+
+
+
+```{r}
+
+############################################
+############################################
+#     PEP cdf for Contam - maybe not necessary
+############################################
+############################################
+
+
+    
+  
+    # Plot:
+    contam <- read.delim('G:/My Drive/2018_QC-MS/Fig_Data/PEG_Contam_QC44/evidence.txt')
+
+
+    
+    # Select Experiments
+list_of_Con_exps <- as.data.frame(levels(contam$Raw.file))
+selected_Con_exps <- as.data.frame(list_of_Con_exps[c(1,5),1])
+names(selected_Con_exps) <- "expNames"
+contam_Selections <- contam[contam$Raw.file %in% selected_Con_exps$expNames,]
+histdata <- contam_Selections
+
+    levels(histdata$Raw.file) <- c("Sample A - 817 IDs","2","3","4","Sample A - Contaminated - 383 IDs","6","7","8","9","10")
+
+
+
+    histdata_PEP <- count(histdata,c('Raw.file','PEP'))
+    DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(freq))
+    
+    
+    
+    # Cut off for display
+    DF.t<-DF.t[DF.t$PEP<0.1,]
+    
+    
+    # Rank the Experiments by most number of peptides observed
+    maxnum<-c()
+    rawnames<-c()
+    for(X in unique(DF.t$Raw.file)){
+      maxnum<-c(maxnum, max(DF.t$cy[DF.t$Raw.file%in%X]) )
+      rawnames<-c(rawnames,X)
+    }
+    names(maxnum)<-rawnames
+    rankExp<-maxnum[order(maxnum, decreasing = T)]
+    rankExp_ord<-seq(1,length(rankExp),1); names(rankExp_ord)<-names(rankExp)
+    DF.t$rank_ord<-NA
+    for(X in unique(DF.t$Raw.file)){
+      
+      DF.t$rank_ord[DF.t$Raw.file%in%X] <- rankExp_ord[X]
+      
+    }
+    
+    cc <- scales::seq_gradient_pal("red", "blue", "Lab")(seq(0,1,length.out=length(rankExp_ord)))
+    
+    #ggplot(DF.t, aes(x=PEP, y=cy,group=Raw.file)) + geom_line(size = 1.2) + coord_flip() + scale_x_log10(limits = c(.00009,.1), breaks = c(.0001,.001,.01,.1), labels = scales::trans_format("log10", scales::math_format(10^.x))) + theme( panel.background = element_rect(fill = "white",colour = "white"), panel.grid.major = element_line(size = .25, linetype = "solid",color="lightgrey"), panel.grid.minor = element_line(size = .25, linetype = "solid",color="lightgrey"), axis.text.x = element_text(angle = 45, hjust = 1, margin=margin(r=45)), axis.title=element_text(size=rel(1.2),face="bold"), axis.text = element_text(size = rel(textVar)),strip.text = element_text(size=textVar)) + ylab("Number of IDs") 
+    ggplot(DF.t, aes(x=PEP, color = factor(rank_ord), y=cy,group=Raw.file)) + geom_line(size = 1.2) +
+      scale_colour_manual(name = "Experiment", values=cc, labels = names(rankExp_ord)) +
+      coord_flip() + scale_x_log10(limits = c(.00009,.1), breaks = c(.0001,.001,.01,.1), labels = scales::trans_format("log10", scales::math_format(10^.x))) + 
+      theme_fig() +
+      annotate("text", x=.00185, y=1250, label= paste0(unique(DF.t$Raw.file)[1]), color = "red", size = 5*textVar) +
+      annotate("text", x=.00055, y=1250, label= paste0(unique(DF.t$Raw.file)[2]), color = "blue", size = 5*textVar) +
+       ylab("Number of IDs") 
+
+    ggsave("ContamsByPEP.png", width = plot_width, height = plot_height, units = "in", dpi = 300)
+
+
+```
+
+```{r}
+############################################
+############################################
+#           Apex Offset
+############################################
+############################################
+
+# Reading in data
+apex <- read.delim('G:/My Drive/2018_QC-MS/Fig_Data/Apex_Offset_SQC68/msmsScans.txt')
+
+list_of_Apex_exps <- as.data.frame(levels(apex$Raw.file))
+selected_Apex_exps <- as.data.frame(list_of_Apex_exps[c(6,7,8),1])
+names(selected_Apex_exps) <- "expNames"
+apex_Selections <- apex[apex$Raw.file %in% selected_Apex_exps$expNames,]
+
+histdata <- apex_Selections[,c("Raw.file","Precursor.apex.offset.time")]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- c("1","2","3","4","5","250ms fill time / Top 3","500ms fill time / Top 3","1000ms fill time / Top 3","9","10","11","12","13","14","15","16","17","18","19","20")
+histdata$Precursor.apex.offset.time <- histdata$Precursor.apex.offset.time*60
+histdata$Precursor.apex.offset.time[histdata$Precursor.apex.offset.time > 8] <- 9
+histdata$Precursor.apex.offset.time[histdata$Precursor.apex.offset.time < -8] <- -9
+
+ggplot(histdata, aes(Precursor.apex.offset.time)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(color=plot_col, fill=plot_fill_col) + coord_flip() + 
+  
+  theme_fig() +
+  
+  xlab("Apex Offset (sec)") + ylab("MS2 Scans") + ggtitle("MS/MS Offset from Apex")
+      
+# Saving Output Figure as .png
+ggsave("ApexOffset.png", width = plot_width, height = plot_height, units = "in", dpi = 300) 
+
+
+```
+```{r}
+############################################
+############################################
+#           Apex Offset
+############################################
+############################################
+
+# Reading in data
+apex <- read.delim('G:/My Drive/2018_QC-MS/Fig_Data/Apex_Offset_SQC68/msmsScans.txt')
+
+list_of_Apex_exps <- as.data.frame(levels(apex$Raw.file))
+selected_Apex_exps <- as.data.frame(list_of_Apex_exps[c(6,7,8),1])
+names(selected_Apex_exps) <- "expNames"
+apex_Selections <- apex[apex$Raw.file %in% selected_Apex_exps$expNames,]
+
+histdata <- apex_Selections[,c("Raw.file","Precursor.apex.offset.time")]
+lengthLev <- length(levels(histdata$Raw.file))
+levels(histdata$Raw.file) <- c("1","2","3","4","5","250ms fill time / Top 3","500ms fill time / Top 3","1000ms fill time / Top 3","9","10","11","12","13","14","15","16","17","18","19","20")
+histdata$Precursor.apex.offset.time <- histdata$Precursor.apex.offset.time*60
+histdata$Precursor.apex.offset.time[histdata$Precursor.apex.offset.time > 8] <- 9
+histdata$Precursor.apex.offset.time[histdata$Precursor.apex.offset.time < -8] <- -9
+
+ggplot(histdata, aes(Precursor.apex.offset.time)) + facet_wrap(~Raw.file, nrow = 1)+ geom_histogram(color=plot_col, fill=plot_fill_col) + coord_flip() + 
+  
+  theme_fig() +
+  
+  xlab("Apex Offset (sec)") + ylab("MS2 Scans") + ggtitle("MS/MS Offset from Apex")
+      
+# Saving Output Figure as .png
+ggsave("ApexOffset.png", width = plot_width, height = plot_height, units = "in", dpi = 300) 
+
+
+```
