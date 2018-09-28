@@ -316,6 +316,8 @@ shinyServer(function(input, output, session) {
   })
   
   # keep track of user-defined experiment names
+  # first debounce the Exp_Names input to prevent errors
+  exp_names <- debounce(reactive({ input$Exp_Names }), 1000)
   file_levels <- reactive({
     .raw_files <- raw_files()
     
@@ -328,7 +330,7 @@ shinyServer(function(input, output, session) {
     # create the nickname vector
     .file_levels <- level_prefixes[1:length(.raw_files)]
     
-    named_exps <- unlist(strsplit(paste(input$Exp_Names), ","))
+    named_exps <- trimws(unlist(strsplit(paste(exp_names()), ",")))
     if(length(named_exps) > 0) {
       if(length(named_exps) < length(.file_levels)) {
         .file_levels[1:length(named_exps)] <- named_exps
@@ -337,6 +339,23 @@ shinyServer(function(input, output, session) {
       } else {
         # same length
         .file_levels = named_exps
+      }
+    }
+    
+    # ensure there are no duplicate names
+    # if so, then append a suffix to duplicate names to prevent refactoring errors
+    for(i in 1:(length(.file_levels)-1)) {
+      duplicate_counter <- 0
+      for(j in (i+1):length(.file_levels)) {
+        if(.file_levels[i] == .file_levels[j]) {
+          # if j is a duplicate, append the corresponding duplicate number and increment
+          .file_levels[j] <- paste0(.file_levels[j], '_', duplicate_counter + 2)
+          duplicate_counter <- duplicate_counter + 1
+        }
+      }
+      # if there were any duplicates, change .file_levels[i]
+      if(duplicate_counter > 0) {
+        .file_levels[i] <- paste0(.file_levels[i], '_1')
       }
     }
     
