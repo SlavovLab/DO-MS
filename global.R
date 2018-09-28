@@ -82,10 +82,13 @@ input_files <- list(
   allPeptides=list(
     name='allPeptides',
     file='allPeptides.txt',
-    help='MaxQuant allPeptides.txt file')#,
-  # inc=list(
-  #   name='inc',
-  #   help='Inclusion list .txt file')
+    help='MaxQuant allPeptides.txt file')
+)
+
+misc_input_files <- list(
+  inclusion_list=list(
+    name='inclusion_list',
+    help='Inclusion list .txt file')
 )
 
 # load app.css into string

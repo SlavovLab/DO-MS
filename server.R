@@ -77,7 +77,12 @@ shinyServer(function(input, output, session) {
     if(is.null(selected_files())) {
       return(HTML())
     }
-    paste(selected_folders(), collapse=', ')
+    HTML(paste(
+      paste0('Loaded ', length(selected_files()),
+             ' files: ', paste(paste0(selected_files(), '.txt'), collapse=', ')),
+      paste0('From ', length(selected_folders()), 
+             'folders: ', paste(selected_folders(), collapse=', ')),
+    sep='<br/>'))
   })
   
   output$folder_table <- DT::renderDataTable({
@@ -92,7 +97,7 @@ shinyServer(function(input, output, session) {
     selected <- input$folder_table_rows_selected
     .folders <- folders()
     HTML(paste(
-      paste0(length(selected), ' folders selected'),
+      paste0('<b>', length(selected), '</b> folders selected:'),
       paste(.folders[selected, 'Folder.Name'], collapse=', '),
     sep='<br/>'))
   })
@@ -207,27 +212,81 @@ shinyServer(function(input, output, session) {
     showNotification(paste0('Loading Complete!'), type='message')
   })
   
-  # for each input file, create a form object
+  # for each misc. input file, create a form object
   # which will then be displayed on the import tab page
-  # input_forms <- list()
-  # for(file in input_files) {
-  #   # for now, all files are specified to be csv/tsv files,
-  #   # but a input file type can be added later so that we can support
-  #   # multiple file types
-  #   input_forms[[file$name]] <- fileInput(
-  #     file$name, file$help,
-  #     accept = c(
-  #       "text/csv",
-  #       "text/comma-separated-values,text/plain",
-  #       ".csv",'.txt', options(shiny.maxRequestSize=300*1024^2) 
-  #     )
-  #   )
-  # }
-  
+  misc_input_forms <- list()
+  for(file in misc_input_files) {
+    # for now, all files are specified to be csv/tsv files,
+    # but a input file type can be added later so that we can support
+    # multiple file types
+    misc_input_forms[[file$name]] <- fileInput(
+      file$name, file$help,
+      accept = c(
+        "text/csv",
+        "text/comma-separated-values,text/plain",
+        ".csv",'.txt', options(shiny.maxRequestSize=300*1024^2)
+      )
+    )
+  }
+
   # render the input forms into an HTML object
-  # output$input_forms <- renderUI({
-  #   do.call(tagList, input_forms)
-  # })
+  output$misc_input_forms <- renderUI({
+    do.call(tagList, misc_input_forms)
+  })
+  
+  # handle misc file input events
+  observe({
+    # isolate data obj because we dont want changes in that to trigger this
+    .data <- isolate(data())
+    
+    # create a progress bar, only if theres data somewhere
+    all_empty <- TRUE
+    for(file in misc_input_files) {
+      if(!is.null(input[[file$name]])) {
+        progress <- shiny::Progress$new()
+        on.exit(progress$close())
+        progress$set(message='', value=0)
+        all_empty <- FALSE
+        break
+      }
+    }
+    
+    # if no files exist yet, then exit now
+    if(all_empty) {
+      return()
+    }
+    
+    # loop thru all misc input files and add it to the data list
+    for(file in misc_input_files) {
+      # update progress bar
+      progress$inc(1/length(misc_input_files), detail=paste0('Reading ', file$name))
+      
+      # get the fileinput object
+      .file <- input[[file$name]]
+      
+      # don't read if there's no file there
+      if(is.null(.file)){ next }
+      # also don't read if it's already been read
+      if(!is.null(.data[[file$name]])) { next }
+      
+      # read in as data frame (need to convert from tibble)
+      .data[[file$name]] <- as.data.frame(read_tsv(file=.file$datapath))
+      # rename columns (replace whitespace or special characters with '.')
+      colnames(.data[[file$name]]) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', 
+                                           colnames(.data[[file$name]]))
+      # coerce raw file names to a factor
+      if('Raw.file' %in% colnames(.data[[file$name]])) {
+        .data[[file$name]]$Raw.file <- factor(.data[[file$name]]$Raw.file)
+      }
+    }
+    
+    # reassign data object
+    data(.data)
+  })
+  
+  observe({
+    print(data())
+  })
    
   raw_files <- reactive({
     f_data <- data()
