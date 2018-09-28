@@ -284,10 +284,6 @@ shinyServer(function(input, output, session) {
     # reassign data object
     data(.data)
   })
-  
-  observe({
-    print(data())
-  })
    
   raw_files <- reactive({
     f_data <- data()

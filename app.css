@@ -182,12 +182,12 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   font-weight: bold;
 }
 
-#shiny-tab-settings .tab-pane {
-  padding: 10px;
-}
-
 #shiny-tab-settings h3 {
   margin-top: 0px;
+}
+
+#shiny-tab-import .tab-pane {
+  padding: 10px;
 }
 
 #shiny-tab-import h2 {
