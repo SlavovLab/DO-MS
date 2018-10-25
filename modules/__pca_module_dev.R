@@ -78,7 +78,7 @@ for(W in exps){
   # Impute missing RI values
   
   RI_imp<-as.matrix(ev.t[,c(quant_cols.t)])
-  RI_imp_res<-kNN(RI_imp, k = 5, imp_var = F)
+  RI_imp_res<-impute.knn(RI_imp, k = 5)#, imp_var = F)
   ev.t[,c(quant_cols.t)]<-RI_imp_res
   
   # Row normalize
@@ -179,7 +179,7 @@ kc<-c(1,kc)
 ev.mat<-ev.mat[,kc]
 
 # Impute missing entries
-ev.mat.imp<-kNN(as.matrix(ev.mat[,-1]), k = 5, imp_var = F)
+ev.mat.imp<-impute.knn(as.matrix(ev.mat[,-1]), k = 5)#, imp_var = F)
 ev.mat.imp<-ev.mat.imp
 
 #ev.mat<-explist[["FP17B_quant"]]
