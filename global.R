@@ -1,6 +1,6 @@
 #Packages to check for
 
-packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","reshape2","RColorBrewer", "readr", 'rmarkdown', "stats", "DT", "stringr")
+packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","lattice","reshape2","RColorBrewer", "readr", 'rmarkdown', "stats", "DT", "stringr")
 #packages.bioc<-c("impute")
 
 
@@ -35,6 +35,7 @@ library(RColorBrewer)
 library(readr)
 library(rmarkdown)
 library(stats)
+library(lattice)
 
 modules <- list()
 
