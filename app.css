@@ -185,3 +185,163 @@ https://codepen.io/TrasherDK/pen/XRzgOR
 #shiny-tab-settings h3 {
   margin-top: 0px;
 }
+
+#shiny-tab-import .tab-pane {
+  padding: 10px;
+}
+
+#shiny-tab-import h2 {
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+
+#shiny-tab-import .well {
+  box-shadow: 2px 2px 3px #AAA;
+  border: none;
+  background-color: #FFF;
+  padding: 20px;
+  border-radius: 8px;
+}
+#shiny-tab-import .well-header {
+  margin-top: -20px;
+  margin-left: -20px;
+  margin-right: -20px;
+  margin-bottom: 15px;
+  padding: 10px 20px;
+  background-color: #61747f;
+  color: white;
+  border-radius: 8px 8px 0px 0px;
+}
+#shiny-tab-import .well-header h4 {
+  margin: 0px;
+}
+#shiny-tab-import .upload-button-container {
+  margin-bottom: 20px;
+  width: 100%;
+}
+#shiny-tab-import #data_status {
+  font-size: 1.2em;
+}
+#shiny-tab-import button#confirm_folders {
+  color: #FFF;
+  width: 100%;
+  font-size: 1.75em;
+  /*font-weight: bold;*/
+  box-shadow: 2px 2px 3px #AAA;
+  border: none;
+  transition: 0.1s all ease-in-out;
+  height: 50px;
+  border-radius: 25px;
+}
+#shiny-tab-import button#confirm_folders:hover, #shiny-tab-import button#confirm_folders:active {
+  border: none;
+  color: #FFF;
+  background-color: #65a9d1;
+}
+
+#shiny-tab-import .selected-folders-output {
+  margin-bottom: 10px;
+}
+#shiny-tab-import .selected-folders-output #selected_folders {
+  font-size: 1.2em;
+}
+#shiny-tab-import .folder-button-list {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+#shiny-tab-import .folder-button-list button {
+  margin: 5px;
+  border: none;
+  background-color: #3c8dbc;
+  color: #FFF;
+  border-radius: 20px;
+  box-shadow: 1px 1px 3px #AAA;
+  transition: 0.1s all ease-in-out;
+}
+#shiny-tab-import .folder-button-list button:hover, #shiny-tab-import .folder-button-list button:active {
+  border: none;
+  background-color: #65a9d1;
+  color: #FFF;
+}
+
+#shiny-tab-import .files_check_all, #shiny-tab-import .files_check_none {
+  border-radius: 20px;
+  background-color: #3c8dbc;
+  color: white;
+  padding: 5px 15px;
+  box-shadow: 1px 1px 3px #AAA;
+  margin-right: 5px;
+  transition: 0.1s all ease-in-out;
+}
+#shiny-tab-import .files_check_all:hover, #shiny-tab-import .files_check_none:hover {
+  border: none;
+  background-color: #65a9d1;
+  color: #FFF;
+}
+#shiny-tab-import #input_files {
+  margin-top: 30px;
+}
+#shiny-tab-import #input_files label.control-label {
+  display: none;
+}
+#shiny-tab-import #input_files .checkbox {
+  
+}
+#shiny-tab-import #input_files .checkbox .btn.tooltip-btn {
+  padding: 0px 3px;
+  margin: 0px;
+  margin-left: 3px;
+  border: none;
+}
+
+/* data table in import tab */
+#folder_table { }
+
+#folder_table .dataTables_length label {
+  font-weight: inherit;
+}
+#folder_table .dataTables_length label select {
+  min-width: 50px;
+  margin: 0px 0.5em;
+}
+#folder_table .dataTables_filter label {
+  font-weight: inherit;
+}
+#folder_table .dataTables_filter label input[type='search'] {
+  border: 1px solid #CCC;
+  border-radius: 8px;
+  padding: 2px 10px;
+  font-weight: normal;
+  outline-offset: -3px;
+}
+#folder_table table.dataTable {  }
+#folder_table .dataTables_paginate {
+  padding-top: 0.75em;
+}
+#folder_table a.paginate_button {
+  background: #FFF;
+  color: #666;
+  border: none;
+  border-radius: 8px;
+  transition: 0.1s all ease-in-out;
+  margin: 0px 0.2em;
+}
+#folder_table a.paginate_button.current {
+  color: #000;
+  background: #DDD;
+}
+#folder_table a.paginate_button.disabled {
+  background: #FFF;
+  color: #888;
+}
+#folder_table a.paginate_button:hover {
+  color: #000 !important;
+  background: #EEE;
+  border-radius: 8px;
+}
+#folder_table a.paginate_button.disabled:hover {
+  color: #888 !important; 
+  background: #FFF;
+}

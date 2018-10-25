@@ -8,14 +8,14 @@ init <- function() {
   .validate <- function(data, input) {
     validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
     validate(need(data()[["evidence"]], paste0("Upload ", "evidence",".txt")))
-    validate(need(data()[["inc"]], paste0("Upload ", "inclusion list ")))
+    validate(need(data()[["inclusion_list"]], paste0("Upload ", "inclusion list ")))
     
   }
   
   .plotdata <- function(data, input) {
     allPeptides <- data()[[source.file]]
     evidence <- data()[["evidence"]]
-    inc <- data()[["inc"]]
+    inc <- data()[["inclusion_list"]]
     
     # Define variables
     mz<-inc$mz

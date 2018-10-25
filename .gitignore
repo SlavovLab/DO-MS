@@ -8,3 +8,6 @@ Icon/**/*
 
 # test modules folder
 _modules/**/*
+
+# generated files
+folder_list.txt
