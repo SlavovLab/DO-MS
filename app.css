@@ -296,6 +296,7 @@ https://codepen.io/TrasherDK/pen/XRzgOR
 }
 
 #shiny-tab-import .files_check_all, #shiny-tab-import .files_check_none {
+  border: none;
   border-radius: 20px;
   background-color: #3c8dbc;
   color: white;

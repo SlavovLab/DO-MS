@@ -15,12 +15,21 @@ names(file_names) <- NULL
 import_tab <- tabItem(tabName='import', fluidPage(
   titlePanel('Import Data'),
   
+  tags$ol(class='breadcrumb',
+    tags$li(tags$a(href='#folder-select', '1. Select Folder(s)')),
+    tags$li(tags$a(href='#file-select', '2. Select File(s)')),
+    tags$li(tags$a(href='#load-data', '3. Load Data')),
+    tags$li(tags$a(href='#load-optional-data', '4. Load Optional Data')),
+    tags$li(tags$a(href='#rename-files', '5. Rename Files'))
+  ),
   
   ################################
   ###  STEP 1: SELECT FOLDERS  ###
   ################################
   
-  div(class='import-header', span(class='num', '1'), h2('Select MaxQuant txt Output Folders')),
+  a(name='folder-select'),
+  div(class='import-header', span(class='num', '1'), 
+      h2('Select MaxQuant txt Output Folders')),
   p(class='import-help', 'Click on a row in the table to select that folder. Click multiple rows to select multiple folders, and use Shift to select a series of folders.'),
   p(class='import-help', 'Please see ',
     a(href='https://github.com/SlavovLab/SCoPE_QC/blob/master/documentation/adding_folders.pdf',
@@ -41,6 +50,9 @@ import_tab <- tabItem(tabName='import', fluidPage(
         #             icon=icon('plus', lib='glyphicon')),
         #shinyFilesButton('files', label='File select', title='Please select a file', multiple=T),
         shinyDirButton('choose_folder', label='Add folder to list', title='Please select a folder'),
+        p('For help adding directories, please view ', 
+          a(href='https://github.com/SlavovLab/SCoPE_QC/blob/master/documentation/adding_folders.pdf',
+            target='_blank', 'this document')),
         actionButton('folder_select_all', 'Select all folders',
                      icon=icon('th-list', lib='glyphicon')),
         actionButton('clear_folder_selection', 'Clear selection',
@@ -56,7 +68,9 @@ import_tab <- tabItem(tabName='import', fluidPage(
   ###  STEP 2: SELECT FILES  ###
   ##############################
   
-  div(class='import-header', span(class='num', '2'), h2('Select Files to Load')),
+  a(name='file-select'),
+  div(class='import-header', span(class='num', '2'), 
+      h2('Select Files to Load')),
   p(class='import-help', 'The text files to load from each folder selected. Unselect large files, such as "allPeptides.txt", if you are not analyzing unidentified ions and want to speed up load times.'),
   fixedRow(column(12,
     div(class='well input-file-select-well',
@@ -78,7 +92,9 @@ import_tab <- tabItem(tabName='import', fluidPage(
   ###  STEP 3: LOAD DATA  ###
   ###########################
   
-  div(class='import-header', span(class='num', '3'), h2('Load Data')),
+  a(name='load-data'),
+  div(class='import-header', span(class='num', '3'), 
+      h2('Load Data')),
   p(class='import-help', 'Once folders and files are selected, click "Load Data" to import the files and begin the analysis. The status panel below to the right will update when the data is imported.'),
   fluidRow(
     column(6,
@@ -101,13 +117,22 @@ import_tab <- tabItem(tabName='import', fluidPage(
   ###  STEP 4: LOAD OTHER DATA (optional)  ###
   ############################################
   
-  div(class='import-header', span(class='num', '4'), h2('Load Other Data (optional)')),
+  a(name='load-optional-data'),
+  div(class='import-header', span(class='num', '4'), 
+      h2('Load Other Data (optional)')),
   p(class='import-help', 'Load other miscellaneous files, such as inclusion lists, individually.'),
   fixedRow(column(12,
     uiOutput('misc_input_forms')
   )),
   
+  ###############################################
+  ###  STEP 5: RENAME EXPERIMENTS (optional)  ###
+  ###############################################
   
+  a(name='rename-files'),
+  div(class='import-header', span(class='num', '5'), 
+      h2('Rename Experiments (optional)')),
+  p('Rename raw file names to more readable or sensible names, for easier interpretation of figures'),
   wellPanel(
     div(class='well-header', h4('Raw File Renaming')),
     p("Enter a comma-separated list of short labels for each Raw-file/exp"),
