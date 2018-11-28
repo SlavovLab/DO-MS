@@ -12,9 +12,23 @@ shinyServer(function(input, output, session) {
   }
   
   volumes <- c(Home = fs::path_home(), 'R Installation' = R.home(), getVolumes()())
-  shinyDirChoose(input, 'choose_folder', roots = volumes, 
-                 session = session)
   
+  # first set default root to home
+  default_root <- names(volumes)[1]
+  
+  if(tolower(.Platform$OS.type) == 'windows') {
+    default_root <- 'Home'
+  }
+  # if on OSX, then set default root directory to "Macintosh HD"
+  else if(tolower(as.list(Sys.info())$sysname) == 'darwin' & any(grepl('Macintosh HD', volumes))) {
+    default_root <- names(volumes)[grep('Macintosh HD', volumes)]
+  }
+  
+  # launch shinyFiles
+  shinyDirChoose(input, 'choose_folder', roots = volumes, 
+                 session = session, defaultRoot=default_root)
+  
+  # listen to shinyFiles
   observe({
 
     # get a copy of the current list of folders
