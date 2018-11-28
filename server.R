@@ -81,7 +81,7 @@ shinyServer(function(input, output, session) {
       paste0('Loaded ', length(selected_files()),
              ' files: ', paste(paste0(selected_files(), '.txt'), collapse=', ')),
       paste0('From ', length(selected_folders()), 
-             'folders: ', paste(selected_folders(), collapse=', ')),
+             ' folders: ', paste(selected_folders(), collapse=', ')),
     sep='<br/>'))
   })
   
@@ -344,19 +344,25 @@ shinyServer(function(input, output, session) {
     
     # ensure there are no duplicate names
     # if so, then append a suffix to duplicate names to prevent refactoring errors
-    for(i in 1:(length(.file_levels)-1)) {
-      duplicate_counter <- 0
-      for(j in (i+1):length(.file_levels)) {
-        if(.file_levels[i] == .file_levels[j]) {
-          # if j is a duplicate, append the corresponding duplicate number and increment
-          .file_levels[j] <- paste0(.file_levels[j], '_', duplicate_counter + 2)
-          duplicate_counter <- duplicate_counter + 1
+    
+    # only do this if we have more than one experiment
+    if(length(.raw_files) > 1) {
+      
+      for(i in 1:(length(.file_levels)-1)) {
+        duplicate_counter <- 0
+        for(j in (i+1):length(.file_levels)) {
+          if(.file_levels[i] == .file_levels[j]) {
+            # if j is a duplicate, append the corresponding duplicate number and increment
+            .file_levels[j] <- paste0(.file_levels[j], '_', duplicate_counter + 2)
+            duplicate_counter <- duplicate_counter + 1
+          }
+        }
+        # if there were any duplicates, change .file_levels[i]
+        if(duplicate_counter > 0) {
+          .file_levels[i] <- paste0(.file_levels[i], '_1')
         }
       }
-      # if there were any duplicates, change .file_levels[i]
-      if(duplicate_counter > 0) {
-        .file_levels[i] <- paste0(.file_levels[i], '_1')
-      }
+      
     }
     
     .file_levels
