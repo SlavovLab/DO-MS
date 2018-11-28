@@ -22,6 +22,10 @@ import_tab <- tabItem(tabName='import', fluidPage(
   
   div(class='import-header', span(class='num', '1'), h2('Select MaxQuant txt Output Folders')),
   p(class='import-help', 'Click on a row in the table to select that folder. Click multiple rows to select multiple folders, and use Shift to select a series of folders.'),
+  p(class='import-help', 'Please see ',
+    a(href='https://github.com/SlavovLab/SCoPE_QC/blob/master/documentation/adding_folders.pdf',
+      target='_blank', 'this document'),
+    ' for help adding folders to the table'),
   fluidRow(
     column(9, wellPanel(
       div(class='well-header', h4('Folder List')),
@@ -53,6 +57,7 @@ import_tab <- tabItem(tabName='import', fluidPage(
   ##############################
   
   div(class='import-header', span(class='num', '2'), h2('Select Files to Load')),
+  p(class='import-help', 'The text files to load from each folder selected. Unselect large files, such as "allPeptides.txt", if you are not analyzing unidentified ions and want to speed up load times.'),
   fixedRow(column(12,
     div(class='well input-file-select-well',
       div(class='well-header', h4('Input File Selection')),
@@ -74,6 +79,7 @@ import_tab <- tabItem(tabName='import', fluidPage(
   ###########################
   
   div(class='import-header', span(class='num', '3'), h2('Load Data')),
+  p(class='import-help', 'Once folders and files are selected, click "Load Data" to import the files and begin the analysis. The status panel below to the right will update when the data is imported.'),
   fluidRow(
     column(6,
       div(class='upload-button-container',
@@ -96,17 +102,18 @@ import_tab <- tabItem(tabName='import', fluidPage(
   ############################################
   
   div(class='import-header', span(class='num', '4'), h2('Load Other Data (optional)')),
+  p(class='import-help', 'Load other miscellaneous files, such as inclusion lists, individually.'),
   fixedRow(column(12,
     uiOutput('misc_input_forms')
-  ))
+  )),
   
   
-  #       wellPanel(
-  #         div(class='well-header', h4('Raw File Renaming')),
-  #         p("Enter a comma-separated list of short labels for each Raw-file/exp"),
-  #         textInput("Exp_Names", "Exp Names", value = "", 
-  #                   width = NULL, placeholder = "Comma-separated Exp Names")
-  #       )
+  wellPanel(
+    div(class='well-header', h4('Raw File Renaming')),
+    p("Enter a comma-separated list of short labels for each Raw-file/exp"),
+    textInput("Exp_Names", "Exp Names", value = "",
+              width = NULL, placeholder = "Comma-separated Exp Names")
+  )
 
   # End tabs
   #p("After uploading your evidence.txt file, please wait for your experiments to appear in the sidebar before uploading msmsScans.txt and allPeptides.txt"),
