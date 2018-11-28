@@ -11,31 +11,44 @@ shinyServer(function(input, output, session) {
     folders <- reactiveVal(as.data.frame(read_tsv('folder_list.txt')))
   }
   
-  observeEvent(input$choose_folder, {
-    
+  volumes <- c(Home = fs::path_home(), "R Installation" = R.home(), getVolumes()())
+  shinyDirChoose(input, "choose_folder", roots = volumes, 
+                 session = session)
+  
+  observe({
+
     # get a copy of the current list of folders
     .folders <- isolate(folders())
     # list of selected files
     .input_files <- isolate(input$input_files)
-    
+
     # trigger native OS UI for choosing a folder, and store the directory it returns
-    directories <- choose_dir()
-    
+    #directories <- choose_dir()
+
     # if the user cancelled the OS UI, then break out
-    if(length(directories) == 0 | is.null(directories)) {
-      return()
-    }
+    #if(length(directories) == 0 | is.null(directories)) {
+    #  return()
+    #}
     
-    for(directory in directories) {
+    # take folder name from shinyFiles
+    directory <- parseDirPath(volumes, input$choose_folder)
+
+    #for(directory in directories) {
+    
+      # if folder is null, break out
+      if(length(directory) == 0 | is.null(directory)) {
+        return()
+      }
+        
       # if folder chosen by user is already in the list, then ignore
       # also display a little notification letting the user know
       # that we're ignoring their input
       if(directory %in% .folders$Path) {
-        showNotification(paste0('Folder ', basename(directory), ' already in list. Skipping...'), 
+        showNotification(paste0('Folder ', basename(directory), ' already in list. Skipping...'),
                          type='warning')
         next
       }
-      
+
       # check if the folder has all of the files specified by the user
       # won't prevent the user from adding it, but warn them at least
       .files <- list.files(directory)
@@ -47,13 +60,14 @@ shinyServer(function(input, output, session) {
         showNotification(paste0('Folder ', basename(directory), ' does not contain some of',
                                 ' the specified files.'))
       }
-      
+
       # add folder to list
       .folders <- rbind(.folders, data.frame(
         Folder.Name=basename(directory),
         Path=directory
       ))
-    }
+      
+    #}
 
     # set temp variable into reactive value
     folders(.folders)
@@ -72,7 +86,7 @@ shinyServer(function(input, output, session) {
   
   output$data_status <- renderUI({
     if(is.null(selected_folders())) {
-      return(HTML('<b>No Data Loaded</b>.<br/>Please select files from <span style="color:#3c8dbc;">Input File Selection</span> and folders from <span style="color:#3c8dbc;">Folder List</span>, and then click \"Upload Data\"'))
+      return(HTML('<b>No Data Loaded</b>.<br/>Please select files from <span style="color:#3c8dbc;">Input File Selection</span> and folders from <span style="color:#3c8dbc;">Folder List</span>, and then click \"Load Data\"'))
     }
     if(is.null(selected_files())) {
       return(HTML())

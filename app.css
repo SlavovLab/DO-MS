@@ -190,6 +190,31 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   padding: 10px;
 }
 
+#shiny-tab-import .import-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+  margin-top: 15px;
+}
+
+#shiny-tab-import .import-header span.num {
+  font-size: 2em;
+  /* padding: 10px; */
+  background-color: #3c8dbc;
+  border-radius: 40px;
+  color: white;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#shiny-tab-import .import-header h2 {
+  margin: 0px;
+  margin-left: 10px;
+}
+
 #shiny-tab-import h2 {
   margin-top: 0px;
   margin-bottom: 20px;
@@ -264,6 +289,10 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   border: none;
   background-color: #65a9d1;
   color: #FFF;
+}
+
+#shiny-tab-import .input-file-select-well {
+  max-width: 300px;
 }
 
 #shiny-tab-import .files_check_all, #shiny-tab-import .files_check_none {

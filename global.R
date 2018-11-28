@@ -1,6 +1,6 @@
 #Packages to check for
 
-packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","lattice","reshape2","RColorBrewer", "readr", 'rmarkdown', "stats", "DT", "stringr")
+packages.needed <- c("shiny","shinydashboard","shinyWidgets","dplyr","plyr","ggplot2","lattice","reshape2","RColorBrewer", "readr", 'rmarkdown', "stats", "DT", "stringr", "shinyFiles")
 #packages.bioc<-c("impute")
 
 
@@ -9,7 +9,7 @@ new.packages <- packages.needed[!(packages.needed %in% installed.packages()[,"Pa
 #new.packages.bioc <- packages.bioc[!(packages.bioc %in% installed.packages()[,"Package"])]
 
 #Install those which are absent
-# if(length(new.packages)) install.packages(new.packages, dependencies = TRUE) 
+if(length(new.packages)) install.packages(new.packages, dependencies = TRUE) 
 # 
 # if(length(new.packages.bioc)) {
 #   
@@ -36,6 +36,7 @@ library(readr)
 library(rmarkdown)
 library(stats)
 library(lattice)
+library(shinyFiles)
 
 modules <- list()
 
