@@ -11,8 +11,8 @@ shinyServer(function(input, output, session) {
     folders <- reactiveVal(as.data.frame(read_tsv('folder_list.txt')))
   }
   
-  volumes <- c(Home = fs::path_home(), "R Installation" = R.home(), getVolumes()())
-  shinyDirChoose(input, "choose_folder", roots = volumes, 
+  volumes <- c(Home = fs::path_home(), 'R Installation' = R.home(), getVolumes()())
+  shinyDirChoose(input, 'choose_folder', roots = volumes, 
                  session = session)
   
   observe({
@@ -382,6 +382,7 @@ shinyServer(function(input, output, session) {
     .file_levels
   })
   
+  # listen to the experiment selection checkboxes
   observe({
     if(length(file_levels()) > 0 & length(raw_files() > 0)) {
       # update the selection input
@@ -630,14 +631,20 @@ shinyServer(function(input, output, session) {
           module <- modules_in_tab[[.m]]
           
           # increment progress bar
-          progress$inc(0.45/length(modules), detail=paste0('Adding module ', .m, 'from tab ', .t))
+          progress$inc(0.45/length(modules), detail=paste0('Adding module ', .m, ' from tab ', .t))
+          
+          # create chunk name from module box title
+          chunk_name <- module$id
+          chunk_name <- gsub('\\s', '_', chunk_name)
+          chunk_name <- gsub('[=-\\.]', '_', chunk_name)
+          
           
           report <<- paste(report,
             paste0('### ', module$boxTitle, ' {.plot-title}'),
             '',
             module$help,
             '',
-            '```{r, echo=FALSE, warning = FALSE, message = FALSE}',
+            paste0('```{r ', chunk_name, ', echo=FALSE, warning = FALSE, message = FALSE}'),
             'options( warn = -1 )',
             paste0('params[["plots"]][[', .t, ']][[', .m, ']]'),
             sep='\n')
@@ -680,4 +687,3 @@ shinyServer(function(input, output, session) {
     }
   )
 })
-
