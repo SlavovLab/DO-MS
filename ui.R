@@ -1,10 +1,9 @@
 source('global.R')
 
-source('documentation_tab.R') # loads documentation_tab var
-source('report_tab.R') # loads report_tab var
-source('import_tab.R') # loads import_tab var
-source('settings_tab.R') # loads settings
-
+source(file.path('tabs', 'documentation_tab.R')) # loads documentation_tab var
+source(file.path('tabs', 'report_tab.R')) # loads report_tab var
+source(file.path('tabs', 'import_tab.R')) # loads import_tab var
+source(file.path('tabs', 'settings_tab.R')) # loads settings
 
 # list of menu items for switching tabs
 # add static items for static tabs first

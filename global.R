@@ -173,48 +173,48 @@ downloadButtonFixed <- function(outputId, label = "Download", class = NULL, ...)
 # dialog pops up in front of all windows, and does not explicitly rely
 # on the user having RStudio installed.
 
-Identify.OS = function(){
-  pl <- .Platform$OS.type
-  if(tolower(pl) == "windows"){
-    os = structure("windows", class = "character")
-  }
-  else{
-    si <- as.list(Sys.info())
-    if(tolower(si$sysname) == "linux"){
-      os = structure("Linux", class = "character")
-    }
-    if(tolower(si$sysname) == "darwin"){
-      os = structure("MacOSX", class = "character")
-    }
-  }
-  return(os)
-}
-
-choose_dir = function(){
-  os = Identify.OS()
-  if(tolower(os) == "windows") {
-    directory <- utils::choose.dir()
-  }
-  if(tolower(os) == "linux") {
-    directory <- system("zenity --file-selection --directory", intern = TRUE)
-  }
-  if(tolower(os) == "macosx") {
-    system(paste0("osascript folder_select.applescript"),
-      intern = FALSE, ignore.stderr = TRUE)
-    directory <- system("cat /tmp/R_folder && rm -rf /tmp/R_folder", intern = TRUE)
-    
-    # okay now time for some ugly regex
-    
-    # first, append a space onto the end of this string so the regex treats it the same
-    directory <- paste0(directory, ' ')
-    
-    # next, extract all items, defining separate items as being separated by "\ "
-    folders <- unlist(stringr::str_extract_all(directory, '(.*?)\\/\\s'))
-    
-    # strip the extra matched whitespace from folders
-    folders <- trimws(folders)
-    
-    return(c(folders))
-  }
-  return(directory)
-}
+# Identify.OS = function(){
+#   pl <- .Platform$OS.type
+#   if(tolower(pl) == "windows"){
+#     os = structure("windows", class = "character")
+#   }
+#   else{
+#     si <- as.list(Sys.info())
+#     if(tolower(si$sysname) == "linux"){
+#       os = structure("Linux", class = "character")
+#     }
+#     if(tolower(si$sysname) == "darwin"){
+#       os = structure("MacOSX", class = "character")
+#     }
+#   }
+#   return(os)
+# }
+# 
+# choose_dir = function(){
+#   os = Identify.OS()
+#   if(tolower(os) == "windows") {
+#     directory <- utils::choose.dir()
+#   }
+#   if(tolower(os) == "linux") {
+#     directory <- system("zenity --file-selection --directory", intern = TRUE)
+#   }
+#   if(tolower(os) == "macosx") {
+#     system(paste0("osascript folder_select.applescript"),
+#       intern = FALSE, ignore.stderr = TRUE)
+#     directory <- system("cat /tmp/R_folder && rm -rf /tmp/R_folder", intern = TRUE)
+#     
+#     # okay now time for some ugly regex
+#     
+#     # first, append a space onto the end of this string so the regex treats it the same
+#     directory <- paste0(directory, ' ')
+#     
+#     # next, extract all items, defining separate items as being separated by "\ "
+#     folders <- unlist(stringr::str_extract_all(directory, '(.*?)\\/\\s'))
+#     
+#     # strip the extra matched whitespace from folders
+#     folders <- trimws(folders)
+#     
+#     return(c(folders))
+#   }
+#   return(directory)
+# }

@@ -49,7 +49,7 @@ import_tab <- tabItem(tabName='import', fluidPage(
         #actionButton('choose_folder', 'Add folder to list',
         #             icon=icon('plus', lib='glyphicon')),
         #shinyFilesButton('files', label='File select', title='Please select a file', multiple=T),
-        shinyDirButton('choose_folder', label='Add folder to list', title='Please select a folder'),
+        shinyDirButton('choose_folder', label='Add folder to table', title='Please select a folder'),
         p('For help adding directories, please view ', 
           a(href='https://github.com/SlavovLab/SCoPE_QC/blob/master/documentation/adding_folders.pdf',
             target='_blank', 'this document')),
