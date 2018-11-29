@@ -57,7 +57,7 @@ Currently modules are limited to plotting and providing data for download. More 
 
 ## Hosting as a Server
 
-Our lab is currently hosting a demo server of this application at [http://do-ms.tunnel.halfgrain.com:8081](http://do-ms.tunnel.halfgrain.com:8081).
+Our lab is currently hosting a demo server of this application at [http://do-ms.tunnel.halfgrain.com:8081](http://do-ms.tunnel.halfgrain.com:8081). This version is a slightly custom-build that for example has password-protected file forms.
 
 As this application requires a large amount of computational power (CPU), on-hand memory (RAM), and possibly the storage of large amounts of mass-spec data (Storage), we do not recommend running this on a standalone server, as it is not cost-efficient. 
 
