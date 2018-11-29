@@ -94,10 +94,10 @@ misc_input_files <- list(
 )
 
 # load app.css into string
-app_css <- paste(readLines('app.css'), collapse='')
+app_css <- paste(readLines(file.path('resources', 'app.css')), collapse='')
 
 # load app.js into string
-app_js <- paste(readLines('app.js'), collapse='\n')
+app_js <- paste(readLines(file.path('resources', 'app.js')), collapse='\n')
 
 #textVar <- 1.1
 
