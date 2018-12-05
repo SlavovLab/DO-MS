@@ -15,7 +15,7 @@ init <- function() {
     plotdata$Charge[plotdata$Charge > 3] <- 4
     hc <- aggregate(plotdata$Intensity, 
                     by=list(Category=plotdata$Raw.file, plotdata$Charge), 
-                    FUN=sum)
+                    FUN=function(x) { sum(as.numeric(x)) })
     colnames(hc) <- c("Raw.file","Charge","Intensity")
     
     return(hc)
@@ -25,14 +25,15 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes(x=Raw.file, y=Intensity,colour=factor(Charge), group=Raw.file)) + 
-      geom_point(size = 2) + 
-      ylab("Number") + 
-      labs(x = "Experiment", y = "Total Ion Current", col = "Charge State") + 
+    ggplot(plotdata) + 
+      #geom_point(aes(x=Raw.file, y=Intensity,colour=factor(Charge), group=Raw.file), size = 2) + 
+      geom_bar(aes(x=Raw.file, y=Intensity, fill=factor(Charge), group=Raw.file), 
+               stat='identity', position='dodge2') +
       scale_y_log10() + 
-      scale_color_hue(labels = c("1","2","3",">3")) + 
-      labs(x = "Experiment", y = "Count", col = "Charge State") +
-      theme_base(input=input)
+      scale_fill_hue(labels = c("1","2","3",">3")) + 
+      labs(x = "Experiment", y = "Total Ion Current", fill = "Charge State") +
+    theme_base(input=input, show_legend=T)
+    
   }
   
   return(list(

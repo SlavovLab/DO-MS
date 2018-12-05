@@ -15,12 +15,12 @@ init <- function() {
     plotdata <- data()[[source.file]][,c("Raw.file","Charge")]
     
     plotdata$Charge[plotdata$Charge > 3] <- 4
-    plotdata_charge <- count(plotdata, c("Raw.file","Charge"))
+    plotdata_charge <- plyr::count(plotdata, c("Raw.file","Charge"))
     
     hc <- aggregate(plotdata_charge$freq, 
                     by=list(Category=plotdata_charge$Raw.file,
                             plotdata_charge$Charge), 
-                    FUN=sum)
+                    FUN=function(x) { sum(as.numeric(x)) })
     colnames(hc) <- c("Raw.file","Charge","Frequency")
     
     return(hc)
@@ -32,13 +32,13 @@ init <- function() {
     # get plot data
     plotdata <- .plotdata(data, input)
     
-    # Plot:
-    ggplot(plotdata, aes(x=Raw.file, y=Frequency,colour=factor(Charge), group=Raw.file)) + 
-      geom_point(size = 2) + 
-      #ylab("Number") + 
-      scale_color_hue(labels = c("1","2","3",">3")) + 
-      labs(x = "Experiment", y = "Count", col = "Charge State") +
-      theme_base(input=input)
+    ggplot(plotdata) + 
+      #geom_point(aes(x=Raw.file, y=Frequency,colour=factor(Charge), group=Raw.file), size = 2) + 
+      geom_bar(aes(x=Raw.file, y=Frequency, fill=factor(Charge), group=Raw.file), 
+               stat='identity', position='dodge2') +
+      scale_fill_hue(labels = c("1","2","3",">3")) + 
+      labs(x = "Experiment", y = "Count", fill = "Charge State") +
+      theme_base(input=input, show_legend=T)
   }
   
   return(list(
