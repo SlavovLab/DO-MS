@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '05 SCoPE-MS Diagnostics'
+  tab <- '050 SCoPE-MS Diagnostics'
   boxTitle <- 'Reporter ion intensity'
   help <- 'Plotting the TMT reporter intensities for a single run.'
   source.file <- 'evidence'

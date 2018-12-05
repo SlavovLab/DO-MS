@@ -107,6 +107,10 @@ ul.sidebar-menu ul.treeview-menu {
   margin-left: 0px !important;
 }
 
+.plot-module-body .shiny-html-output {
+  overflow-x: scroll;
+}
+
 /* loading indicator taken from:
 Mogens Melander (https://codepen.io/TrasherDK):
 https://codepen.io/TrasherDK/pen/XRzgOR
@@ -140,7 +144,9 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   position: absolute;
   width: 75px !important;
   height: 75px !important;
-  margin: 0 auto;
+  /*margin: 0 auto;*/
+  top: 185px;
+  left: 185px;
   background-color: #AAA;
   animation: rectangle 1.5s infinite ease-in-out;
 }
@@ -328,6 +334,25 @@ https://codepen.io/TrasherDK/pen/XRzgOR
 
 /* data table in import tab */
 #folder_table { }
+
+/* styles for empty folder table (while loading) */
+#folder_table:empty {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* loading indicator - same for recalculating plots */
+#folder_table:empty:before {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 75px !important;
+  height: 75px !important;
+  margin: 0 auto;
+  background-color: #AAA;
+  animation: rectangle 1.5s infinite ease-in-out;
+}
 
 #folder_table .dataTables_length label {
   font-weight: inherit;

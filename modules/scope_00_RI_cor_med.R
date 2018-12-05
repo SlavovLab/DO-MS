@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '05 SCoPE-MS Diagnostics'
+  tab <- '050 SCoPE-MS Diagnostics'
   boxTitle <- 'TMT Channel Spearman Correlations vs. Intensity'
   help <- 'Calculating the spearman correlation between the peptide quantitation in different
   TMT channels to the carry channel for every experiment, plotted against the median RI 

@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '07 DART-ID'
+  tab <- '070 DART-ID'
   boxTitle <- 'Increase in Confident PSMs'
   help <- 'Fold-change increase of PSMs at given confidence thresholds (in this case, FDR thresholds)'
   source.file <- 'evidence'
@@ -12,7 +12,7 @@ init <- function() {
     validate(need(data()[['evidence']],paste0("Upload evidence.txt")))
     
     # ensure that table has the DART-ID PEP
-    validate(need(data()[['evidence']][,'pep_updated'], 
+    validate(need('pep_updated' %in% colnames(data()[['evidence']]), 
                   paste0('Provide evidence.txt from DART-ID output, with updated PEP column')))
   }
   

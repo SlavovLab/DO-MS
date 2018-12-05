@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '07 DART-ID'
+  tab <- '070 DART-ID'
   boxTitle <- 'RT Alignment Error'
   help <- 'Alignment Error (Predicted RT - Observed RT) for the RT Alignment in DART-ID'
   source.file <- 'evidence'
@@ -12,8 +12,8 @@ init <- function() {
     validate(need(data()[['evidence']],paste0("Upload evidence.txt")))
     
     # ensure that table has the DART-ID residual RT
-    validate(need(data()[['evidence']][,'residual'], 
-                  paste0('Provide evidence.txt from DART-ID output, with residual RT column (\"residual\")')))
+    validate(need('residual' %in% colnames(data()[['evidence']]), 
+                  paste0('Provide evidence.txt from DART-ID output, with residual RT column \"residual\"')))
   }
   
   .plotdata <- function(data, input) {

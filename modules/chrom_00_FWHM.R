@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '01 Chromatography'
+  tab <- '010 Chromatography'
   boxTitle <- 'Elution profile: FWHM'
   help <- 'Plotting the distrution of elution profile widths at half the maximum intensity value for each peak.'
   source.file <- 'allPeptides'
@@ -34,7 +34,8 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    dynamic_width=75
   ))
 }
 

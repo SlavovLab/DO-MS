@@ -19,7 +19,7 @@ import_tab <- tabItem(tabName='import', fluidPage(
     tags$li(tags$a(href='#folder-select', '1. Select Folder(s)')),
     tags$li(tags$a(href='#file-select', '2. Select File(s)')),
     tags$li(tags$a(href='#load-data', '3. Load Data')),
-    tags$li(tags$a(href='#load-optional-data', '4. Load Optional Data')),
+    tags$li(tags$a(href='#upload-optional-data', '4. Upload Optional Data')),
     tags$li(tags$a(href='#rename-files', '5. Rename Files'))
   ),
   
@@ -107,20 +107,23 @@ import_tab <- tabItem(tabName='import', fluidPage(
     column(6,
       wellPanel(
         div(class='well-header', h4('Status')),
+        # div(class='selected-folders-output',
+        #     htmlOutput('selected_folders')
+        # ),
         htmlOutput('data_status')
       )
     )
   ),
   
   
-  ############################################
-  ###  STEP 4: LOAD OTHER DATA (optional)  ###
-  ############################################
+  ##############################################
+  ###  STEP 4: UPLOAD OTHER DATA (optional)  ###
+  ##############################################
   
-  a(name='load-optional-data'),
+  a(name='upload-optional-data'),
   div(class='import-header', span(class='num', '4'), 
-      h2('Load Other Data (optional)')),
-  p(class='import-help', 'Load other miscellaneous files, such as inclusion lists, individually.'),
+      h2('Upload Other Data (optional)')),
+  p(class='import-help', 'Upload other miscellaneous files, such as inclusion lists, individually.'),
   fixedRow(column(12,
     uiOutput('misc_input_forms')
   )),
@@ -135,7 +138,8 @@ import_tab <- tabItem(tabName='import', fluidPage(
   p('Rename raw file names to more readable or sensible names, for easier interpretation of figures'),
   wellPanel(
     div(class='well-header', h4('Raw File Renaming')),
-    p("Enter a comma-separated list of short labels for each Raw-file/exp"),
+    p('Enter a comma-separated list of short labels for each raw file/experiment. By default raw files will be named "Exp1, Exp2, Exp3, ..."'),
+    p('For example: "Control,Drug1,Drug2,Drug3,2xDrug1"'),
     textInput("Exp_Names", "Exp Names", value = "",
               width = NULL, placeholder = "Comma-separated Exp Names")
   )

@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '00 Sample Quality'
+  tab <- '030 Peptide Identifications'
   boxTitle <- 'Reporter ion intensity'
   help <- 'Plotting the TMT reporter intensities for a single run.'
   source.file <- 'evidence'

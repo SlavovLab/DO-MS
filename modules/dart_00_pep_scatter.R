@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '07 DART-ID'
+  tab <- '070 DART-ID'
   boxTitle <- 'Error Probability Update'
   help <- '2D Densities of PSM error probabilities, given by MaxQuant (Spectra) and DART-ID. Points below the 45 degree line indicate boosted confidence (and lowered error probability), and vice versa for above the 45 degree line. Set the PEP slider to 1 to see all PSMs regardless of initial confidence.'
   source.file <- 'evidence'
@@ -12,7 +12,7 @@ init <- function() {
     validate(need(data()[['evidence']],paste0("Upload evidence.txt")))
     
     # ensure that table has the DART-ID PEP
-    validate(need(data()[['evidence']][,'pep_updated'], 
+    validate(need('pep_updated' %in% colnames(data()[['evidence']]), 
              paste0('Provide evidence.txt from DART-ID output, with updated PEP column')))
   }
   

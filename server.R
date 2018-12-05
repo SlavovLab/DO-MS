@@ -1,4 +1,12 @@
+##################################################################
+###                                                            ###
+### SERVER                                                     ###
+###                                                            ###
+##################################################################
+
 source('global.R')
+source('build_modules.R')
+source('generate_report.R')
 
 shinyServer(function(input, output, session) {
   
@@ -35,14 +43,6 @@ shinyServer(function(input, output, session) {
     .folders <- isolate(folders())
     # list of selected files
     .input_files <- isolate(input$input_files)
-
-    # trigger native OS UI for choosing a folder, and store the directory it returns
-    #directories <- choose_dir()
-
-    # if the user cancelled the OS UI, then break out
-    #if(length(directories) == 0 | is.null(directories)) {
-    #  return()
-    #}
     
     # take folder name from shinyFiles
     directory <- parseDirPath(volumes, input$choose_folder)
@@ -455,105 +455,10 @@ shinyServer(function(input, output, session) {
   }), 1000)
   
   output$UserExpList <- renderText({ input$Exp_Names })
+  exp_sets <- reactive({ input$Exp_Sets }) %>% debounce(1000)
   
-  # load each module from the module list via. callModule
-  # each module is loaded by passing the moduleFunc field of the module
-  # data is only in one reactive named list -- passing in filtered_data
-  for(module in modules) { local({
-    m <- module
-    ns <- NS(m$id)
-    
-    output[[ns('plot')]] <- renderPlot({ 
-      m$plotFunc(filtered_data, input)
-    })
-    
-    output[[ns('downloadPDF')]] <- downloadHandler(
-      filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.pdf') },
-      content=function(file) {
-        ggsave(filename=file, plot=m$plotFunc(filtered_data, input), 
-               device='pdf', 
-               units=input$download_figure_units,
-               width=input$download_figure_width, 
-               height=input$download_figure_height)
-      }
-    )
-    
-    output[[ns('downloadPNG')]] <- downloadHandler(
-      filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.png') },
-      content=function(file) {
-        ggsave(filename=file, plot=m$plotFunc(filtered_data, input), 
-               # for some reason, specify the png device with a string instead of the
-               # straight device, and it doesn't print a handful of pixels
-               device='png', 
-               units=input$download_figure_units,
-               width=input$download_figure_width, 
-               height=input$download_figure_height)
-      }
-    )
-    
-    output[[ns('downloadData')]] <- downloadHandler(
-      filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.txt') },
-      content=function(file) {
-        m$validateFunc(filtered_data, input)
-        plotdata <- m$plotdataFunc(filtered_data, input)
-        write_tsv(plotdata, path=file)
-      }
-    )
-    
-  }) }
-  
-  # need local({}) to isolate each instance of the for loop - or else the output
-  # of each iteration will default to to the last one.
-  # see: https://gist.github.com/wch/5436415/
-  for(tab in tabs) { local({
-    modules_in_tab <- modules[sapply(modules, function(m) { 
-      gsub('([0-9])+(\\s|_)', '', m$tab) == tab 
-    })]
-    
-    plots <- lapply(modules_in_tab, function(m) {
-      ns <- NS(m$id)
-      # instead of using box() as provided by shinydashboard,
-      # we're going to hack in a similar div since we have to shove in additional elements
-      # taken from: https://github.com/rstudio/shinydashboard/blob/master/R/boxes.R
-      return(div(class='col-sm-6', div(class='box box-solid', 
-        style='',
-        # header
-        div(class='box-header',
-          h3(class='box-title', m$boxTitle),
-          tags$button(class='btn btn-secondary tooltip-btn', 
-                      `data-toggle`='tooltip', `data-placement`='right', title=m$help,
-            icon('question-sign', lib='glyphicon')  
-          ),
-          
-          div(class='box-tools pull-right',
-            tags$button(class='btn btn-box-tool', `data-widget`='collapse',
-                        shiny::icon('minus'))
-          )
-        ),
-        div(class='box-body',
-          plotOutput(ns('plot'), height=370)  
-        ),
-        # TODO: conditionalPanel which only displays the buttons when the relevant data is loaded
-        div(class='box-footer', 
-          conditionalPanel(
-            condition=paste0('output[\"', ns('plot'),'\"] != undefined'),
-            div(class='row', style='height:30px',
-              column(width=4,
-                downloadButtonFixed(ns('downloadPDF'), label='PDF')
-              ),
-              column(width=4,
-                downloadButtonFixed(ns('downloadPNG'), label='PNG')
-              ),
-              column(width=4,
-                downloadButtonFixed(ns('downloadData'), label='Data')
-              )
-            )
-          )
-        )
-      )))
-    })
-    output[[tab]] <- renderUI(plots)
-  }) }
+  attach_module_outputs(input, output, filtered_data, exp_sets)
+  render_modules(input, output)
   
   ######################################################################################
   ######################################################################################
@@ -562,142 +467,5 @@ shinyServer(function(input, output, session) {
   ######################################################################################
   ######################################################################################
   
-  output$download_report <- downloadHandler(
-    # For PDF output, change this to "report.pdf"
-    filename = function() {
-      name <- 'SCoPE_QC_Report'
-      switch(input$report_format,
-             html=paste0(name, '.html'),
-             pdf=paste0(name, '.pdf'))
-    },
-    content = function(file) {
-      
-      # init progress bar
-      progress <- shiny::Progress$new()
-      on.exit(progress$close())
-      progress$set(message='', value=0)
-      
-      # first 5% is init
-      # next 45% will be gathering materials
-      # leave last 50% for rmarkdown rendering
-      progress$inc(5/100, detail='Initializing')
-      
-      report <- paste(
-        '---',
-        'title: SCoPE QC Report',
-        'output:',
-      sep='\n')
-      
-      if(input$report_format == 'pdf') {
-        report <- paste(report,
-          '  pdf_document:',
-          #'    header-includes:',
-          #'      - \\usepackage{xcolor}',
-          #'      - \\usepackage{framed}',
-          #'      - \\usepackage{color}',
-          '    fig_caption: false',
-        sep='\n')
-      } else {
-        # default: HTML
-        .theme <- input$report_theme
-        report <- paste(report,
-          '  html_document:',
-          paste0('    theme: ', .theme),
-          #'    highlight: tango',
-          '    fig_caption: false',
-          '    df_print: paged',            
-        sep='\n')
-      }
-      
-      # add figure options
-      report <- paste(report,
-        paste0('    fig_width: ', input$report_figure_width),
-        paste0('    fig_height: ', input$report_figure_height),
-        paste0('    dev: ', input$report_figure_format),
-      sep='\n')
-      
-      # add params
-      report <- paste(report,
-        'params:',
-        '  plots: NA',
-        '---',
-        '# {.tabset}',
-      sep='\n')
-      
-      params <- list()
-      params[['plots']] <- list()
-
-      for(t in 1:length(tabs)) { local({
-        .t <- t
-        tab <- tabs[.t]
-        
-        report <<- paste(report,
-          paste0('## ', tab),
-          sep='\n')
-
-        modules_in_tab <- modules[sapply(modules, function(m) { 
-          gsub('([0-9])+(\\s|_)', '', m$tab) == tab 
-        })]
-        plots <- list()
-
-        for(m in 1:length(modules_in_tab)) { local({
-          .m <- m
-          module <- modules_in_tab[[.m]]
-          
-          # increment progress bar
-          progress$inc(0.45/length(modules), detail=paste0('Adding module ', .m, ' from tab ', .t))
-          
-          # create chunk name from module box title
-          chunk_name <- module$id
-          chunk_name <- gsub('\\s', '_', chunk_name)
-          chunk_name <- gsub('[=-\\.]', '_', chunk_name)
-          
-          
-          report <<- paste(report,
-            paste0('### ', module$boxTitle, ' {.plot-title}'),
-            '',
-            module$help,
-            '',
-            paste0('```{r ', chunk_name, ', echo=FALSE, warning = FALSE, message = FALSE}'),
-            'options( warn = -1 )',
-            paste0('params[["plots"]][[', .t, ']][[', .m, ']]'),
-            sep='\n')
-
-          plots[[.m]] <<- tryCatch(module$plotFunc(filtered_data, input),
-            error = function(e) {
-              # dummy plot
-              #qplot(0, 0)
-              paste0('Plot failed to render. Reason: ', e)
-            },
-            finally={}
-          )
-          
-          report <<- paste(report, '```', '', sep='\n')
-        }) } # end module loop
-        
-        params[['plots']][[.t]] <<- plots
-        
-        report <<- paste(report,
-          '',
-          sep='\n')
-        
-      }) } # end tab loop
-      
-      # last 50% of progress
-      progress$inc(5/100, detail='Writing temporary files')
-      
-      tempReport <- file.path(tempdir(), "tempReport.Rmd")
-      write_file(x=report, path=tempReport, append=FALSE)
-      
-      progress$inc(5/100, detail='Rendering report (this may take a while)')
-      
-      rmarkdown::render(tempReport, output_file = file,
-                        params = params,
-                        envir = new.env(parent = globalenv())
-      )
-      
-      progress$inc(40/100, detail='Finishing')
-
-    }
-  )
+  download_report(input, output, filtered_data, exp_sets)
 })

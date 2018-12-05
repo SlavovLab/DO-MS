@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '02 Instrument Performance'
+  tab <- '020 Instrument Performance'
   boxTitle <- 'Injection times, no PSM resulting'
   help <- 'Plotting distribution of injection times for MS2 events that did not result in a PSM.'
   source.file <- 'msmsScans'
@@ -34,7 +34,8 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    dynamic_width=75
   ))
 }
 

@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '02 Instrument Performance'
+  tab <- '020 Instrument Performance'
   boxTitle <- 'Apex Offset'
   help <- 'Plotting the distance from the peak of the elution profile the MS2
     events were executed.'
@@ -41,6 +41,7 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    dynamic_width=75
   ))
 }

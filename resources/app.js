@@ -20,6 +20,19 @@ $(document).ready(function() {
   $('#files_check_none').click(function() {
     $('input[name="input_files"]').removeAttr("checked");
   });
+  
+  
+  // activate tooltips
+  // see: https://getbootstrap.com/docs/3.3/javascript/#tooltips
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+  
+  // activate popovers
+  // see: https://getbootstrap.com/docs/3.3/javascript/#popovers
+  $(function () {
+    $('[data-toggle="popover"]').popover()
+  })
 
   /*var a = document.getElementById('fileIn');
   if(a.value === "") {
