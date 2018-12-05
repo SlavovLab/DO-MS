@@ -22,6 +22,8 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=100) + 
       coord_flip() + 
+      scale_x_log10() +
+      labs(y='Count', x='Intensity') +
       theme_base(input=input)
   }
   
