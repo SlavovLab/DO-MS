@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '05 SCoPE-MS Diagnostics'
+  tab <- '050 SCoPE-MS Diagnostics'
   boxTitle <- 'Missing data per TMT channel'
   help <- 'Calculating the missing values reporter per run per TMT channel, reported as 0 by MaxQuant.'
   source.file<-"evidence"

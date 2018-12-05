@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '00 Sample Quality'
+  tab <- '030 Peptide Identifications'
   boxTitle <- 'Miscleavage rate'
   help <- 'Plotting frequency of peptide miscleavages.'
   source.file <- 'evidence'

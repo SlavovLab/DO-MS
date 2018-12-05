@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '07 DART-ID'
+  tab <- '070 DART-ID'
   boxTitle <- 'Increase in Confident PSMs'
   help <- 'Fold-change increase of PSMs at given confidence thresholds (in this case, FDR thresholds)'
   source.file <- 'evidence'

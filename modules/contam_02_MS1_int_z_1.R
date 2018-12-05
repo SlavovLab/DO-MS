@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '03 Contamination'
+  tab <- '040 Contamination'
   boxTitle <- 'MS1 Intensity, +1 ions'
   help <- 'Plotting the intensity distribution of +1 ions, a diagnostic of non-peptide contaminants'
   source.file <- 'allPeptides'

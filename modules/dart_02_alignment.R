@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '07 DART-ID'
+  tab <- '070 DART-ID'
   boxTitle <- 'RT Alignment Error'
   help <- 'Alignment Error (Predicted RT - Observed RT) for the RT Alignment in DART-ID'
   source.file <- 'evidence'

@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '02 Instrument Performance'
+  tab <- '020 Instrument Performance'
   boxTitle <- 'Injection times, PSM resulting'
   help <- 'Plotting distribution of injection times for MS2 events that did result in a PSM.'
   source.file <- 'msmsScans'

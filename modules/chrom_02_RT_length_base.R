@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '01 Chromatography'
+  tab <- '010 Chromatography'
   boxTitle <- 'Retention length of peptides at base'
   help <- 'Plotting the retention length of identified peptide peaks at the base.'
   source.file <- 'evidence'
