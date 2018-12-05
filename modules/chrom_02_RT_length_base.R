@@ -24,7 +24,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=120) + 
       coord_flip() + 
-      xlab('Retention Lengths at base (sec)') +
+      labs(x='Retention Lengths at base (sec)', y='Count') +
       theme_base(input=input)
   }
   

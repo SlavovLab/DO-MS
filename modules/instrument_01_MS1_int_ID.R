@@ -23,7 +23,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=100) + 
       coord_flip() + 
-      xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
+      labs(x=expression(bold("Log"[10]*" Precursor Intensity")), y='Count') +
       theme_base(input=input)
   }
   

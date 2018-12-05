@@ -23,7 +23,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram() + 
       coord_flip() + 
-      xlab("Ion Injection Time (ms)") +
+      labs(x="Ion Injection Time (ms)", y='Count') +
       theme_base(input=input)
   }
   

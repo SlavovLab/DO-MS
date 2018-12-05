@@ -22,7 +22,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=10) + 
       coord_flip() + 
-      xlab("Missed Cleavages") +
+      labs(x="Missed Cleavages", y='Count') +
       theme_base(input=input)
   }
   

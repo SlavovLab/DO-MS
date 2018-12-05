@@ -23,7 +23,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins = 49) + 
       coord_flip() +  
-      xlab("Retention Length FWHM (sec)") +
+      labs(x='Retention Length FWHM (sec)', y='Count') +
       theme_base(input=input)
   }
   

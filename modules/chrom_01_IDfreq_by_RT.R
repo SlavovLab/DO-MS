@@ -24,6 +24,7 @@ init <- function() {
       geom_histogram(bins=100) + 
       coord_flip() + 
       xlim(10, maxRT) +
+      labs(x='Retention Time (min)', y='Count') +
       theme_base(input=input)
   }
   

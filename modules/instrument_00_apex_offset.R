@@ -30,7 +30,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram() + 
       coord_flip() + 
-      xlab("Apex Offset (sec)") + 
+      labs(x="Apex Offset (sec)", y='Count') + 
       theme_base(input=input)
   }
   
