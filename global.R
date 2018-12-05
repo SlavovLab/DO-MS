@@ -101,7 +101,7 @@ app_js <- paste(readLines(file.path('resources', 'app.js')), collapse='\n')
 
 #textVar <- 1.1
 
-theme_base <- function(input=list()) {
+theme_base <- function(input=list(), show_legend=F) {
   
   # default values
   axis_font_size <- ifelse(is.null(input[['figure_axis_font_size']]), 
@@ -116,12 +116,14 @@ theme_base <- function(input=list()) {
   
   .theme <- theme(
     panel.background = element_rect(fill="white", colour = "white"), 
-    legend.position="none",
     axis.text.x = element_text(angle=45, hjust=1, margin=margin(r=45)),
     axis.title = element_text(size=title_font_size, face="bold"), 
     axis.text = element_text(size=axis_font_size),
     strip.text = element_text(size=facet_font_size)
   )
+  if(!show_legend) {
+    .theme <- .theme + theme(legend.position="none")
+  }
   
   if(show_grid) {
     .theme <- .theme + theme(
