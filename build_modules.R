@@ -9,7 +9,7 @@
 source('global.R')
 
 # attach module outputs/buttons to functions
-attach_module_outputs <- function(input, output, filtered_data) {
+attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
   
   # load each module from the module list via. callModule
   # each module is loaded by passing the moduleFunc field of the module
@@ -23,8 +23,26 @@ attach_module_outputs <- function(input, output, filtered_data) {
     m <- module
     ns <- NS(m$id)
     
-    output[[ns('plot')]] <- renderPlot({ 
+    output[[ns('plot')]] <- renderPlot({
       m$plotFunc(filtered_data, input)
+    })
+    
+    output[[ns('plot.ui')]] <- renderUI({
+      
+      # plot dynamic width, based on number of experiments?
+      plot_width <- '100%'
+      if(!is.null(m$dynamic_width)) {
+        if(!is.null(exp_sets())) {
+          num_files <- length(exp_sets())
+          plot_width <- paste0((num_files * m$dynamic_width) + 50, 'px')
+        } else {
+          plot_width='400px'
+        }
+      }
+      
+      plotOutput(ns('plot'), 
+                 width=plot_width,
+                 height='370px')
     })
     
     output[[ns('downloadPDF')]] <- downloadHandler(
@@ -97,8 +115,9 @@ render_modules <- function(input, output) {
                             shiny::icon('minus'))
           )
         ),
-        div(class='box-body',
-          plotOutput(ns('plot'), height=370)  
+        div(class='box-body plot-module-body',
+          #plotOutput(ns('plot'), height=370)  
+          uiOutput(ns('plot.ui'))
         ),
         div(class='box-footer', 
           # only display the below buttons when the plot is displayed

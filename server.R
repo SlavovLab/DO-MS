@@ -455,8 +455,9 @@ shinyServer(function(input, output, session) {
   }), 1000)
   
   output$UserExpList <- renderText({ input$Exp_Names })
+  exp_sets <- reactive({ input$Exp_Sets }) %>% debounce(1000)
   
-  attach_module_outputs(input, output, filtered_data)
+  attach_module_outputs(input, output, filtered_data, exp_sets)
   render_modules(input, output)
   
   ######################################################################################
@@ -466,5 +467,5 @@ shinyServer(function(input, output, session) {
   ######################################################################################
   ######################################################################################
   
-  output$download_report <- download_report(input, output, filtered_data)
+  download_report(input, output, filtered_data, exp_sets)
 })

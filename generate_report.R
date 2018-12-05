@@ -7,8 +7,8 @@
 
 source('global.R')
 
-download_report <- function(input, output, filtered_data) {
-  return(downloadHandler(
+download_report <- function(input, output, filtered_data, exp_sets) {
+  output$download_report <- downloadHandler(
     filename = function() {
       name <- 'SCoPE_QC_Report'
       switch(input$report_format,
@@ -97,13 +97,29 @@ download_report <- function(input, output, filtered_data) {
           chunk_name <- gsub('\\s', '_', chunk_name)
           chunk_name <- gsub('[=-\\.]', '_', chunk_name)
           
+          # if dynamic plot width is defined, then inject that into this
+          # R-markdown chunk instead
+          # because dynamic width is defined in pixels -- need to convert to inches
+          
+          # I know this is variable between screens and whatever, 
+          # but set this as the default for now
+          ppi <- 75
+          
+          dynamic_plot_width = ''
+          if(!is.null(module$dynamic_width)) {
+            num_files <- length(exp_sets())
+            dynamic_plot_width <- paste0(', fig.width=', ceiling(num_files * module$dynamic_width / ppi) + 1)
+          }
           
           report <<- paste(report,
                            paste0('### ', module$boxTitle, ' {.plot-title}'),
                            '',
                            module$help,
                            '',
-                           paste0('```{r ', chunk_name, ', echo=FALSE, warning = FALSE, message = FALSE}'),
+                           paste0('```{r ', chunk_name, ', echo=FALSE, warning = FALSE, message = FALSE', 
+                                  # put custom width definition. if it doesn't exist, this variable will be empty
+                                  dynamic_plot_width,
+                                  '}'),
                            'options( warn = -1 )',
                            paste0('params[["plots"]][[', .t, ']][[', .m, ']]'),
                            sep='\n')
@@ -144,5 +160,5 @@ download_report <- function(input, output, filtered_data) {
       progress$inc(40/100, detail='Finishing')
       
     }
-  ))
+  )
 }
