@@ -12,7 +12,7 @@ init <- function() {
     validate(need(data()[['evidence']],paste0("Upload evidence.txt")))
     
     # ensure that table has the DART-ID PEP
-    validate(need(data()[['evidence']][,'pep_updated'], 
+    validate(need('pep_updated' %in% colnames(data()[['evidence']]), 
                   paste0('Provide evidence.txt from DART-ID output, with updated PEP column')))
   }
   

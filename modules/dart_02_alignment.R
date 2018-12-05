@@ -12,7 +12,7 @@ init <- function() {
     validate(need(data()[['evidence']],paste0("Upload evidence.txt")))
     
     # ensure that table has the DART-ID residual RT
-    validate(need(data()[['evidence']][,'residual'], 
+    validate(need('residual' %in% colnames(data()[['evidence']]), 
                   paste0('Provide evidence.txt from DART-ID output, with residual RT column (\"residual\")')))
   }
   
