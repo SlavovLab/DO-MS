@@ -10,7 +10,8 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c('Raw.file', 'Charge', 'm.z')]
+    plotdata <- data()[[source.file]][,c('Raw.file', 'Charge', 'm.z')] %>% 
+      filter(Charge == 1)
     return(plotdata)
   }
   
@@ -18,7 +19,7 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata[plotdata$Charge == 1, ], 'm.z') + 
+    ggplot(plotdata, aes(m.z)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=100) + 
       coord_flip() + 
@@ -32,6 +33,7 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    dynamic_width=75
   ))
 }
