@@ -78,7 +78,19 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    
+    # dynamic width - scale the width of this plot to the number of experiments
+    # selected for plotting. used for many of the default plots, such as the
+    # vertical histograms or boxplots
+    # units are in pixels per experiment. 
+    # when downloading figures or generating a report, pixels are converted to
+    # inches with the ratio (PPI -- pixels-per-inch) of 75.
+    # i.e., 75 pixels -> 1 inch. Fractions of inches are rounded up.
+    #
+    # if you do not intend to use dynamic width, then remove this line.
+    dynamic_width=75
+    
   ))
 }
 
