@@ -34,20 +34,13 @@ We are in the process of submitting this application to the CRAN for easier inst
 
 ## Running
 
-You can run the application by running the script ```start_server.sh``` (OSX/Linux), or ```start_server.bat``` (Windows).
-For OSX/Linux, ```Rscript``` must be available on the path, and for Windows, 
-you will need to edit the ```start_server.bat``` script to point to the specific ```Rscript.exe``` executable.
-
-If you are having trouble loading ```shiny```, please confirm that you have installed the package in the "Installation" step. If so, then you may need to define a new environment variable, ```R_LIBS_USER```, that points to the library path of your R installation. See [this StackOverflow answer](https://stackoverflow.com/a/19662905) for more details on this issue.
-
-The app can also be run directly from RStudio by opening the ```SCoPE_QC.Rproj``` Rproject file 
+The easiest way to run the app is directly through RStudio, by opening the ```SCoPE_QC.Rproj``` Rproject file 
 and clicking the "Run App" button at the top of the application.
 
-You can also run the application with an Rscript, by running the command:
-```{r}
-library(shiny)
-runApp(appDir='/path/to/SCoPE_QC/')
-```
+You can also run the application by running the script ```start_server.sh``` (OSX/Linux), or ```start_server.bat``` (Windows). This option is less desirable as some of the dependencies bundled by RStudio have to be found or loaded manually (see [pandoc requirements](https://github.com/SlavovLab/SCoPE_QC/blob/master/documentation/pandoc.md))
+For OSX/Linux, ```Rscript``` must be available on the path, and for Windows, you will need to edit the ```start_server.bat``` script to point to the specific ```Rscript.exe``` executable.
+
+If you are having trouble loading ```shiny```, please confirm that you have installed the package in the "Installation" step. If so, then you may need to define a new environment variable, ```R_LIBS_USER```, that points to the library path of your R installation. See [this StackOverflow answer](https://stackoverflow.com/a/19662905) for more details on this issue.
 
 ## Customization
 
