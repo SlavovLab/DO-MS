@@ -19,18 +19,10 @@ shinyServer(function(input, output, session) {
     folders <- reactiveVal(as.data.frame(read_tsv('folder_list.txt')))
   }
   
-  volumes <- c(Home = fs::path_home(), 'R Installation' = R.home(), getVolumes()())
+  volumes <- c(getVolumes()(), Home = fs::path_home())
   
-  # first set default root to home
+  # set default root to OS drive
   default_root <- names(volumes)[1]
-  
-  if(tolower(.Platform$OS.type) == 'windows') {
-    default_root <- 'Home'
-  }
-  # if on OSX, then set default root directory to "Macintosh HD"
-  else if(tolower(as.list(Sys.info())$sysname) == 'darwin' & any(grepl('Macintosh HD', volumes))) {
-    default_root <- names(volumes)[grep('Macintosh HD', volumes)]
-  }
   
   # launch shinyFiles
   shinyDirChoose(input, 'choose_folder', roots = volumes, 
@@ -253,7 +245,6 @@ shinyServer(function(input, output, session) {
         "text/csv",
         "text/comma-separated-values,text/plain",
         ".csv",'.txt', options(shiny.maxRequestSize=1000*1024^2) 
-        #".csv",'.txt', options(shiny.maxRequestSize=300*1024^2) # Changed 20180924 due to Toni break
       )
     )
   }
