@@ -65,9 +65,9 @@ We are hosting our server on a desktop machine, and making the server publicly a
 
 ## Search Engines Other Than MaxQuant
 
-This application is currently maintained for MaxQuant >= 1.6.0.16. We are working on a future version of this application that will be compatible with outputs from any search engine.
+This application is currently maintained for MaxQuant >= 1.6.0.16. Adapting this application to other search engines is straightfowards but does require some code editing. Please see [this document on implementing other search engines](https://github.com/SlavovLab/SCoPE_QC/blob/master/implement_other_search_engines.md) for more detailed instructions.
 
 ## Help!
 
 For any bugs, questions, or feature requests, 
-please use the GitHub [issue system](https://github.com/SlavovLab/SCoPE_QC/issues) to contact the developers.
+please use the [GitHub issue system](https://github.com/SlavovLab/SCoPE_QC/issues) to contact the developers.
