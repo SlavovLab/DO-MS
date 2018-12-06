@@ -144,9 +144,8 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   position: absolute;
   width: 75px !important;
   height: 75px !important;
-  /*margin: 0 auto;*/
-  top: 185px;
-  left: 185px;
+  top: calc(50% - 37px);
+  left: calc(50% - 37px);
   background-color: #AAA;
   animation: rectangle 1.5s infinite ease-in-out;
 }
