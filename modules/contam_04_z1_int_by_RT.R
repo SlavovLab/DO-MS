@@ -8,13 +8,14 @@ init <- function() {
   source.file <- 'allPeptides'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
+    validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
   }
   
   .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]][,c("Raw.file","Charge","Intensity","Retention.time")]
     
     plotdata <- plotdata[plotdata$Charge == 1,]
+    plotdata$Intensity[plotdata$Intensity == 0] <- NA
     plotdata$Retention.time <- floor(plotdata$Retention.time)
     
     return(plotdata)
@@ -24,11 +25,11 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes(x = Retention.time, y = Intensity)) + 
-      geom_bar(stat = 'identity', width= 1) + 
+    ggplot(plotdata, aes(x=Retention.time, y=Intensity)) + 
+      geom_bar(stat='identity', width=1) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       coord_flip() + 
-      scale_y_log10() + 
+      #scale_y_continuous(trans='log10', limits=c(NA, 12)) + 
       labs(x="Retention Time (min)", y=expression(bold("Precursor Intensity"))) +
       theme_base(input=input)
   }
