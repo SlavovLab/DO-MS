@@ -28,8 +28,8 @@ init <- function() {
       geom_bar(stat = 'identity', width= 1) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       coord_flip() + 
-      xlab("Retention Time (min)") + 
-      ylab(expression(bold("Precursor Intensity"))) +
+      scale_y_log10() + 
+      labs(x="Retention Time (min)", y=expression(bold("Precursor Intensity"))) +
       theme_base(input=input)
   }
   

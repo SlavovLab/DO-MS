@@ -20,7 +20,7 @@ init <- function() {
     hc <- aggregate(plotdata_charge$freq, 
                     by=list(Category=plotdata_charge$Raw.file,
                             plotdata_charge$Charge), 
-                    FUN=function(x) { sum(as.numeric(x)) })
+                    FUN=function(x) { sum(as.numeric(x), na.rm=T) })
     colnames(hc) <- c("Raw.file","Charge","Frequency")
     
     return(hc)
