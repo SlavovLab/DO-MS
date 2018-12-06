@@ -10,6 +10,17 @@ source('global.R')
 
 # attach module outputs/buttons to functions
 attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
+
+  # helper function to generate figure widths for figures with dynamic widths
+  dynamic_fig_width <- function(num_exps, width_per_exp) {
+    # PPI is static. maybe in the future make this dynamic based on the system
+    # or graphics device
+    ppi <- 75
+    # convert initial dynamic width (in pixels) to inches using PPI
+    width_per_exp <- width_per_exp / ppi
+    
+    return(ceiling((width_per_exp * num_exps) + 1))
+  }
   
   # load each module from the module list via. callModule
   # each module is loaded by passing the moduleFunc field of the module
@@ -29,7 +40,7 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     
     output[[ns('plot.ui')]] <- renderUI({
       
-      # plot dynamic width, based on number of experiments?
+      # use dynamic width, based on number of experiments
       plot_width <- '100%'
       if(!is.null(m$dynamic_width)) {
         if(!is.null(exp_sets())) {
@@ -45,36 +56,78 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
                  height='370px')
     })
     
+    
+    
+    
     output[[ns('downloadPDF')]] <- downloadHandler(
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.pdf') },
       content=function(file) {
+        
+        # create progress bar
+        progress <- shiny::Progress$new()
+        on.exit(progress$close())
+        progress$set(message='Generating Figure...', value=0)
+        
+        # use dynamic width, based on number of experiments
+        fig_width <- input$download_figure_width
+        if(!is.null(m$dynamic_width)) {
+          fig_width <- dynamic_fig_width(isolate(length(exp_sets())), m$dynamic_width)
+        }
+        
         ggsave(filename=file, plot=m$plotFunc(filtered_data, input), 
                device='pdf', 
                units=input$download_figure_units,
-               width=input$download_figure_width, 
+               width=fig_width, 
                height=input$download_figure_height)
+        
+        # finish progress bar
+        progress$inc(1, detail='')
       }
     )
     
     output[[ns('downloadPNG')]] <- downloadHandler(
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.png') },
       content=function(file) {
+        
+        # create progress bar
+        progress <- shiny::Progress$new()
+        on.exit(progress$close())
+        progress$set(message='Generating Figure...', value=0)
+        
+        # use dynamic width, based on number of experiments
+        fig_width <- input$download_figure_width
+        if(!is.null(m$dynamic_width)) {
+          fig_width <- dynamic_fig_width(isolate(length(exp_sets())), m$dynamic_width)
+        }
+        
         ggsave(filename=file, plot=m$plotFunc(filtered_data, input), 
                # for some reason, specify the png device with a string instead of the
-               # straight device, and it doesn't print a handful of pixels
+               # direct device handle, and it doesn't print a handful of pixels
                device='png', 
                units=input$download_figure_units,
-               width=input$download_figure_width, 
+               width=fig_width, 
                height=input$download_figure_height)
+        
+        # finish progress bar
+        progress$inc(1, detail='')
       }
     )
     
     output[[ns('downloadData')]] <- downloadHandler(
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.txt') },
       content=function(file) {
+        
+        # create progress bar
+        progress <- shiny::Progress$new()
+        on.exit(progress$close())
+        progress$set(message='Gathering Data...', value=0)
+        
         m$validateFunc(filtered_data, input)
         plotdata <- m$plotdataFunc(filtered_data, input)
         write_tsv(plotdata, path=file)
+        
+        # finish progress bar
+        progress$inc(1, detail='')
       }
     )
     
