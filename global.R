@@ -162,6 +162,7 @@ downloadButtonFixed <- function(outputId, label = "Download", class = NULL, ...)
     )
 }
 
+# stolen from https://github.com/r-lib/rappdirs/blob/master/R/utils.r
 get_os <- function() {
   if (.Platform$OS.type == "windows") { 
     "win"
