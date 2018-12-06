@@ -12,7 +12,11 @@ init <- function() {
   .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]][,c("Raw.file","Charge","Intensity")]
     
+    # aggregate charge states greater than 3
     plotdata$Charge[plotdata$Charge > 3] <- 4
+    # make sure that no intensities are 0 -- will trip up the log10 scale
+    plotdata$Intensity[plotdata$Intensity == 0] <- NA
+    
     hc <- aggregate(plotdata$Intensity, 
                     by=list(Category=plotdata$Raw.file, plotdata$Charge), 
                     FUN=function(x) { sum(as.numeric(x)) })
