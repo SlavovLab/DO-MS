@@ -337,7 +337,7 @@ https://codepen.io/TrasherDK/pen/XRzgOR
 
 /* styles for empty folder table (while loading) */
 #folder_table:empty {
-  min-height: 200px;
+  min-height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
