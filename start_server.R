@@ -1,9 +1,14 @@
 #!/bin/R
 
-r <- getOption('repos')
-r['CRAN'] <- 'https://cloud.r-project.org'
-options(repos=r)
+repos <- getOption('repos')
+repos['CRAN'] <- 'https://cloud.r-project.org'
+
+options(repos=repos)
 
 library(shiny)
 
-shiny::runApp(getwd(), port=8080)
+port <- 8080
+host <- '127.0.0.1'
+
+shiny::runApp(getwd(), host=host, port=port, launch.browser = T)
+
