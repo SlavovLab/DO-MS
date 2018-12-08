@@ -1,17 +1,20 @@
 init <- function() {
   
-  tab <- '00 Sample Quality'
+  tab <- '030 Peptide Identifications'
   boxTitle <- 'Reporter ion intensity'
   help <- 'Plotting the TMT reporter intensities for a single run.'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
+    validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
+    # require reporter ion quantification data
+    validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[[source.file]]))), 
+                  paste0('Loaded data does not contain reporter ion quantification')))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- dplyr::select(data()[[source.file]],starts_with("Reporter.intensity.corrected"))
-    plotdata <- melt(plotdata)
+    plotdata <- data()[[source.file]] %>% dplyr::select(dplyr::starts_with("Reporter.intensity.corrected"))
+    plotdata <- reshape2::melt(plotdata)
     plotdata$log10tran <- log10(plotdata$value)
     return(plotdata)
   }

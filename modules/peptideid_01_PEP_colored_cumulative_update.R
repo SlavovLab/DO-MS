@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '00 Sample Quality'
+  tab <- '030 Peptide Identifications'
   boxTitle <- 'Number of Confident Identifications'
   help <- 'Plotting the number of peptides identified at each given confidence
     level.'

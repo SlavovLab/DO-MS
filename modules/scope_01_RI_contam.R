@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '05 SCoPE-MS Diagnostics'
+  tab <- '050 SCoPE-MS Diagnostics'
   boxTitle <- 'Reporter Ion Intensities vs. Carrier Intensities'
   help <- 'Comparing the reporter ion intensities for all TMT channels
   to the carrier channel, chosen automatically as the most intense 
@@ -9,6 +9,11 @@ init <- function() {
   
   .validate <- function(data, input) {
     validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
+    
+    # require reporter ion quantification data
+    validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[[source.file]]))), 
+                  paste0('Loaded data does not contain reporter ion quantification')))
+    
     plotdata <- data()[[source.file]]
     validate(need((length(unique(plotdata[,"Raw.file"])) == 1),"Please select a single experiment"))
   }

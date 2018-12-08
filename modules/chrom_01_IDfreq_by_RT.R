@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '01 Chromatography'
+  tab <- '010 Chromatography'
   boxTitle <- 'Identification frequency across gradient'
   help <- 'Plotting the frequency of peptide identification across thechromatographic gradient.'
   source.file <- 'evidence'
@@ -24,6 +24,7 @@ init <- function() {
       geom_histogram(bins=100) + 
       coord_flip() + 
       xlim(10, maxRT) +
+      labs(x='Retention Time (min)', y='Count') +
       theme_base(input=input)
   }
   
@@ -34,6 +35,7 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    dynamic_width=75
   ))
 }

@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '01 Chromatography'
+  tab <- '010 Chromatography'
   boxTitle <- 'Retention length of peptides at base'
   help <- 'Plotting the retention length of identified peptide peaks at the base.'
   source.file <- 'evidence'
@@ -24,7 +24,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=120) + 
       coord_flip() + 
-      xlab('Retention Lengths at base (sec)') +
+      labs(x='Retention Lengths at base (sec)', y='Count') +
       theme_base(input=input)
   }
   
@@ -35,6 +35,7 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    dynamic_width=75
   ))
 }

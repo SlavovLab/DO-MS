@@ -27,8 +27,8 @@ if(length(new.packages)) install.packages(new.packages, dependencies = TRUE)
 library(shiny)
 library(shinydashboard)
 library(shinyWidgets)
-library(dplyr)
 library(plyr)
+library(dplyr)
 library(ggplot2) 
 library(reshape2)
 library(RColorBrewer)
@@ -94,14 +94,14 @@ misc_input_files <- list(
 )
 
 # load app.css into string
-app_css <- paste(readLines('app.css'), collapse='')
+app_css <- paste(readLines(file.path('resources', 'app.css')), collapse='')
 
 # load app.js into string
-app_js <- paste(readLines('app.js'), collapse='\n')
+app_js <- paste(readLines(file.path('resources', 'app.js')), collapse='\n')
 
 #textVar <- 1.1
 
-theme_base <- function(input=list()) {
+theme_base <- function(input=list(), show_legend=F) {
   
   # default values
   axis_font_size <- ifelse(is.null(input[['figure_axis_font_size']]), 
@@ -116,12 +116,14 @@ theme_base <- function(input=list()) {
   
   .theme <- theme(
     panel.background = element_rect(fill="white", colour = "white"), 
-    legend.position="none",
     axis.text.x = element_text(angle=45, hjust=1, margin=margin(r=45)),
     axis.title = element_text(size=title_font_size, face="bold"), 
     axis.text = element_text(size=axis_font_size),
     strip.text = element_text(size=facet_font_size)
   )
+  if(!show_legend) {
+    .theme <- .theme + theme(legend.position="none")
+  }
   
   if(show_grid) {
     .theme <- .theme + theme(
@@ -160,63 +162,17 @@ downloadButtonFixed <- function(outputId, label = "Download", class = NULL, ...)
     )
 }
 
-# taken from easycsv package
-# https://github.com/bogind/easycsv
-#
-# rationale for using this -- native OS UI is much more intuitive than the one
-# provided by 'shinyFiles'. behavior for linux only works for ubuntu, but we
-# will cross that bridge when we get to it (maybe default to shinyFiles if
-# the detected OS is distro other than ubuntu)
-#
-# only change is in osx, changing the target of the osascript
-# from "RStudio" to a more general "SystemUIServer" so that the
-# dialog pops up in front of all windows, and does not explicitly rely
-# on the user having RStudio installed.
-
-Identify.OS = function(){
-  pl <- .Platform$OS.type
-  if(tolower(pl) == "windows"){
-    os = structure("windows", class = "character")
+# stolen from https://github.com/r-lib/rappdirs/blob/master/R/utils.r
+get_os <- function() {
+  if (.Platform$OS.type == "windows") { 
+    "win"
+  } else if (Sys.info()["sysname"] == "Darwin") {
+    "mac" 
+  } else if (.Platform$OS.type == "unix") { 
+    "unix"
+  } else {
+    stop("Unknown OS")
   }
-  else{
-    si <- as.list(Sys.info())
-    if(tolower(si$sysname) == "linux"){
-      os = structure("Linux", class = "character")
-    }
-    if(tolower(si$sysname) == "darwin"){
-      os = structure("MacOSX", class = "character")
-    }
-  }
-  return(os)
-}
-
-choose_dir = function(){
-  os = Identify.OS()
-  if(tolower(os) == "windows") {
-    directory <- utils::choose.dir()
-  }
-  if(tolower(os) == "linux") {
-    directory <- system("zenity --file-selection --directory", intern = TRUE)
-  }
-  if(tolower(os) == "macosx") {
-    system(paste0("osascript folder_select.applescript"),
-      intern = FALSE, ignore.stderr = TRUE)
-    directory <- system("cat /tmp/R_folder && rm -rf /tmp/R_folder", intern = TRUE)
-    
-    # okay now time for some ugly regex
-    
-    # first, append a space onto the end of this string so the regex treats it the same
-    directory <- paste0(directory, ' ')
-    
-    # next, extract all items, defining separate items as being separated by "\ "
-    folders <- unlist(stringr::str_extract_all(directory, '(.*?)\\/\\s'))
-    
-    # strip the extra matched whitespace from folders
-    folders <- trimws(folders)
-    
-    return(c(folders))
-  }
-  return(directory)
 }
 
 # load password

@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '05 SCoPE-MS Diagnostics'
+  tab <- '050 SCoPE-MS Diagnostics'
   boxTitle <- 'TMT Channel Spearman Correlations vs. Intensity'
   help <- 'Calculating the spearman correlation between the peptide quantitation in different
   TMT channels to the carry channel for every experiment, plotted against the median RI 
@@ -9,6 +9,9 @@ init <- function() {
   
   .validate <- function(data, input) {
     validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
+    # require reporter ion quantification data
+    validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[[source.file]]))), 
+                  paste0('Loaded data does not contain reporter ion quantification')))
   }
   
   .plotdata <- function(data, input) {

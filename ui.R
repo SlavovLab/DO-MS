@@ -1,10 +1,9 @@
 source('global.R')
 
-source('documentation_tab.R') # loads documentation_tab var
-source('report_tab.R') # loads report_tab var
-source('import_tab.R') # loads import_tab var
-source('settings_tab.R') # loads settings
-
+source(file.path('ui', 'documentation_tab.R')) # loads documentation_tab var
+source(file.path('ui', 'report_tab.R')) # loads report_tab var
+source(file.path('ui', 'import_tab.R')) # loads import_tab var
+source(file.path('ui', 'settings_tab.R')) # loads settings
 
 # list of menu items for switching tabs
 # add static items for static tabs first
@@ -50,7 +49,16 @@ for(i in 1:length(tabs)) {
 
 shinyUI(
   dashboardPage(skin='blue',
-    dashboardHeader(title = "SCoPE QC Dashboard"),
+    dashboardHeader(title = "SCoPE QC Dashboard"
+      # tags$li(class='dropdown',
+      # tags$button(type='button', class='btn btn-default', `data-container`='body', `data-toggle`='popover',
+      #             `data-placement`='bottom', 
+      #             `data-content`=checkboxGroupInput('Exp_Sets', '', choices=NULL, selected=NULL,
+      #                                               choiceNames=NULL, choiceValues=NULL),
+      #             `data-html`=TRUE,
+      #             'Popover on bottom')
+      # )
+    ),
     dashboardSidebar(
       sidebarMenu(
         # Sidebar Menu Options

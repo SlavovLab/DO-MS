@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '03 Contamination'
+  tab <- '040 Contamination'
   boxTitle <- 'MS1 Intensity, +1 ions'
   help <- 'Plotting the intensity distribution of +1 ions, a diagnostic of non-peptide contaminants'
   source.file <- 'allPeptides'
@@ -22,6 +22,8 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=100) + 
       coord_flip() + 
+      scale_x_log10() +
+      labs(y='Count', x='Intensity') +
       theme_base(input=input)
   }
   
@@ -32,7 +34,8 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    dynamic_width=75
   ))
 }
 

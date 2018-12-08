@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '00 Sample Quality'
+  tab <- '030 Peptide Identifications'
   boxTitle <- 'Miscleavage rate'
   help <- 'Plotting frequency of peptide miscleavages.'
   source.file <- 'evidence'
@@ -22,7 +22,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=10) + 
       coord_flip() + 
-      xlab("Missed Cleavages") +
+      labs(x="Missed Cleavages", y='Count') +
       theme_base(input=input)
   }
   
@@ -33,6 +33,7 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    dynamic_width=75
   ))
 }

@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '02 Instrument Performance'
+  tab <- '020 Instrument Performance'
   boxTitle <- 'Apex Offset'
   help <- 'Plotting the distance from the peak of the elution profile the MS2
     events were executed.'
@@ -30,7 +30,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram() + 
       coord_flip() + 
-      xlab("Apex Offset (sec)") + 
+      labs(x="Apex Offset (sec)", y='Count') + 
       theme_base(input=input)
   }
   
@@ -41,6 +41,7 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    dynamic_width=75
   ))
 }

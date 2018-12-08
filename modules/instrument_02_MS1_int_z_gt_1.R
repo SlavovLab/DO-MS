@@ -1,6 +1,6 @@
 init <- function() {
   
-  tab <- '02 Instrument Performance'
+  tab <- '020 Instrument Performance'
   boxTitle <- 'MS1 Intensity for z>1 ions'
   help <- 'Plotting the MS1 intensity for all peptide-like ions observed (not necessarily sent to MS2) across runs.'
   source.file <- 'allPeptides'
@@ -24,7 +24,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram() + 
       coord_flip() + 
-      xlab(expression(bold("Log"[10]*" Precursor Intensity"))) +
+      labs(x=expression(bold("Log"[10]*" Precursor Intensity")), y='Count') +
       theme_base(input=input)
   }
   
@@ -35,6 +35,7 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    dynamic_width=75
   ))
 }
