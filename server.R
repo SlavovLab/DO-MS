@@ -25,8 +25,20 @@ shinyServer(function(input, output, session) {
   }
   
   # launch shinyFiles
-  shinyDirChoose(input, 'choose_folder', roots = volumes, 
-                 session = session, defaultRoot=default_root)
+  # RESTRICT DIRECTORY PICKING FOR DEMO SERVER
+  volumes <- c(getVolumes()())
+  volumes <- c(volumes, setNames(c('G:\\My Drive\\MS'), c('MS')))
+  
+  observe({
+    if(!is.null(input$import_password) & input$import_password == admin.pw) {
+      
+      shinyDirChoose(input, 'choose_folder', roots = volumes, 
+                     session = session, defaultRoot='MS')
+    }
+  })
+  
+  #shinyDirChoose(input, 'choose_folder', roots = volumes, 
+  #               session = session, defaultRoot=default_root)
   
   # listen to shinyFiles
   observe({
@@ -43,6 +55,8 @@ shinyServer(function(input, output, session) {
     #if(length(directories) == 0 | is.null(directories)) {
     #  return()
     #}
+    
+    
     
     # take folder name from shinyFiles
     directory <- parseDirPath(volumes, input$choose_folder)
@@ -140,6 +154,12 @@ shinyServer(function(input, output, session) {
   
   observeEvent(input$delete_folders, {
     selected <- isolate(input$folder_table_rows_selected)
+    
+    # disable deleteion for demo server, unless password is correct
+    if(input$import_password != admin.pw) {
+      showNotification('Folder deletion is restricted for the demo server', type='warning')
+      return()
+    }
     
     # if no folders are selected, break out
     if(length(selected) == 0 | is.null(selected)) {
