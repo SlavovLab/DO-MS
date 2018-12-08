@@ -11,3 +11,6 @@ _modules/**/*
 
 # generated files
 folder_list.txt
+
+# password file
+password.txt
