@@ -1,7 +1,5 @@
 # DO-MS
 
-Shiny app for SCoPE QC visualization
-
 ## Requirements
 
 This application has been tested on R 3.4.4, OSX 10.14 / Windows 7/8/10, 
