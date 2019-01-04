@@ -32,7 +32,7 @@ import_tab <- tabItem(tabName='import', fluidPage(
       h2('Select MaxQuant txt Output Folders')),
   p(class='import-help', 'Click on a row in the table to select that folder. Click multiple rows to select multiple folders, and use Shift to select a series of folders.'),
   p(class='import-help', 'Please see ',
-    a(href='https://github.com/SlavovLab/SCoPE_QC/blob/master/documentation/adding_folders.pdf',
+    a(href='https://github.com/SlavovLab/DO-MS/blob/master/documentation/adding_folders.pdf',
       target='_blank', 'this document'),
     ' for help adding folders to the table'),
   fluidRow(
@@ -51,7 +51,7 @@ import_tab <- tabItem(tabName='import', fluidPage(
         #shinyFilesButton('files', label='File select', title='Please select a file', multiple=T),
         shinyDirButton('choose_folder', label='Add folder to table', title='Please select a folder'),
         p('For help adding directories, please view ', 
-          a(href='https://github.com/SlavovLab/SCoPE_QC/blob/master/documentation/adding_folders.pdf',
+          a(href='https://github.com/SlavovLab/DO-MS/blob/master/documentation/adding_folders.pdf',
             target='_blank', 'this document')),
         actionButton('folder_select_all', 'Select all folders',
                      icon=icon('th-list', lib='glyphicon')),

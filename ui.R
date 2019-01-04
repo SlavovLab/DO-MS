@@ -49,7 +49,7 @@ for(i in 1:length(tabs)) {
 
 shinyUI(
   dashboardPage(skin='blue',
-    dashboardHeader(title = "SCoPE QC Dashboard"
+    dashboardHeader(title = "DO-MS Dashboard"
       # tags$li(class='dropdown',
       # tags$button(type='button', class='btn btn-default', `data-container`='body', `data-toggle`='popover',
       #             `data-placement`='bottom', 

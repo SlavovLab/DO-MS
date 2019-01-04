@@ -5,7 +5,7 @@ report_tab <- tabItem(tabName = "report", fluidPage(
   panel(
     p("Once you're happy with how your plots look in the dashboard, press 'download report' to generate a PDF report"),
     p("You can also output the figures as .png files alongside your PDF report."),
-    p('Note: If running the application via. command line, required tools such as \"pandoc\" may not have been loaded, and this will result in an error when attempting to generate a report. Please see https://github.com/SlavovLab/SCoPE_QC/blob/master/documentation/pandoc.md for more details.'),
+    p('Note: If running the application via. command line, required tools such as \"pandoc\" may not have been loaded, and this will result in an error when attempting to generate a report. Please see https://github.com/SlavovLab/DO-MS/blob/master/documentation/pandoc.md for more details.'),
     tags$hr(),
     fluidRow(
       column(3, selectInput('report_format', 'Report Format',

@@ -10,7 +10,7 @@ source('global.R')
 download_report <- function(input, output, filtered_data, exp_sets) {
   output$download_report <- downloadHandler(
     filename = function() {
-      name <- 'SCoPE_QC_Report'
+      name <- 'DO-MS_Report'
       switch(input$report_format,
              html=paste0(name, '.html'),
              pdf=paste0(name, '.pdf'))
