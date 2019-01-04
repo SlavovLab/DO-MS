@@ -1,4 +1,4 @@
-# SCoPE_QC
+# DO-MS
 
 Shiny app for SCoPE QC visualization
 
@@ -16,12 +16,12 @@ For a complete list of the dependencies of this application, view ```global.R```
 ## Installation
 
 Install this application by downloading it from the GitHub page as a .zip archive, 
-or from a bundle on the [release page](https://github.com/SlavovLab/SCoPE_QC/releases).
+or from a bundle on the [release page](https://github.com/SlavovLab/DO-MS/releases).
 
 Or, if you are comfortable from the command line and have ```git``` installed:
 
 ```{bash}
-git clone https://github.com/SlavovLab/SCoPE_QC
+git clone https://github.com/SlavovLab/DO-MS
 ```
 
 You will also need to install the ```shiny``` library via. R. In R, run:
@@ -34,10 +34,10 @@ We are in the process of submitting this application to the CRAN for easier inst
 
 ## Running
 
-The easiest way to run the app is directly through RStudio, by opening the ```SCoPE_QC.Rproj``` Rproject file 
+The easiest way to run the app is directly through RStudio, by opening the ```DO-MS.Rproj``` Rproject file 
 and clicking the "Run App" button at the top of the application.
 
-You can also run the application by running the script ```start_server.sh``` (OSX/Linux), or ```start_server.bat``` (Windows). This option is less desirable as some of the dependencies bundled by RStudio have to be found or loaded manually (see [pandoc requirements](https://github.com/SlavovLab/SCoPE_QC/blob/master/documentation/pandoc.md))
+You can also run the application by running the script ```start_server.sh``` (OSX/Linux), or ```start_server.bat``` (Windows). This option is less desirable as some of the dependencies bundled by RStudio have to be found or loaded manually (see [pandoc requirements](https://github.com/SlavovLab/DO-MS/blob/master/documentation/pandoc.md))
 For OSX/Linux, ```Rscript``` must be available on the path, and for Windows, you will need to edit the ```start_server.bat``` script to point to the specific ```Rscript.exe``` executable.
 
 If you are having trouble loading ```shiny```, please confirm that you have installed the package in the "Installation" step. If so, then you may need to define a new environment variable, ```R_LIBS_USER```, that points to the library path of your R installation. See [this StackOverflow answer](https://stackoverflow.com/a/19662905) for more details on this issue.
@@ -60,9 +60,9 @@ If you wish to host a server for internal usage, i.e., within an organizational 
 
 ## Search Engines Other Than MaxQuant
 
-This application is currently maintained for MaxQuant >= 1.6.0.16. Adapting this application to other search engines is straightfowards but does require some code editing. Please see [this document on implementing other search engines](https://github.com/SlavovLab/SCoPE_QC/blob/master/documentation/implement_other_search_engines.md) for more detailed instructions.
+This application is currently maintained for MaxQuant >= 1.6.0.16. Adapting this application to other search engines is straightfowards but does require some code editing. Please see [this document on implementing other search engines](https://github.com/SlavovLab/DO-MS/blob/master/documentation/implement_other_search_engines.md) for more detailed instructions.
 
 ## Help!
 
 For any bugs, questions, or feature requests, 
-please use the [GitHub issue system](https://github.com/SlavovLab/SCoPE_QC/issues) to contact the developers.
+please use the [GitHub issue system](https://github.com/SlavovLab/DO-MS/issues) to contact the developers.
