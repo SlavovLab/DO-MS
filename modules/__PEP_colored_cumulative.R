@@ -56,10 +56,15 @@ testModule <- function(input, output, session, data) {
     # object of R class 'data frame':
     data.loaded <- data()[[data.choice]]
     
+    
+    
     # Plot:
     histdata <- data.loaded[,c("Raw.file","PEP")]
-    histdata_PEP <- count(histdata,c('Raw.file','PEP'))
-    DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(freq))
+    #histdata_PEP <- count(histdata,c('Raw.file','PEP'))
+    histdata_PEP <- as.data.frame(table(histdata[,c('Raw.file','PEP')]))
+    histdata_PEP<-histdata_PEP[histdata_PEP$Freq!=0,]
+    #DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(freq))
+    DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(Freq))
     
     # Cut off for display
     DF.t<-DF.t[DF.t$PEP<0.1,]

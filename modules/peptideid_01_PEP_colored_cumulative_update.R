@@ -13,9 +13,20 @@ init <- function() {
   .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]][,c("Raw.file","PEP")]
     data.loaded<-plotdata
+    # histdata <- data.loaded[,c("Raw.file","PEP")]
+    # histdata_PEP <- count(histdata,c('Raw.file','PEP'))
+    # DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(freq))
+
+    options(scipen =200)
+    
     histdata <- data.loaded[,c("Raw.file","PEP")]
-    histdata_PEP <- count(histdata,c('Raw.file','PEP'))
-    DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(freq))
+    #histdata_PEP <- count(histdata,c('Raw.file','PEP'))
+    histdata_PEP <- as.data.frame(table(histdata[,c('Raw.file','PEP')]))
+    histdata_PEP<-histdata_PEP[histdata_PEP$Freq!=0,]
+    histdata_PEP<-data.frame(histdata_PEP$Raw.file, as.numeric(as.character(histdata_PEP$PEP)), as.numeric(histdata_PEP$Freq))
+    colnames(histdata_PEP)<-c("Raw.file","PEP","Freq")
+    #DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(freq))
+    DF.t <- ddply(histdata_PEP, .(Raw.file), transform, cy = cumsum(Freq))
     
     # Cut off for display
     #DF.t<-DF.t[DF.t$PEP<0.1,]
