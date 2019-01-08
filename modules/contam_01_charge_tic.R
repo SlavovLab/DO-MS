@@ -33,10 +33,10 @@ init <- function() {
       #geom_point(aes(x=Raw.file, y=Intensity,colour=factor(Charge), group=Raw.file), size = 2) + 
       geom_bar(aes(x=Raw.file, y=Intensity, fill=factor(Charge), group=Raw.file), 
                stat='identity', position='dodge2') +
-      scale_y_log10() + 
+      #scale_y_log10() + 
       scale_fill_hue(labels = c("1","2","3",">3")) + 
       labs(x = "Experiment", y = "Total Ion Current", fill = "Charge State") +
-      theme_base(input=input, show_legend=T)
+      theme_base(input=input, show_legend=T) + scale_y_continuous(labels = scales::scientific)
     
   }
   

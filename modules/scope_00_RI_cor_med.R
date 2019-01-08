@@ -74,8 +74,7 @@ init <- function() {
             legend.position = "right",
             legend.key = element_rect(fill = "white"),
             panel.background = element_rect(fill = "white",colour = "white")) + 
-      ylab("Median Reporter Ion Intensity (log10)")
-      
+      ylab(expression(bold("Median Reporter Ion Intensity (Log "[10]*")")))
     
     
     }

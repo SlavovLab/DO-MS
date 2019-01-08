@@ -31,7 +31,8 @@ init <- function() {
       coord_flip() + 
       #scale_y_continuous(trans='log10', limits=c(NA, 12)) + 
       labs(x="Retention Time (min)", y=expression(bold("Precursor Intensity"))) +
-      theme_base(input=input)
+      theme_base(input=input) +
+      scale_y_continuous(labels = scales::scientific)
   }
   
   return(list(

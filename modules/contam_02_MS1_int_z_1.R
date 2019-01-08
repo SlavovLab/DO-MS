@@ -17,14 +17,14 @@ init <- function() {
   .plot <- function(data, input) {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
-    
-    ggplot(plotdata[plotdata$Charge == 1, ], aes(Intensity)) + 
+    plotdata$logInt <- log10(plotdata$Intensity)
+    ggplot(plotdata[plotdata$Charge == 1, ], aes(logInt)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=100) + 
       coord_flip() + 
-      scale_x_log10() +
-      labs(y='Count', x='Intensity') +
-      theme_base(input=input)
+      #scale_x_log10() +
+      labs(y='Count', x=expression(bold("Log"[10]*" Intensity"))) +
+      theme_base(input=input) 
   }
   
   return(list(
