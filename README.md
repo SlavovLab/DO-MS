@@ -40,6 +40,8 @@ For OSX/Linux, ```Rscript``` must be available on the path, and for Windows, you
 
 If you are having trouble loading ```shiny```, please confirm that you have installed the package in the "Installation" step. If so, then you may need to define a new environment variable, ```R_LIBS_USER```, that points to the library path of your R installation. See [this StackOverflow answer](https://stackoverflow.com/a/19662905) for more details on this issue.
 
+Also, some users have reported issues with the package opening within RStudio's viewer pane, rather than within a separate browser window. Please make sure that you have the appropriate option checked in the dropdown menu of the 'Run App' button, if using RStudio. 
+
 ## Customization
 
 The UI for this application is generated dynamically from the contents of the ```modules``` folder. Users can add their own modules to this folder, following the template provided in ```modules/__template.R```. Modules can be disabled by appending two underscores to the filename, e.g., ```disable_module.R``` --> ```__disable_module.R```.
