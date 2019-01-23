@@ -1,0 +1,63 @@
+## DO-MS command line configuration
+## for use with do-ms_cmd.R
+
+verbose: true
+
+## Input/Output
+
+input_folders:
+  - /gd/MS/SCoPE/phospho/dat/PS095
+  - /gd/MS/SCoPE/phospho/dat/PS096
+  
+# match up with the input_files list in global.R
+input_files:
+  - evidence
+  - msms
+  - msmsScans
+  - allPeptides
+  
+# match up with misc_input_files list in global.R
+#misc_input_files:
+#  inclusion_list: /path/to/inclusion_list.txt
+
+output: /Users/albert/Desktop/report.html
+
+## Filters
+
+# TODO: add expressions to include or exclude raw files
+# TODO: add vector for renaming raw files
+
+pep_thresh: 0.01
+remove_decoy: REV_
+remove_contam: CON_
+
+## Figure rendering options
+
+# label font size
+figure_title_font_size: 16
+# axis tick label font size
+figure_axis_font_size: 12
+# facet label font size
+figure_facet_font_size: 12
+# line width
+figure_line_width: 1
+# show background grid
+figure_show_grid: true
+
+## Report options
+
+# choices: pdf, html
+format: html
+
+# choices: default, cerulean, flatly, darkly, readable, 
+# spacelab, united, cosmo, lumen, paper, sandstone, simplex, yeti
+theme: readable
+
+# figure size (in inches)
+figure_width: 5
+figure_height: 5
+
+# figure format. choices: pdf, png
+figure_format: png
+
+
