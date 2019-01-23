@@ -13,6 +13,8 @@
 ##
 ## $ Rscript do-ms_cmd.R config_file.yaml
 ## Windows: $ Rscript.exe do-ms_cmd.R config_file.yaml
+##
+## check out an example configuration file at example/config_file.yaml
 
 # load packages, modules, tabs, helper functions --------------------------
 
@@ -102,12 +104,20 @@ for(f in load_input_files) {
     }
     
     # if field is not initialized yet, set field
-    if(is.null(.data[[file$name]])) {
+    if(is.null(data[[file$name]])) {
       data[[file$name]] <- .dat
     }
     # otherwise, append to existing data.frame
     else {
-      data[[file$name]] <- rbind(.data[[file$name]], .dat)
+      
+      # before we append, need to make sure that columns match up
+      # if not, then take the intersection of the columns (only common columns)
+      cols_prev <- colnames(data[[file$name]])
+      cols_new  <- colnames(.dat)
+      common_cols <- intersect(cols_prev, cols_new)
+      
+      # merge dataframes, with only common columns between the two frames
+      data[[file$name]] <- rbind(data[[file$name]][,common_cols], .dat[,common_cols])
     }
   }
 }
@@ -162,11 +172,19 @@ for(f in load_input_files) {
     # data[[file$name]]$Raw.file <- factor(data[[file$name]]$Raw.file,
     #   levels=levels(data[[file$name]]$Raw.file), labels=file_levels())
     
-    # if(!is.null(input$Exp_Sets)) {
-    #   # Filter for experiments as specified by user
-    #   data[[ file[['name']] ]] <- data[[ file[['name']] ]] %>%
-    #     filter(Raw.file %in% input$Exp_Sets)
-    # }
+    # Filter by raw file name, by matching against regular expressions in config_file
+    
+    if(!is.null(config[['include_files']])) {
+      prnt(paste0('Filtering for raw files that match expression "', config[['include_files']], '"'))
+      data[[file$name]] <- data[[file$name]] %>%
+        filter(grepl(config[['include_files']], Raw.file))
+    }
+    
+    if(!is.null(config[['exclude_files']])) {
+      prnt(paste0('Filtering out raw files that match expression "', config[['exclude_files']], '"'))
+      data[[file$name]] <- data[[file$name]] %>%
+        filter(!grepl(config[['exclude_files']], Raw.file))
+    }
     
   }
   
@@ -211,8 +229,13 @@ for(f in load_input_files) {
   # for each file, check if it has a raw file column
   if('Raw.file' %in% colnames(data[[file$name]])) {
     
+    # drop unused levels, if they've been filtered out
+    data[[file$name]]$Raw.file <- droplevels(data[[file$name]]$Raw.file)
+    
     # get the raw files for this input file
     .raw_files <- levels(data[[file$name]]$Raw.file)
+    
+    prnt(.raw_files)
     
     for(raw_file in .raw_files) {
       # if the raw file is not in the list of raw files, then add it
@@ -232,17 +255,17 @@ level_prefixes <- paste0('Exp ', seq(1, 100))
 # create the nickname vector
 file_levels <- level_prefixes[1:length(raw_files)]
   
-# named_exps <- trimws(unlist(strsplit(paste(exp_names()), ",")))
-# if(length(named_exps) > 0) {
-#   if(length(named_exps) < length(file_levels)) {
-#     file_levels[1:length(named_exps)] <- named_exps
-#   } else if(length(named_exps) > length(file_levels)) {
-#     file_levels = named_exps[1:length(file_levels)]
-#   } else {
-#     # same length
-#     file_levels = named_exps
-#   }
-# }
+named_exps <- config[['exp_names']]
+if(!is.null(named_exps) & length(named_exps) > 0) {
+  if(length(named_exps) < length(file_levels)) {
+    file_levels[1:length(named_exps)] <- named_exps
+  } else if(length(named_exps) > length(file_levels)) {
+    file_levels <- named_exps[1:length(file_levels)]
+  } else {
+    # same length
+    file_levels <- named_exps
+  }
+}
   
 # ensure there are no duplicate names
 # if so, then append a suffix to duplicate names to prevent refactoring errors
@@ -270,6 +293,21 @@ if(length(raw_files) > 1) {
 
 # re-filter data ----------------------------------------------------------
 
+prnt('Renaming raw files...')
+
+for(f in load_input_files) {
+  file <- input_files[[f]]
+  
+  # for each file, check if it has a raw file column
+  if('Raw.file' %in% colnames(data[[file$name]])) {
+    
+    # rename the levels of this file
+    data[[file$name]]$Raw.file <- factor(data[[file$name]]$Raw.file,
+      levels=levels(data[[file$name]]$Raw.file), labels=file_levels)
+  }
+}
+
+prnt('Finished renaming raw files')
 
 
 # generate report ---------------------------------------------------------
@@ -285,7 +323,7 @@ input <- config
 report <- paste(
   '---',
   'title: DO-MS Report',
-  'date: "`r format(Sys.time(), \'%Y-%m-%d\')`"',
+  'date: "`r format(Sys.time(), \'%Y-%m-%d    %H:%M:%S\')`"',
   'output:',
   sep='\n')
 
@@ -349,7 +387,7 @@ for(t in 1:length(tabs)) { local({
     .m <- m
     module <- modules_in_tab[[.m]]
     
-    prnt(paste0('Adding module ', .m, ' from tab ', .t))
+    prnt(paste0('Adding module ', .m, ' (', module$id, ') from tab ', .t, ' (', tab, ')'))
     
     # create chunk name from module box title
     chunk_name <- module$id
@@ -419,6 +457,6 @@ rmarkdown::render(tempReport, output_file = config[['output']],
                   envir = new.env(parent = globalenv())
 )
 
-prnt(paste0('Report outputted: ', config[['output']]))
+prnt(paste0('Report written to: ', config[['output']]))
 
 prnt('Done!')

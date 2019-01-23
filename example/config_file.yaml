@@ -24,8 +24,17 @@ output: /Users/albert/Desktop/report.html
 
 ## Filters
 
-# TODO: add expressions to include or exclude raw files
-# TODO: add vector for renaming raw files
+# regular expressions to match raw file names against
+include_files: PS096
+exclude_files: PS096D
+
+# custom names for files
+exp_names:
+  - Control
+  - '2X'
+  - '4X'
+  - '10X'
+  - 'this shouldnt show'
 
 pep_thresh: 0.01
 remove_decoy: REV_
