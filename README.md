@@ -13,10 +13,14 @@ For a complete list of the dependencies of this application, view ```global.R```
 
 ## Installation
 
-Install this application by downloading it from the GitHub page as a .zip archive, 
+The easiest way to install and run is: ```shiny::runGitHub('DO-MS', 'SlavovLab')```
+
+-----------------
+
+Or, install this application by downloading it from the GitHub page as a .zip archive, 
 or from a bundle on the [release page](https://github.com/SlavovLab/DO-MS/releases).
 
-Or, if you are comfortable from the command line and have ```git``` installed:
+Alternatively, if you are comfortable from the command line and have ```git``` installed:
 
 ```{bash}
 git clone https://github.com/SlavovLab/DO-MS
@@ -49,8 +53,6 @@ The UI for this application is generated dynamically from the contents of the ``
 Currently modules are limited to plotting and providing data for download. More features, such as custom inputs are forthcoming.
 
 ## Hosting as a Server
-
-Our lab is currently hosting a demo server of this application at [http://do-ms.tunnel.halfgrain.com:8081](http://do-ms.tunnel.halfgrain.com:8081). This version is a slightly custom-build that for example has password-protected file forms.
 
 As this application requires a large amount of computational power (CPU), on-hand memory (RAM), and possibly the storage of large amounts of mass-spec data (Storage), we do not recommend running this on a standalone server, as it is not cost-efficient.
 

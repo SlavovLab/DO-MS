@@ -1,8 +1,8 @@
 init <- function() {
   
   tab <- '050 SCoPE-MS Diagnostics'
-  boxTitle <- 'Reporter ion intensity'
-  help <- 'Plotting the TMT reporter intensities for a single run.'
+  boxTitle <- 'Relative reporter ion intensity'
+  help <- 'Plotting the TMT reporter intensities for a single run, normalized by the channel with the highest mean reporter ion intensity.'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -14,8 +14,14 @@ init <- function() {
   
   .plotdata <- function(data, input) {
     plotdata <- data()[[source.file]] %>% dplyr::select(starts_with("Reporter.intensity.corrected"))
+    #plotdata <- reshape2::melt(plotdata)
+    #plotdata$log10tran <- log10(plotdata$value)
+    #plotdata <- dcast(plotdata, Reporter.intensity.corrected)
+    plotdata <- log10(plotdata)
+    is.na(plotdata) <- sapply(plotdata, is.infinite)
+    meanInt <- colMeans(plotdata, na.rm = TRUE)
+    plotdata <- plotdata - plotdata[,which.max(meanInt)]
     plotdata <- reshape2::melt(plotdata)
-    plotdata$log10tran <- log10(plotdata$value)
     return(plotdata)
   }
   
@@ -27,11 +33,11 @@ init <- function() {
     TMTlabels <- c("C1","C2","C3","C4","C5","C6","C7","C8","C9","C10","C11")
     plot2Labels <- TMTlabels[1:uniqueLabelsSize]
     
-    ggplot(plotdata,aes(x=variable,y=log10tran))+ 
+    ggplot(plotdata,aes(x=variable,y=value))+ 
       geom_violin(aes(group=variable),alpha=0.6, fill = "black", 
                   kernel="rectangular")+    # passes to stat_density, makes violin rectangular 
       xlab("TMT Channel")+             
-      ylab(expression(bold("Log"[10]*" RI Intensity")))+ 
+      ylab(expression(bold("Log"[10]*" RRI Intensity")))+ 
       theme_bw() +                     # make white background on plot
       theme_base(input=input) +
       scale_x_discrete(name ="TMT Channel", labels=plot2Labels) 
