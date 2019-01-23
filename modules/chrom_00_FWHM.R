@@ -6,7 +6,14 @@ init <- function() {
   source.file <- 'allPeptides'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
+    validate(need(
+      data()[[source.file]],
+      paste0("Upload ", source.file,".txt")
+    ))
+    validate(need( 
+      colnames(data()[[source.file]])['Retention.length..FWHM.'],
+      'Column "Retention length (FWHM)" not found. Please run search with "Calculate peak properties" enabled (under Global Parameters/Advanced) in order to generate this column in the MaxQuant output.'
+    ))
   }
   
   .plotdata <- function(data, input) {
