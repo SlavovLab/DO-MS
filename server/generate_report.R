@@ -29,8 +29,7 @@ download_report <- function(input, output, filtered_data, exp_sets) {
       
       report <- paste(
         '---',
-        'title: SCoPE QC Report',
-# date format, thanks to: https://stackoverflow.com/questions/23449319/yaml-current-date-in-rmarkdown
+        'title: DO-MS Report',
         'date: "`r format(Sys.time(), \'%Y-%m-%d\')`"',
         'output:',
         sep='\n')

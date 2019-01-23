@@ -6,7 +6,9 @@ library(pacman)
 
 # install/load dependencies
 p_load(shiny, shinydashboard, shinyWidgets, dplyr, ggplot2, lattice, 
-       reshape2, RColorBrewer, readr, rmarkdown, stats, DT, stringr)
+       reshape2, RColorBrewer, readr, rmarkdown, stats, DT, stringr, yaml)
+
+print('Packages loaded')
 
 modules <- list()
 
@@ -108,14 +110,6 @@ theme_base <- function(input=list(), show_legend=F) {
   return(.theme)
 }
 
-facetHist <- function(DF, X, num_bins=100) {
-  ggplot(DF, aes_string(X)) + 
-    facet_wrap(as.formula(paste("~", "Raw.file")), nrow = 1) + 
-    geom_histogram(bins=num_bins) + 
-    coord_flip() + 
-    theme_base()
-}
-
 downloadButtonFixed <- function(outputId, label = "Download", class = NULL, ...) {
   aTag <-
     tags$a(
@@ -142,3 +136,7 @@ get_os <- function() {
     stop("Unknown OS")
   }
 }
+
+
+# clean up
+rm(module, module_name)

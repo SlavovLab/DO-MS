@@ -6,14 +6,17 @@ init <- function() {
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
-    # require the user upload the specified source file
-    validate(need(data()[['evidence']],paste0("Upload ", source.file, ".txt")))
-    # or, you can hard-code the source file
-    validate(need(data()[['evidence']],paste0("Upload evidence.txt")))
+    
+    validate(need(
+      data()[['evidence']],
+      paste0("Upload ", source.file, ".txt")
+    ))
     
     # ensure that table has the DART-ID PEP
-    validate(need('pep_updated' %in% colnames(data()[['evidence']]), 
-             paste0('Provide evidence.txt from DART-ID output, with updated PEP column')))
+    validate(need(
+      'pep_updated' %in% colnames(data()[['evidence']]), 
+      paste0('Provide evidence.txt from DART-ID output, with updated PEP column')
+    ))
   }
   
   .plotdata <- function(data, input) {

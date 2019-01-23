@@ -268,8 +268,6 @@ shinyServer(function(input, output, session) {
       }
     }
     
-    #print(.data)
-    
     # set the data
     data(.data)
     
@@ -436,28 +434,20 @@ shinyServer(function(input, output, session) {
     if(length(file_levels()) > 0 & length(raw_files() > 0)) {
       # update the selection input
       # for the selection input only, concatenate the nickname and the raw file name
-      
-      # updateCheckboxGroupInput(session, 'Exp_Sets', '',
-      #   choiceNames=paste0(file_levels(), ': ', raw_files()), 
-      #   choiceValues=file_levels(), selected=file_levels())
-      
+
       choices <- file_levels()
       names(choices) <- paste0(file_levels(), ': ', raw_files())
       
       shinyWidgets::updatePickerInput(session, 'Exp_Sets', '',
         selected=file_levels(), choices=choices)
-      
-    } else {
     }
   })
   
   # filtered data
-  # debounce (throttle) by 1000ms delay, because this expression
-  # is so computationally costly
+  # debounce (throttle) by 1000ms delay, because this expression is so costly
   filtered_data <- debounce(reactive({
     f_data <- data()
     
-    ## TODO: Apply filters (PEP, experiment subsets, ....)
     for(file in input_files) {
       
       # for each file, check if it has a raw file column
