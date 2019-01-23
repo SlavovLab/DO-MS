@@ -83,8 +83,21 @@ shinyUI(
         tags$button(id='exp_check_none', class='btn exp_check_none',
                'Select None')
       ),
-      checkboxGroupInput('Exp_Sets', '', choices=NULL, selected=NULL,
-                         choiceNames=NULL, choiceValues=NULL),
+      #checkboxGroupInput('Exp_Sets', '', choices=NULL, selected=NULL,
+      #                   choiceNames=NULL, choiceValues=NULL),
+      
+      shinyWidgets::pickerInput(
+        inputId = "Exp_Sets", 
+        label = "Select/deselect all + format selected", 
+        choices = NULL, selected=NULL, 
+        options = list(
+          `actions-box` = TRUE, 
+          size = 10,
+          `selected-text-format` = "count > 1"
+        ), 
+        multiple = TRUE
+      ),
+      
       tags$hr(),
       
       #PEP selection slider

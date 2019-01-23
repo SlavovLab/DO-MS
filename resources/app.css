@@ -1,5 +1,23 @@
+/* GLOBAL STYLES */
+
+button.action-button {
+  margin: 5px;
+  border: none;
+  background-color: #3c8dbc;
+  color: #FFF;
+  border-radius: 20px;
+  box-shadow: 1px 1px 3px #AAA;
+  transition: 0.1s all ease-in-out;
+}
+button.action-button:hover, button.action-button:active {
+  border: none;
+  background-color: #65a9d1;
+  color: #FFF;
+}
+
+
 .main-header .logo { 
-  font-family: "Josefin slab", Times, "Times New Roman", serif;
+  /*font-family: "Josefin slab", Times, "Times New Roman", serif;*/
   font-weight: bold; font-size: 24px;
 }
 
@@ -276,24 +294,7 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   font-size: 1.2em;
 }
 #shiny-tab-import .folder-button-list {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-#shiny-tab-import .folder-button-list button {
-  margin: 5px;
-  border: none;
-  background-color: #3c8dbc;
-  color: #FFF;
-  border-radius: 20px;
-  box-shadow: 1px 1px 3px #AAA;
-  transition: 0.1s all ease-in-out;
-}
-#shiny-tab-import .folder-button-list button:hover, #shiny-tab-import .folder-button-list button:active {
-  border: none;
-  background-color: #65a9d1;
-  color: #FFF;
+  margin-bottom: 5px;
 }
 
 #shiny-tab-import .input-file-select-well {

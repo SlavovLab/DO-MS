@@ -19,64 +19,104 @@ shinyServer(function(input, output, session) {
     folders <- reactiveVal(as.data.frame(read_tsv('folder_list.txt')))
   }
   
-  volumes <- c(getVolumes()(), Home = fs::path_home())
+  add_folder_modal <- function() {
+    modalDialog(
+      title='Add Folder(s)',
+      textInput('add_folder_path', 'Folder Path'),
+      radioButtons('add_folder_options', 'Options', selected=character(0),
+                         choices=c('Add Child Folders' = 'children', 
+                                   'Add Recursively' = 'recursive')),
+      p('"Add Child Folders" adds all child folders that are directly below the path entered'),
+      p('"Add Recursively" adds all folders recursively below the path entered. Warning: selecting many folders will take a long time and may bloat the table.'),
+      footer = tagList(
+        modalButton('Cancel'),
+        actionButton('add_folders_confirm', 'Confirm')
+      )
+    )
+  }
   
-  # set default root to OS drive
-  default_root <- names(volumes)[1]
+  # launch add folder modal
+  observeEvent(input$show_add_folder_modal, {
+    showModal(add_folder_modal())
+  })
   
-  # launch shinyFiles
-  shinyDirChoose(input, 'choose_folder', roots = volumes, 
-                 session = session, defaultRoot=default_root)
-  
-  # listen to shinyFiles
-  observe({
-
+  # listen to add folder modal completion
+  observeEvent(input$add_folders_confirm, {
+    
     # get a copy of the current list of folders
     .folders <- isolate(folders())
     # list of selected files
     .input_files <- isolate(input$input_files)
     
-    # take folder name from shinyFiles
-    directory <- parseDirPath(volumes, input$choose_folder)
-
-    #for(directory in directories) {
+    directory <- input$add_folder_path
     
-      # if folder is null, break out
-      if(length(directory) == 0 | is.null(directory)) {
+    # does directory exist?
+    finfo <- file.info(directory) # get file information
+    
+    # if doesn't exist, show error and break out
+    if(is.na(finfo$size)) {
+      showNotification(paste0('Folder "', directory, '" does not exist.'), type='error')
+      return()
+    }
+    
+    # if exists, but is not a folder, show error and break out
+    if(!finfo$isdir) {
+      showNotification(paste0('Folder "', directory, '" is a file, not a folder.'), type='error')
+      return()
+    }
+    
+    # if the directory path ends in '/', then remove it.
+    if(substr(directory, nchar(directory), nchar(directory)) == .Platform$file.sep) {
+      directory <- substr(directory, 0, nchar(directory)-1)
+    }
+    
+    # what to do with this folder
+    if(input$add_folder_options == 'children' | input$add_folder_options == 'recursive') {
+      
+      # if add_children is checked, then look for child folders within the one specified
+      # and add all of those. again, don't have to check if they contain relevant files, yet
+      child_dirs <- list.dirs(path=directory, recursive=input$add_folder_options == 'recursive')
+      
+      # for each child directory, check if it exists already and add if not
+      for(child_dir in child_dirs) {
+        
+        # if folder chosen by user is already in the list, then ignore
+        if(child_dir %in% .folders$Path) {
+          showNotification(paste0('Folder ', basename(directory), ' already in list. Skipping...'), type='warning')
+          next
+        }
+        
+        # add folder to list
+        .folders <- rbind(.folders, data.frame(
+          Folder.Name=basename(child_dir),
+          Path=child_dir
+        ))
+      }
+      
+    } else {
+      
+      # if we're not looking for child folders, then allow this addition
+      # we could check for membership of certain files (evidence.txt, etc) later,
+      # but now just let the user add whatever they want
+      
+      # if folder chosen by user is already in the list, then ignore
+      if(directory %in% .folders$Path) {
+        showNotification(paste0('Folder ', basename(directory), ' already in list. Skipping...'), type='warning')
         return()
       }
-        
-      # if folder chosen by user is already in the list, then ignore
-      # also display a little notification letting the user know
-      # that we're ignoring their input
-      if(directory %in% .folders$Path) {
-        showNotification(paste0('Folder ', basename(directory), ' already in list. Skipping...'),
-                         type='warning')
-        next
-      }
-
-      # check if the folder has all of the files specified by the user
-      # won't prevent the user from adding it, but warn them at least
-      .files <- list.files(directory)
-      counter <- 0
-      for(.file in .files) {
-        if(.file %in% .input_files) { counter <- counter + 1 }
-      }
-      if(counter < length(.input_files)) {
-        showNotification(paste0('Folder ', basename(directory), ' does not contain some of',
-                                ' the specified files.'))
-      }
-
+      
       # add folder to list
       .folders <- rbind(.folders, data.frame(
         Folder.Name=basename(directory),
         Path=directory
       ))
-      
-    #}
-
+    }
+    
     # set temp variable into reactive value
     folders(.folders)
+    
+    # remove modal
+    removeModal()
   })
   
   # have a debounced version of folders, so we can do more
@@ -108,7 +148,11 @@ shinyServer(function(input, output, session) {
   output$folder_table <- DT::renderDataTable({
     folders()
   }, options=list(
-    pageLength=10,
+    columnDefs=list(
+      list(visible=FALSE, targets=0), # hide the row number
+      list(title='Folder', targets=1), # rename folder list columns
+      list(title='Path', targets=2)),
+    pageLength=5,
     dom='lftp',
     lengthMenu=c(5, 10, 15, 20, 50)
   ))
@@ -117,7 +161,7 @@ shinyServer(function(input, output, session) {
     selected <- input$folder_table_rows_selected
     .folders <- folders()
     HTML(paste(
-      paste0('<b>', length(selected), '</b> folders selected:'),
+      paste0('<b>', length(selected), '</b> folder(s) selected:'),
       paste(.folders[selected, 'Folder.Name'], collapse=', '),
     sep='<br/>'))
   })
@@ -392,9 +436,17 @@ shinyServer(function(input, output, session) {
     if(length(file_levels()) > 0 & length(raw_files() > 0)) {
       # update the selection input
       # for the selection input only, concatenate the nickname and the raw file name
-      updateCheckboxGroupInput(session, 'Exp_Sets', '',
-        choiceNames=paste0(file_levels(), ': ', raw_files()), 
-        choiceValues=file_levels(), selected=file_levels())
+      
+      # updateCheckboxGroupInput(session, 'Exp_Sets', '',
+      #   choiceNames=paste0(file_levels(), ': ', raw_files()), 
+      #   choiceValues=file_levels(), selected=file_levels())
+      
+      choices <- file_levels()
+      names(choices) <- paste0(file_levels(), ': ', raw_files())
+      
+      shinyWidgets::updatePickerInput(session, 'Exp_Sets', '',
+        selected=file_levels(), choices=choices)
+      
     } else {
     }
   })

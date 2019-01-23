@@ -31,35 +31,24 @@ import_tab <- tabItem(tabName='import', fluidPage(
   div(class='import-header', span(class='num', '1'), 
       h2('Select MaxQuant txt Output Folders')),
   p(class='import-help', 'Click on a row in the table to select that folder. Click multiple rows to select multiple folders, and use Shift to select a series of folders.'),
-  p(class='import-help', 'Please see ',
-    a(href='https://github.com/SlavovLab/DO-MS/blob/master/documentation/adding_folders.pdf',
-      target='_blank', 'this document'),
-    ' for help adding folders to the table'),
   fluidRow(
     column(9, wellPanel(
       div(class='well-header', h4('Folder List')),
+      fixedRow(class='folder-button-list',
+        actionButton('show_add_folder_modal', 'Add Folder to Table', icon=icon('plus')),
+        actionButton('folder_select_all', 'Select All', icon=icon('th-list', lib='glyphicon')),
+        actionButton('clear_folder_selection', 'Clear selection', icon=icon('eraser')),
+        actionButton('delete_folders', 'Remove selected folders', icon=icon('trash'))
+      ),
       DT::dataTableOutput('folder_table')
     )),
     column(3, wellPanel(
-      div(class='well-header', h4('Folder Actions')),
+      div(class='well-header', h4('Status')),
       div(class='selected-folders-output',
         htmlOutput('selected_folders')
       ),
-      tags$div(class='folder-button-list',
-        #actionButton('choose_folder', 'Add folder to list',
-        #             icon=icon('plus', lib='glyphicon')),
-        #shinyFilesButton('files', label='File select', title='Please select a file', multiple=T),
-        shinyDirButton('choose_folder', label='Add folder to table', title='Please select a folder'),
-        p('For help adding directories, please view ', 
-          a(href='https://github.com/SlavovLab/DO-MS/blob/master/documentation/adding_folders.pdf',
-            target='_blank', 'this document')),
-        actionButton('folder_select_all', 'Select all folders',
-                     icon=icon('th-list', lib='glyphicon')),
-        actionButton('clear_folder_selection', 'Clear selection',
-                     icon=icon('eraser')),
-        actionButton('delete_folders', 'Remove selected folders',
-                     icon=icon('trash'))
-      )
+      p('For help adding directories, please view ...'),
+      p('Once you are finished selecting folders, scroll down to continue the import process.')
     ))
   ),
   
