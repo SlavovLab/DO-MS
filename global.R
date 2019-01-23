@@ -1,54 +1,12 @@
-#Packages to check for
+# first, get pacman
+if(!'pacman' %in% installed.packages()[,"Package"]) {
+  install.packages('pacman')
+}
+library(pacman)
 
-packages.needed <- c(
-  'shiny',
-  'shinydashboard',
-  'shinyWidgets',
-  'dplyr',
-  'ggplot2',
-  'lattice',
-  'reshape2',
-  'RColorBrewer',
-  'readr',
-  'rmarkdown',
-  'stats',
-  'DT',
-  'stringr'
-)
-#packages.bioc<-c("impute")
-
-
-#Checking installed packages against required ones
-new.packages <- packages.needed[!(packages.needed %in% installed.packages()[,"Package"])]
-#new.packages.bioc <- packages.bioc[!(packages.bioc %in% installed.packages()[,"Package"])]
-
-#Install those which are absent
-if(length(new.packages)) install.packages(new.packages, dependencies = TRUE) 
-# 
-# if(length(new.packages.bioc)) {
-#   
-#   source("https://bioconductor.org/biocLite.R")
-#   
-#   for(X in new.packages.bioc){
-#     
-#     biocLite(X)
-#   
-#     }
-# }
-
-#Libraries to load
-#library(impute)
-library(shiny)
-library(shinydashboard)
-library(shinyWidgets)
-library(dplyr)
-library(ggplot2) 
-library(reshape2)
-library(RColorBrewer)
-library(readr)
-library(rmarkdown)
-library(stats)
-library(lattice)
+# install/load dependencies
+p_load(shiny, shinydashboard, shinyWidgets, dplyr, ggplot2, lattice, 
+       reshape2, RColorBrewer, readr, rmarkdown, stats, DT, stringr)
 
 modules <- list()
 
@@ -110,8 +68,6 @@ app_css <- paste(readLines(file.path('resources', 'app.css')), collapse='')
 
 # load app.js into string
 app_js <- paste(readLines(file.path('resources', 'app.js')), collapse='\n')
-
-#textVar <- 1.1
 
 theme_base <- function(input=list(), show_legend=F) {
   
