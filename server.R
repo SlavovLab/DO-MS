@@ -263,6 +263,19 @@ shinyServer(function(input, output, session) {
         }
         # otherwise, append to existing data.frame
         else {
+          
+          # before we append, need to make sure that columns match up
+          # if not, then take the intersection of the columns (only common columns)
+          cols_prev <- colnames(.data[[file$name]])
+          cols_new  <- colnames(.dat)
+          common_cols <- intersect(cols_prev, cols_new)
+          
+          if(length(common_cols) < length(cols_prev)) {
+            # take only common cols, if there is a difference
+            .data[[file$name]] <- .data[[file$name]][,common_cols]
+            .dat              <- .dat[,common_cols]
+          }
+          
           .data[[file$name]] <- rbind(.data[[file$name]], .dat)
         }
       }
