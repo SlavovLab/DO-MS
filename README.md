@@ -1,5 +1,7 @@
 # DO-MS
 
+[https://www.biorxiv.org/content/early/2019/01/06/512152](https://www.biorxiv.org/content/early/2019/01/06/512152)
+
 ## Requirements
 
 This application has been tested on R 3.4.4, OSX 10.14 / Windows 7/8/10, 
@@ -44,7 +46,17 @@ For OSX/Linux, ```Rscript``` must be available on the path, and for Windows, you
 
 If you are having trouble loading ```shiny```, please confirm that you have installed the package in the "Installation" step. If so, then you may need to define a new environment variable, ```R_LIBS_USER```, that points to the library path of your R installation. See [this StackOverflow answer](https://stackoverflow.com/a/19662905) for more details on this issue.
 
-Also, some users have reported issues with the package opening within RStudio's viewer pane, rather than within a separate browser window. Please make sure that you have the appropriate option checked in the dropdown menu of the 'Run App' button, if using RStudio. 
+Also, some users have reported issues with the package opening within RStudio's viewer pane, rather than within a separate browser window. Please make sure that you have the appropriate option checked in the dropdown menu of the 'Run App' button, if using RStudio.
+
+## Automated Report Generation
+
+You can automatically generate PDF/HTML reports without having to launch the server by running the ```do-ms_cmd.R``` script, like so:
+
+```
+$ Rscript do-ms_cmd.R config_file.yaml
+```
+
+This requires a configuration file, and you can [find an example one here](https://github.com/SlavovLab/DO-MS/blob/master/example/config_file.yaml).
 
 ## Customization
 
@@ -55,8 +67,6 @@ Currently modules are limited to plotting and providing data for download. More 
 ## Hosting as a Server
 
 As this application requires a large amount of computational power (CPU), on-hand memory (RAM), and possibly the storage of large amounts of mass-spec data (Storage), we do not recommend running this on a standalone server, as it is not cost-efficient.
-
-We are hosting our server on a desktop machine, and making the server publicly available via. a reverse proxy. Instructions to do this yourself are upcoming. Still, by far the easiest way to use the application is to run it locally.
 
 If you wish to host a server for internal usage, i.e., within an organizational intranet, you can change the host IP to "0.0.0.0" instead of "127.0.0.1", which exposes the server outside of the machine itself.
 
