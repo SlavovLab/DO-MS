@@ -46,6 +46,22 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     progress$inc(1, detail='')
   }}
   
+  # helper function to download data
+  download_data <- function(m) { function(file) {
+    # create progress bar
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message='Gathering Data...', value=0)
+    
+    m$validateFunc(filtered_data, input)
+    plotdata <- m$plotdataFunc(filtered_data, input)
+    # TODO: options to configure output format (CSV, delimeters, quotes, etc)
+    write_tsv(plotdata, path=file)
+    
+    # finish progress bar
+    progress$inc(1, detail='')
+  }}
+  
   # load each module from the module list via. callModule
   # each module is loaded by passing the moduleFunc field of the module
   # data is only in one reactive named list -- passing in filtered_data
@@ -58,24 +74,34 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     m <- module
     ns <- NS(m$id)
     
+    # simple table output, no javascript
     if(m$type == 'table') {
-      
-      # table type
       output[[ns('table')]] <- renderTable({
         m$plotFunc(filtered_data, input)
       })
-      
       output[[ns('plot.ui')]] <- renderUI({
         tableOutput(ns('table'))
       })
+    }
+    
+    # datatable (from DT package)
+    else if (m$type == 'datatable') {
+      # pull datatable options (customization) from module def
+      datatable_options <- m$datatable_options
+      if(is.null(datatable_options)) datatable_options <- list() # set to empty if not defined
       
-    } else if (m$type == 'plot') {
-      
-      # plot type
+      output[[ns('table')]] <- renderDataTable({  
+        m$plotFunc(filtered_data, input) }, options=datatable_options)
+      output[[ns('plot.ui')]] <- renderUI({
+        dataTableOutput(ns('table'), width='100%', height='auto')
+      })
+    }
+    
+    # plot output (image/plot object/ggplot object)
+    else if (m$type == 'plot') {
       output[[ns('plot')]] <- renderPlot({
         m$plotFunc(filtered_data, input)
       })
-      
       output[[ns('plot.ui')]] <- renderUI({
         
         # use dynamic width, based on number of experiments
@@ -84,9 +110,7 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
           if(!is.null(exp_sets())) {
             num_files <- length(exp_sets())
             plot_width <- paste0((num_files * m$dynamic_width) + 50, 'px')
-          } else {
-            plot_width='400px'
-          }
+          } else plot_width='400px' # default width when no data is loaded - to preserve DOM layout
         }
         
         plotOutput(ns('plot'), width=plot_width, height='370px')
@@ -106,20 +130,7 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     
     output[[ns('downloadData')]] <- downloadHandler(
       filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.txt') },
-      content=function(file) {
-        
-        # create progress bar
-        progress <- shiny::Progress$new()
-        on.exit(progress$close())
-        progress$set(message='Gathering Data...', value=0)
-        
-        m$validateFunc(filtered_data, input)
-        plotdata <- m$plotdataFunc(filtered_data, input)
-        write_tsv(plotdata, path=file)
-        
-        # finish progress bar
-        progress$inc(1, detail='')
-      }
+      content=download_data(m)
     )
     
   }) }
@@ -190,7 +201,8 @@ render_modules <- function(input, output) {
         div(class='box-footer', 
           switch(m$type,
                  plot=plot_footer(ns),
-                 table=table_footer(ns))
+                 table=table_footer(ns),
+                 datatable=table_footer(ns))
         )
       )))
     })

@@ -5,6 +5,7 @@ verbose: true
 
 ## Input/Output
 
+# paths to folders with MaxQuant txt output
 input_folders:
   - /gd/MS/SCoPE/phospho/dat/PS095
   - /gd/MS/SCoPE/phospho/dat/PS096
@@ -15,6 +16,7 @@ input_files:
   - msms
   - msmsScans
   - allPeptides
+  - parameters
   
 # match up with misc_input_files list in global.R
 #misc_input_files:
@@ -56,17 +58,18 @@ figure_show_grid: true
 ## Report options
 
 # choices: pdf, html
-format: html
+report_format: html
 
 # choices: default, cerulean, flatly, darkly, readable, 
 # spacelab, united, cosmo, lumen, paper, sandstone, simplex, yeti
-theme: readable
+# previews: https://bootswatch.com/3/
+report_theme: readable
 
 # figure size (in inches)
-figure_width: 5
-figure_height: 5
+report_figure_width: 5
+report_figure_height: 5
 
 # figure format. choices: pdf, png
-figure_format: png
+report_figure_format: png
 
 

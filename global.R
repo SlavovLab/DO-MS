@@ -8,8 +8,6 @@ library(pacman)
 p_load(shiny, shinydashboard, shinyWidgets, dplyr, ggplot2, lattice, 
        reshape2, RColorBrewer, readr, rmarkdown, stats, DT, stringr, yaml)
 
-print('Packages loaded')
-
 modules <- list()
 
 module_files <- list.files('modules')
@@ -23,6 +21,11 @@ for(module in module_files) {
   module_name <- gsub('.R', '', module)
   modules[[module_name]] <- init()
   modules[[module_name]][['id']] <- module_name
+  
+  # default type = 'plot'
+  if(is.null(modules[[module_name]][['type']])) {
+    modules[[module_name]][['type']] <- 'plot'
+  }
 }
 
 # collect all tab names
@@ -56,7 +59,11 @@ input_files <- list(
   allPeptides=list(
     name='allPeptides',
     file='allPeptides.txt',
-    help='MaxQuant allPeptides.txt file')
+    help='MaxQuant allPeptides.txt file'),
+  parameters=list(
+    name='parameters',
+    file='parameters.txt',
+    help='MaxQuant parameters.txt file')
 )
 
 misc_input_files <- list(

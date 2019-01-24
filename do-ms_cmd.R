@@ -19,6 +19,7 @@
 # load packages, modules, tabs, helper functions --------------------------
 
 source('global.R')
+source(file.path('server', 'generate_report.R'))
 
 prnt <- function(message) {
   if(verbose) print(message)
@@ -322,143 +323,11 @@ prnt('Generating report...')
 # and the other fields should just be ignored
 input <- config
 
+# wrap data in a function, since down the line data is called like a function
+# as modules are expecting a reactive object not static data
+f_data <- function() { data }
 
-report <- paste(
-  '---',
-  'title: DO-MS Report',
-  'date: "`r format(Sys.time(), \'Generated: %Y-%m-%d    %H:%M:%S\')`"',
-  'output:',
-  sep='\n')
-
-if(config[['format']] == 'pdf') {
-  
-  report <- paste(report,
-                  '  pdf_document:',
-                  #'    header-includes:',
-                  #'      - \\usepackage{xcolor}',
-                  #'      - \\usepackage{framed}',
-                  #'      - \\usepackage{color}',
-                  '    fig_caption: false',
-                  sep='\n')
-  
-} else if (config[['format']] == 'html') {
-  
-  report <- paste(report,
-                  '  html_document:',
-                  paste0('    theme: ', config[['theme']]),
-                  #'    highlight: tango',
-                  '    fig_caption: false',
-                  '    df_print: paged',            
-                  sep='\n')
-}
-  
-# add figure options
-report <- paste(report,
-                paste0('    fig_width: ', config[['figure_width']]),
-                paste0('    fig_height: ', config[['figure_height']]),
-                paste0('    dev: ', config[['figure_format']]),
-                sep='\n')
-  
-# add params
-report <- paste(report,
-                'params:',
-                '  plots: NA',
-                '---',
-                '# {.tabset}',
-                sep='\n')
-
-prnt('Adding modules to report')
-
-params <- list()
-params[['plots']] <- list()
-  
-for(t in 1:length(tabs)) { local({
-  .t <- t
-  tab <- tabs[.t]
-  
-  report <<- paste(report,
-                   paste0('## ', tab),
-                   sep='\n')
-  
-  modules_in_tab <- modules[sapply(modules, function(m) { 
-    gsub('([0-9])+(\\s|_)', '', m$tab) == tab 
-  })]
-  
-  plots <- list()
-  
-  for(m in 1:length(modules_in_tab)) { local({
-    .m <- m
-    module <- modules_in_tab[[.m]]
-    
-    prnt(paste0('Adding module ', .m, ' (', module$id, ') from tab ', .t, ' (', tab, ')'))
-    
-    # create chunk name from module box title
-    chunk_name <- module$id
-    chunk_name <- gsub('\\s', '_', chunk_name)
-    chunk_name <- gsub('[=-\\.]', '_', chunk_name)
-    
-    # if dynamic plot width is defined, then inject that into this
-    # R-markdown chunk instead
-    # because dynamic width is defined in pixels -- need to convert to inches
-    
-    # I know this is variable between screens and whatever, 
-    # but set this as the default for now
-    ppi <- 75
-    
-    dynamic_plot_width = ''
-    if(!is.null(module$dynamic_width)) {
-      num_files <- length(raw_files)
-      dynamic_plot_width <- paste0(', fig.width=', ceiling(num_files * module$dynamic_width / ppi) + 1)
-    }
-    
-    report <<- paste(report,
-                     paste0('### ', module$boxTitle, ' {.plot-title}'),
-                     '',
-                     module$help,
-                     '',
-                     paste0('```{r ', chunk_name, ', echo=FALSE, warning = FALSE, message = FALSE', 
-                            # put custom width definition. if it doesn't exist, this variable will be empty
-                            dynamic_plot_width,
-                            '}'),
-                     'options( warn = -1 )',
-                     paste0('params[["plots"]][[', .t, ']][[', .m, ']]'),
-                     sep='\n')
-    
-    # because in shiny data is a reactive variable (that is called like a function)
-    # and here data is just a static table, create a dummy function that just returns the data
-    # that way we don't have to change any module code.
-    plots[[.m]] <<- tryCatch(module$plotFunc(function() { data }, input),
-                             error = function(e) {
-                               # dummy plot
-                               #qplot(0, 0)
-                               paste0('Plot failed to render. Reason: ', e)
-                             },
-                             finally={}
-    )
-    
-    report <<- paste(report, '```', '', sep='\n')
-  }) } # end module loop
-  
-  params[['plots']][[.t]] <<- plots
-  
-  report <<- paste(report,
-                   '',
-                   sep='\n')
-  
-}) } # end tab loop
-  
-
-prnt('Writing temporary files')
-
-tempReport <- file.path(tempdir(), "tempReport.Rmd")
-write_file(x=report, path=tempReport, append=FALSE)
-
-prnt('Rendering report (this may take a while)')
-
-rmarkdown::render(tempReport, output_file = config[['output']],
-                  params = params,
-                  envir = new.env(parent = globalenv())
-)
+generate_report(input, f_data, raw_files, config[['output']], progress_bar=FALSE)
 
 prnt(paste0('Report written to: ', config[['output']]))
 
