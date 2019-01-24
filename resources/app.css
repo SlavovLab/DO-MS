@@ -101,6 +101,7 @@ button.action-button:hover, button.action-button:active {
 
 .box-body {
   height: 400px;
+  overflow-y: auto;
 }
 
 .box-body .shiny-output-error-validation {
