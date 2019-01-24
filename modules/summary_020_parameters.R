@@ -37,7 +37,9 @@ init <- function() {
       pageLength=10,
       dom='lfptp',
       lengthMenu=c(5, 10, 15, 20, 50)
-    )
+    ),
+    box_width=12, # in bootstrap column units
+    box_height=600 # pixels
   ))
 }
 

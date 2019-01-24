@@ -11,19 +11,16 @@ source('global.R')
 # attach module outputs/buttons to functions
 attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
 
-  # helper function to generate figure widths for figures with dynamic widths
+  # helper function to generate figure widths for figures with dynamic widths 
   dynamic_fig_width <- function(num_exps, width_per_exp) {
-    # PPI is static. maybe in the future make this dynamic based on the system
-    # or graphics device
-    ppi <- 75
     # convert initial dynamic width (in pixels) to inches using PPI
-    width_per_exp <- width_per_exp / ppi
+    width_per_exp <- width_per_exp / input$ppi
     
     return(ceiling((width_per_exp * num_exps) + 1))
   }
   
   # helper function to download figure
-  download_figure <- function(m, format) { function(file) {
+  download_figure <- function(module, format) { function(file) {
     
     # create progress bar
     progress <- shiny::Progress$new()
@@ -32,11 +29,11 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     
     # use dynamic width, based on number of experiments
     fig_width <- input$download_figure_width
-    if(!is.null(m$dynamic_width)) {
-      fig_width <- dynamic_fig_width(isolate(length(exp_sets())), m$dynamic_width)
+    if(!is.null(module$dynamic_width)) {
+      fig_width <- dynamic_fig_width(isolate(length(exp_sets())), module$dynamic_width)
     }
     
-    ggsave(filename=file, plot=m$plotFunc(filtered_data, input), 
+    ggsave(filename=file, plot=module$plotFunc(filtered_data, input), 
            device=format, 
            units=input$download_figure_units,
            width=fig_width, 
@@ -47,14 +44,14 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
   }}
   
   # helper function to download data
-  download_data <- function(m) { function(file) {
+  download_data <- function(module) { function(file) {
     # create progress bar
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message='Gathering Data...', value=0)
     
-    m$validateFunc(filtered_data, input)
-    plotdata <- m$plotdataFunc(filtered_data, input)
+    module$validateFunc(filtered_data, input)
+    plotdata <- module$plotdataFunc(filtered_data, input)
     # TODO: options to configure output format (CSV, delimeters, quotes, etc)
     write_tsv(plotdata, path=file)
     
@@ -70,14 +67,14 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
   # of each iteration will default to to the last one.
   # see: https://gist.github.com/wch/5436415/
   
-  for(module in modules) { local({
-    m <- module
-    ns <- NS(m$id)
+  for(m in modules) { local({
+    module <- m
+    ns <- NS(module$id)
     
     # simple table output, no javascript
-    if(m$type == 'table') {
+    if(module$type == 'table') {
       output[[ns('table')]] <- renderTable({
-        m$plotFunc(filtered_data, input)
+        module$plotFunc(filtered_data, input)
       })
       output[[ns('plot.ui')]] <- renderUI({
         tableOutput(ns('table'))
@@ -85,66 +82,67 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     }
     
     # datatable (from DT package)
-    else if (m$type == 'datatable') {
+    else if (module$type == 'datatable') {
       # pull datatable options (customization) from module def
-      datatable_options <- m$datatable_options
+      datatable_options <- module$datatable_options
       if(is.null(datatable_options)) datatable_options <- list() # set to empty if not defined
       
       output[[ns('table')]] <- renderDataTable({  
-        m$plotFunc(filtered_data, input) }, options=datatable_options)
+        module$plotFunc(filtered_data, input) }, options=datatable_options)
       output[[ns('plot.ui')]] <- renderUI({
         dataTableOutput(ns('table'), width='100%', height='auto')
       })
     }
     
     # plain, unformatted text output
-    else if (m$type == 'text') {
-      output[[ns('text')]] <- renderText({ m$plotFunc(filtered_data, input) })
+    else if (module$type == 'text') {
+      output[[ns('text')]] <- renderText({ module$plotFunc(filtered_data, input) })
       output[[ns('plot.ui')]] <- renderUI({
         verbatimTextOutput(ns('text'))
       })
     }
     
     # plot output (image/plot object/ggplot object)
-    else if (m$type == 'plot') {
+    else if (module$type == 'plot') {
       output[[ns('plot')]] <- renderPlot({
-        m$plotFunc(filtered_data, input)
+        module$plotFunc(filtered_data, input)
       })
       output[[ns('plot.ui')]] <- renderUI({
         
         # use dynamic width, based on number of experiments
         plot_width <- '100%'
-        if(!is.null(m$dynamic_width)) {
+        if(!is.null(module$dynamic_width)) {
           if(!is.null(exp_sets())) {
             num_files <- length(exp_sets())
-            plot_width <- paste0((num_files * m$dynamic_width) + 50, 'px')
+            plot_width <- paste0((num_files * module$dynamic_width) + 50, 'px')
           } else plot_width='400px' # default width when no data is loaded - to preserve DOM layout
         }
         
-        plotOutput(ns('plot'), width=plot_width, height='370px')
+        # pull plot height from module def. if null, default to 370px
+        plot_height <- module$plot_height
+        if(is.null(plot_height)) plot_height <- 370
+        
+        plotOutput(ns('plot'), width=plot_width, height=paste0(plot_height, 'px'))
       })
       
     }
     
     output[[ns('downloadPDF')]] <- downloadHandler(
-      filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.pdf') },
-      content=download_figure(m, 'pdf')
+      filename=function() { paste0(gsub('\\s', '_', module$boxTitle), '.pdf') },
+      content=download_figure(module, 'pdf')
     )
     
     output[[ns('downloadPNG')]] <- downloadHandler(
-      filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.png') },
-      content=download_figure(m, 'png')
+      filename=function() { paste0(gsub('\\s', '_', module$boxTitle), '.png') },
+      content=download_figure(module, 'png')
     )
     
     output[[ns('downloadData')]] <- downloadHandler(
-      filename=function() { paste0(gsub('\\s', '_', m$boxTitle), '.txt') },
-      content=download_data(m)
+      filename=function() { paste0(gsub('\\s', '_', module$boxTitle), '.txt') },
+      content=download_data(module)
     )
-    
   }) }
-  
 }
-
 
 
 plot_footer <- function(ns) {
@@ -177,26 +175,37 @@ render_modules <- function(input, output) {
   # of each iteration will default to to the last one.
   # see: https://gist.github.com/wch/5436415/
   for(tab in tabs) { local({
-    modules_in_tab <- modules[sapply(modules, function(m) { 
-      gsub('([0-9])+(\\s|_)', '', m$tab) == tab 
+    modules_in_tab <- modules[sapply(modules, function(module) { 
+      gsub('([0-9])+(\\s|_)', '', module$tab) == tab 
     })]
     
-    plots <- lapply(modules_in_tab, function(m) {
-      ns <- NS(m$id)
+    plots <- lapply(modules_in_tab, function(module) {
+      ns <- NS(module$id)
+      
+      # derive box height from plot height from module def. if null, default to 370px
+      plot_height <- module$plot_height
+      if(is.null(plot_height)) plot_height <- 370
+      box_height <- plot_height + 30 # add footer_height (30px)
+      
+      # pull box width from module def. if null, default to 6 (50%)
+      box_width <- module$box_width
+      if(is.null(box_width)) box_width <- 6
+      box_width <- round(box_width) # enforce integer
+      if(box_width < 1) box_width <- 1; if(box_width > 12) box_width <- 12 # enforce limits (1-12)
       
       # instead of using box() as provided by shinydashboard,
       # we're going to hack in a similar div since we have to shove in additional elements
       # taken from: https://github.com/rstudio/shinydashboard/blob/master/R/boxes.R
-      return(div(class='col-sm-6', div(class='box box-solid', style='',
+      return(div(class=paste0('col-sm-', box_width), div(class='box box-solid', style='',
         # header
         div(class='box-header',
-          h3(class='box-title', m$boxTitle),
+          h3(class='box-title', module$boxTitle),
            
             # tooltip information:
             # https://getbootstrap.com/docs/3.3/javascript/#tooltips
             
             tags$button(class='btn btn-secondary tooltip-btn', 
-                       `data-toggle`='tooltip', `data-placement`='right', title=m$help,
+                       `data-toggle`='tooltip', `data-placement`='right', title=module$help,
                        icon('question-sign', lib='glyphicon')  
             ),
            
@@ -205,11 +214,11 @@ render_modules <- function(input, output) {
                             shiny::icon('minus'))
           )
         ),
-        div(class='box-body plot-module-body',
+        div(class='box-body plot-module-body', style=paste0('height:', box_height, 'px;'),
           uiOutput(ns('plot.ui'))
         ),
         div(class='box-footer', 
-          switch(m$type,
+          switch(module$type,
                  plot=plot_footer(ns),
                  table=table_footer(ns),
                  datatable=table_footer(ns),

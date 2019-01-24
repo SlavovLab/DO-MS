@@ -44,6 +44,8 @@ remove_contam: CON_
 
 ## Figure rendering options
 
+ppi: 150
+
 # label font size
 figure_title_font_size: 16
 # axis tick label font size

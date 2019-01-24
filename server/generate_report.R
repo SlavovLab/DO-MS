@@ -114,92 +114,57 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       # R-markdown chunk instead
       # because dynamic width is defined in pixels -- need to convert to inches
       
-      # I know this is variable between screens and whatever, 
-      # but set this as the default for now
-      ppi <- 75
-      
-      dynamic_plot_width = ''
+      plot_width = ''
       if(!is.null(module$dynamic_width)) {
         num_files <- length(exp_sets)
-        dynamic_plot_width <- paste0(', fig.width=', ceiling(num_files * module$dynamic_width / ppi) + 1)
+        plot_width <- paste0(', fig.width=', ceiling(num_files * module$dynamic_width / input$ppi) + 1)
+      }
+      
+      # override existing/default plot width if it is explicitly defined
+      if(!is.null(module$plot_width)) {
+        plot_width <- paste0(', fig.width=', round(module$plot_width))
+      }
+      
+      plot_height <- ''
+      # override existing/default plot height if it is explicitly defined
+      if(!is.null(module$plot_height)) {
+        plot_height <- paste0(', fig.height=', round(module$plot_height))
       }
       
       report <<- paste(report,
-                       paste0('### ', module$boxTitle, ' {.plot-title}'),
-                       '',
-                       module$help,
-                       '',
+                       paste0('### ', module$boxTitle, ' {.plot-title}'), '',
+                       module$help, '',
                        paste0('```{r ', chunk_name, ', echo=FALSE, warning = FALSE, message = FALSE', 
-                              # put custom width definition. if it doesn't exist, this variable will be empty
-                              dynamic_plot_width,
+                              # custom width/height definition
+                              plot_width, plot_height,
                               '}'),
                        'options( warn = -1 )',
                        sep='\n')
       
-      # render plot for the module. varies based on module plot type
-      render_obj <- ''
-      
-      # for plots, can just dump the object and Rmarkdown will take care of the rest.
-      if(module$type == 'plot') {
-        report <<- paste(report, paste0('params[["plots"]][[', .t, ']][[', .m, ']]'), sep='\n')
-      } 
-      
-      # for datatable widget
-      else if (module$type == 'datatable') {
-        # render an htmlwidget object which then becomes interactive in the HTML report
-        if(input$report_format == 'html') {
-        # pull in datatable options from the meta object for this module
-        report <<- paste(report, 
-                         paste0('datatable(params[["plots"]][[', .t, ']][[', .m, ']], ',
-                                'options=ifelse(is.null(params[["meta"]][[',.t,']][[',.m,']][["datatable_options"]]), list(), params[["meta"]][[',.t,']][[',.m,']][["datatable_options"]])', ')'), 
-                         sep='\n')
-        } 
-        # for PDF, render the table with kable
-        else if (input$report_format == 'pdf') {
-          report <<- paste(report, paste0('kable(params[["plots"]][[', .t, ']][[', .m, ']])'), sep='\n')
-        }
-      } 
-      
-      # for tables:
-      else if (module$type == 'table') {
-        # for HTML report, this is transformed neatly into the DOM automatically, no need to transform the output
-        if(input$report_format == 'html') {
-          report <<- paste(report, paste0('params[["plots"]][[', .t, ']][[', .m, ']]'), sep='\n')
-        }
-        # for PDF, need to render the table with the kable function
-        else if(input$report_format == 'pdf') {
-          report <<- paste(report, paste0('kable(params[["plots"]][[', .t, ']][[', .m, ']])'), sep='\n')
-        }
-      }
-      
-      # for text output, just render normally
-      else if (module$type == 'text') {
-        report <<- paste(report, paste0('params[["plots"]][[', .t, ']][[', .m, ']]'), sep='\n')
-      }
+      # call helper function to decide what to do with this module + report format
+      report <<- paste(report, render_module(.t, .m, module$type, input$report_format), sep='\n')
       
       
+      # store the output from the module plot function
       plots[[.m]] <<- tryCatch(module$plotFunc(filtered_data, input),
-                               error = function(e) {
-                                 # dummy plot
-                                 #qplot(0, 0)
-                                 paste0('Plot failed to render. Reason: ', e)
-                               },
-                               finally={}
+        error = function(e) { paste0('Plot failed to render. Reason: ', e) },
+        finally={}
       )
+      
       # grab module metadata, but exclude function definitions to save space
       meta[[.m]] <<- module[!grepl('Func', names(module))]
       
+      # end chunk
       report <<- paste(report, '```', '', sep='\n')
-      
       
     }) } # end module loop
     
+    # deposit plot and meta structures into the tab entry in parameters
     params[['plots']][[.t]] <<- plots
     params[['meta']][[.t]] <<- meta
     
-    report <<- paste(report,
-                     '',
-                     sep='\n')
+    # extra newline at end
+    report <<- paste(report, '', sep='\n')
     
   }) } # end tab loop
   
@@ -216,11 +181,58 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
   }
   
   rmarkdown::render(tempReport, output_file = file,
-                    params = params,
-                    envir = new.env(parent = globalenv())
+                    params = params, envir = new.env(parent = globalenv())
   )
   
   if(progress_bar) {
     progress$inc(40/100, detail='Finishing')
   }
 }
+
+# helper function for deciding how to render each module
+render_module <- function(tab_index, module_index, type, format) {
+
+  render_code <- ''
+  
+  if(format == 'pdf') {
+    
+    if(type == 'plot') {
+      render_code <- paste0('params[["plots"]][[', tab_index, ']][[', module_index, ']]')
+    }
+    else if(type == 'table') {
+      # for PDF, need to render the table with the kable function
+      render_code <- paste0('kable(params[["plots"]][[', tab_index, ']][[', module_index, ']])')
+    }
+    else if(type == 'datatable') {
+      render_code <- paste0('kable(params[["plots"]][[', tab_index, ']][[', module_index, ']])')
+    }
+    else if(type == 'text') {
+      render_code <- paste0('params[["plots"]][[', tab_index, ']][[', module_index, ']]')
+    }
+    
+  } 
+  else if(format == 'html') {
+    
+    if(type == 'plot') {
+      render_code <- paste0('params[["plots"]][[', tab_index, ']][[', module_index, ']]')
+    }
+    else if(type == 'table') {
+      # for HTML report, this is transformed neatly into the DOM automatically, no need to transform the output
+      render_code <- paste0('params[["plots"]][[', tab_index, ']][[', module_index, ']]')
+    }
+    # render an htmlwidget object which then becomes interactive in the HTML report
+    else if(type == 'datatable') {
+      # pull in datatable options from the meta object for this module
+      render_code <- paste0('datatable(params[["plots"]][[', tab_index, ']][[', module_index, ']], ',
+        'options=ifelse(is.null(params[["meta"]][[', tab_index, ']][[', module_index, ']][["datatable_options"]]), ',
+        'list(), params[["meta"]][[', tab_index, ']][[', module_index, ']][["datatable_options"]])', ')')
+    }
+    else if(type == 'text') {
+      render_code <- paste0('params[["plots"]][[', tab_index, ']][[', module_index, ']]')
+    }
+  }
+  
+  return(render_code)
+}
+
+

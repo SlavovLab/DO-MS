@@ -3,6 +3,12 @@
 settings_tab <- tabItem(tabName='settings', fluidPage(
   h1('Plotting Options'),
   panel(
+    h3('Global Display Options'),
+    fluidRow(
+      column(12, numericInput('ppi', 'Points per Inch (PPI)', 150, min=75, max=600, step=1))
+    )
+  ),
+  panel(
     h3('Figure Download Options'),
     tags$p('Set the width, height, and units of plots when downloading as PDF or PNG'),
     selectInput('download_figure_units', 'Plot Units', selected='in',
