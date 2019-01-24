@@ -3,6 +3,7 @@ init <- function() {
   tab <- '010 Chromatography'
   boxTitle <- 'Elution profile: FWHM'
   help <- 'Plotting the distrution of elution profile widths at half the maximum intensity value for each peak.'
+  type <- 'plot'
   source.file <- 'allPeptides'
   
   .validate <- function(data, input) {
@@ -36,6 +37,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

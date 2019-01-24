@@ -3,6 +3,7 @@ init <- function() {
   tab <- '050 SCoPE-MS Diagnostics'
   boxTitle <- 'Missing data per TMT channel'
   help <- 'Calculating the missing values reporter per run per TMT channel, reported as 0 by MaxQuant.'
+  type <- 'plot'
   source.file<-"evidence"
   
   .validate <- function(data, input) {
@@ -60,6 +61,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

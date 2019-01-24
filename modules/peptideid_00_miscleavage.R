@@ -3,6 +3,7 @@ init <- function() {
   tab <- '030 Peptide Identifications'
   boxTitle <- 'Miscleavage rate'
   help <- 'Plotting frequency of peptide miscleavages.'
+  type <- 'plot'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -28,6 +29,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

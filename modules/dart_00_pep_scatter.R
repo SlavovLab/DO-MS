@@ -3,6 +3,7 @@ init <- function() {
   tab <- '070 DART-ID'
   boxTitle <- 'Error Probability Update'
   help <- '2D Densities of PSM error probabilities, given by MaxQuant (Spectra) and DART-ID. Points below the 45 degree line indicate boosted confidence (and lowered error probability), and vice versa for above the 45 degree line. Set the PEP slider to 1 to see all PSMs regardless of initial confidence.'
+  type <- 'plot'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -156,6 +157,7 @@ init <- function() {
   # that our application can build its UI from
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

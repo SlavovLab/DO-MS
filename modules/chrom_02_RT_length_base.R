@@ -3,6 +3,7 @@ init <- function() {
   tab <- '010 Chromatography'
   boxTitle <- 'Retention length of peptides at base'
   help <- 'Plotting the retention length of identified peptide peaks at the base.'
+  type <- 'plot'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -37,6 +38,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

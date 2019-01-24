@@ -3,6 +3,7 @@ init <- function() {
   tab <- '040 Contamination'
   boxTitle <- 'm/z Distribution for +1 ions'
   help <- 'Plotting the m/z distribution of +1 ions, a diagnostic of non-peptide contaminants'
+  type <- 'plot'
   source.file <- 'allPeptides'
   
   .validate <- function(data, input) {
@@ -29,6 +30,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

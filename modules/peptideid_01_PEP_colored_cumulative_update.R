@@ -4,6 +4,7 @@ init <- function() {
   boxTitle <- 'Number of Confident Identifications'
   help <- 'Plotting the number of peptides identified at each given confidence
     level.'
+  type <- 'plot'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -64,6 +65,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

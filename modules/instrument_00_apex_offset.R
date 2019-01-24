@@ -4,7 +4,8 @@ init <- function() {
   boxTitle <- 'Apex Offset'
   help <- 'Plotting the distance from the peak of the elution profile the MS2
     events were executed.'
-  source.file<-"msmsScans"
+  type <- 'plot'
+  source.file<-'msmsScans'
   
   .validate <- function(data, input) {
     validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
@@ -36,6 +37,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

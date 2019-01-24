@@ -3,6 +3,7 @@ init <- function() {
   tab <- '020 Instrument Performance'
   boxTitle <- 'MS1 Intensity for all ions'
   help <- 'Plotting the MS1 intensity for all ions observed (not necessarily sent to MS2) across runs.'
+  type <- 'plot'
   source.file <- 'allPeptides'
   
   .validate <- function(data, input) {
@@ -31,6 +32,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

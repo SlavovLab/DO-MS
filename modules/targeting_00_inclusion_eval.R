@@ -3,6 +3,7 @@ init <- function() {
   tab <- '060 Targeting'
   boxTitle <- 'Inclusion List Evaluation'
   help <- 'Showing the success of targeting specific m/z values at specific Retention time (RT) windows.'
+  type <- 'plot'
   source.file<-"allPeptides"
   
   .validate <- function(data, input) {
@@ -128,6 +129,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

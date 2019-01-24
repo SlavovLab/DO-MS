@@ -3,6 +3,7 @@ init <- function() {
   tab <- '040 Contamination'
   boxTitle <- 'TIC of ions by charge state'
   help <- 'Plotting the TIC of charge states observed. This will give an idea if you are seeing mostly peptides or non-peptide species'
+  type <- 'plot'
   source.file <- 'allPeptides'
   
   .validate <- function(data, input) {
@@ -42,6 +43,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

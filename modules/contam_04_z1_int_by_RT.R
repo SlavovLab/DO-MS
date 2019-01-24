@@ -5,6 +5,7 @@ init <- function() {
   help <- 'Plotting the intensity of z=1 ions observed. This will give an
   if you are seeing mostly peptides or non-peptide species and where they occur
   in the gradient'
+  type <- 'plot'
   source.file <- 'allPeptides'
   
   .validate <- function(data, input) {
@@ -37,6 +38,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

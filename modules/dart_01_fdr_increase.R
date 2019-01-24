@@ -3,6 +3,7 @@ init <- function() {
   tab <- '070 DART-ID'
   boxTitle <- 'Increase in Confident PSMs'
   help <- 'Fold-change increase of PSMs at given confidence thresholds (in this case, FDR thresholds)'
+  type <- 'plot'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -133,6 +134,7 @@ init <- function() {
   # that our application can build its UI from
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

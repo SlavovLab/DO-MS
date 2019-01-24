@@ -5,6 +5,7 @@ init <- function() {
   help <- 'Calculating the spearman correlation between the peptide quantitation in different
   TMT channels to the carry channel for every experiment, plotted against the median RI 
   intensity for that channel.'
+  type <- 'plot'
   source.file<-"evidence"
   
   .validate <- function(data, input) {
@@ -81,6 +82,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

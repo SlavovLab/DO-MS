@@ -3,6 +3,7 @@ init <- function() {
   tab <- '020 Instrument Performance'
   boxTitle <- 'Injection times, PSM resulting'
   help <- 'Plotting distribution of injection times for MS2 events that did result in a PSM.'
+  type <- 'plot'
   source.file <- 'msmsScans'
   
   .validate <- function(data, input) {
@@ -29,6 +30,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

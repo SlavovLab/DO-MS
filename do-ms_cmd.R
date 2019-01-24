@@ -229,6 +229,9 @@ for(f in load_input_files) {
   # for each file, check if it has a raw file column
   if('Raw.file' %in% colnames(data[[file$name]])) {
     
+    # make a copy of the raw file column
+    data[[file$name]]$Raw.file.orig <- data[[file$name]]$Raw.file
+    
     # drop unused levels, if they've been filtered out
     data[[file$name]]$Raw.file <- droplevels(data[[file$name]]$Raw.file)
     
@@ -323,7 +326,7 @@ input <- config
 report <- paste(
   '---',
   'title: DO-MS Report',
-  'date: "`r format(Sys.time(), \'%Y-%m-%d    %H:%M:%S\')`"',
+  'date: "`r format(Sys.time(), \'Generated: %Y-%m-%d    %H:%M:%S\')`"',
   'output:',
   sep='\n')
 

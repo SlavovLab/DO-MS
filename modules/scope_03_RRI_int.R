@@ -3,6 +3,7 @@ init <- function() {
   tab <- '050 SCoPE-MS Diagnostics'
   boxTitle <- 'Relative reporter ion intensity'
   help <- 'Plotting the TMT reporter intensities for a single run, normalized by the channel with the highest mean reporter ion intensity.'
+  type <- 'plot'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -45,6 +46,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

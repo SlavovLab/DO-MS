@@ -5,6 +5,7 @@ init <- function() {
   help <- 'Comparing the reporter ion intensities for all TMT channels
   to the carrier channel, chosen automatically as the most intense 
   channel (median intensity).'
+  type <- 'plot'
   source.file<-"msms"
   
   .validate <- function(data, input) {
@@ -61,6 +62,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

@@ -3,6 +3,7 @@ init <- function() {
   tab <- '070 DART-ID'
   boxTitle <- 'RT Alignment Error'
   help <- 'Alignment Error (Predicted RT - Observed RT) for the RT Alignment in DART-ID'
+  type <- 'plot'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -47,6 +48,7 @@ init <- function() {
   # that our application can build its UI from
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

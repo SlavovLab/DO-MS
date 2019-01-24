@@ -4,6 +4,7 @@ init <- function() {
   boxTitle <- 'Number of ions by charge state'
   help <- 'Plotting the frequency of charge states observed. This will give an
   if you are seeing mostly peptides or non-peptide species'
+  type <- 'plot'
   source.file <- 'allPeptides'
 
   
@@ -43,6 +44,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

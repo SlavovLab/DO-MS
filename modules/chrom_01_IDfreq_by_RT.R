@@ -3,6 +3,7 @@ init <- function() {
   tab <- '010 Chromatography'
   boxTitle <- 'Identification frequency across gradient'
   help <- 'Plotting the frequency of peptide identification across thechromatographic gradient.'
+  type <- 'plot'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -30,6 +31,7 @@ init <- function() {
   
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,

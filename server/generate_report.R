@@ -30,7 +30,7 @@ download_report <- function(input, output, filtered_data, exp_sets) {
       report <- paste(
         '---',
         'title: DO-MS Report',
-        'date: "`r format(Sys.time(), \'%Y-%m-%d\')`"',
+        'date: "`r format(Sys.time(), \'Generated: %Y-%m-%d    %H:%M:%S\')`"',
         'output:',
         sep='\n')
       

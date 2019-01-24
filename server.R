@@ -409,10 +409,10 @@ shinyServer(function(input, output, session) {
       if(length(named_exps) < length(.file_levels)) {
         .file_levels[1:length(named_exps)] <- named_exps
       } else if(length(named_exps) > length(.file_levels)) {
-        .file_levels = named_exps[1:length(.file_levels)]
+        .file_levels <- named_exps[1:length(.file_levels)]
       } else {
         # same length
-        .file_levels = named_exps
+        .file_levels <- named_exps
       }
     }
     
@@ -465,6 +465,9 @@ shinyServer(function(input, output, session) {
       
       # for each file, check if it has a raw file column
       if('Raw.file' %in% colnames(f_data[[file$name]])) {
+        
+        # make a copy of the raw file column
+        f_data[[file$name]]$Raw.file.orig <- f_data[[file$name]]$Raw.file
         
         # rename the levels of this file
         f_data[[file$name]]$Raw.file <- factor(f_data[[file$name]]$Raw.file,

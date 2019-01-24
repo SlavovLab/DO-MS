@@ -3,6 +3,7 @@ init <- function() {
   tab <- '070 DART-ID'
   boxTitle <- 'Peptide Identification Increase by Experiment'
   help <- 'Increased number of peptide IDs per experiment, relative to existing IDs before DART-ID'
+  type <- 'plot'
   source.file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -52,6 +53,7 @@ init <- function() {
   # that our application can build its UI from
   return(list(
     tab=tab,
+    type=type,
     boxTitle=boxTitle,
     help=help,
     source.file=source.file,
