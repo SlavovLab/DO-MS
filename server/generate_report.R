@@ -138,18 +138,28 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       
       # render plot for the module. varies based on module plot type
       render_obj <- ''
+      
+      # for plots and tables, can just dump the object and Rmarkdown will take care of the rest.
       if(module$type == 'plot' | module$type == 'table') {
-        # for plots and tables, can just dump the object and Rmarkdown will take care of the rest.
         report <<- paste(report, paste0('params[["plots"]][[', .t, ']][[', .m, ']]'), sep='\n')
-      } else if (module$type == 'datatable' & input$report_format == 'html') {
-        # for datatable, can render an htmlwidget object which then becomes interactive in the HTML report
+      } 
+      
+      # for datatable, can render an htmlwidget object which then becomes interactive in the HTML report
+      else if (module$type == 'datatable' & input$report_format == 'html') {
         # pull in datatable options from the meta object for this module
         report <<- paste(report, 
                          paste0('datatable(params[["plots"]][[', .t, ']][[', .m, ']], ',
                                 'options=ifelse(is.null(params[["meta"]][[',.t,']][[',.m,']][["datatable_options"]]), list(), params[["meta"]][[',.t,']][[',.m,']][["datatable_options"]])', ')'), 
                          sep='\n')
-      } else if (module$type == 'datatable') {
-        # for non-html outputs, just render like a normal table
+      } 
+      
+      # for non-html outputs, just render like a normal table
+      else if (module$type == 'datatable') {
+        report <<- paste(report, paste0('params[["plots"]][[', .t, ']][[', .m, ']]'), sep='\n')
+      }
+      
+      # for text output, just render normally
+      else if (module$type == 'text') {
         report <<- paste(report, paste0('params[["plots"]][[', .t, ']][[', .m, ']]'), sep='\n')
       }
       

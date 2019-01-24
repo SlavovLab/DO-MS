@@ -9,7 +9,7 @@ init <- function() {
   .validate <- function(data, input) {
     validate(need(
       data()[[source.file]],
-      paste0("Upload ", source.file,".txt")
+      paste0('Upload ', source.file, '.txt')
     ))
   }
   

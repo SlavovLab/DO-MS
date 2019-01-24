@@ -97,6 +97,14 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
       })
     }
     
+    # plain, unformatted text output
+    else if (m$type == 'text') {
+      output[[ns('text')]] <- renderText({ m$plotFunc(filtered_data, input) })
+      output[[ns('plot.ui')]] <- renderUI({
+        verbatimTextOutput(ns('text'))
+      })
+    }
+    
     # plot output (image/plot object/ggplot object)
     else if (m$type == 'plot') {
       output[[ns('plot')]] <- renderPlot({
@@ -161,6 +169,8 @@ table_footer <- function(ns) {
   )
 }
 
+no_footer <- function(ns) { div(class='empty-footer') }
+
 
 render_modules <- function(input, output) {
   # need local({}) to isolate each instance of the for loop - or else the output
@@ -202,7 +212,8 @@ render_modules <- function(input, output) {
           switch(m$type,
                  plot=plot_footer(ns),
                  table=table_footer(ns),
-                 datatable=table_footer(ns))
+                 datatable=table_footer(ns),
+                 text=no_footer(ns))
         )
       )))
     })
