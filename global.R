@@ -5,7 +5,7 @@ if(!'pacman' %in% installed.packages()[,"Package"]) {
 library(pacman)
 
 # install/load dependencies
-p_load(shiny, shinydashboard, shinyWidgets, dplyr, ggplot2, lattice, 
+p_load(shiny, shinydashboard, shinyWidgets, dplyr, ggplot2, lattice, knitr,
        reshape2, RColorBrewer, readr, rmarkdown, stats, DT, stringr, yaml)
 
 modules <- list()

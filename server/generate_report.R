@@ -139,23 +139,37 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       # render plot for the module. varies based on module plot type
       render_obj <- ''
       
-      # for plots and tables, can just dump the object and Rmarkdown will take care of the rest.
-      if(module$type == 'plot' | module$type == 'table') {
+      # for plots, can just dump the object and Rmarkdown will take care of the rest.
+      if(module$type == 'plot') {
         report <<- paste(report, paste0('params[["plots"]][[', .t, ']][[', .m, ']]'), sep='\n')
       } 
       
-      # for datatable, can render an htmlwidget object which then becomes interactive in the HTML report
-      else if (module$type == 'datatable' & input$report_format == 'html') {
+      # for datatable widget
+      else if (module$type == 'datatable') {
+        # render an htmlwidget object which then becomes interactive in the HTML report
+        if(input$report_format == 'html') {
         # pull in datatable options from the meta object for this module
         report <<- paste(report, 
                          paste0('datatable(params[["plots"]][[', .t, ']][[', .m, ']], ',
                                 'options=ifelse(is.null(params[["meta"]][[',.t,']][[',.m,']][["datatable_options"]]), list(), params[["meta"]][[',.t,']][[',.m,']][["datatable_options"]])', ')'), 
                          sep='\n')
+        } 
+        # for PDF, render the table with kable
+        else if (input$report_format == 'pdf') {
+          report <<- paste(report, paste0('kable(params[["plots"]][[', .t, ']][[', .m, ']])'), sep='\n')
+        }
       } 
       
-      # for non-html outputs, just render like a normal table
-      else if (module$type == 'datatable') {
-        report <<- paste(report, paste0('params[["plots"]][[', .t, ']][[', .m, ']]'), sep='\n')
+      # for tables:
+      else if (module$type == 'table') {
+        # for HTML report, this is transformed neatly into the DOM automatically, no need to transform the output
+        if(input$report_format == 'html') {
+          report <<- paste(report, paste0('params[["plots"]][[', .t, ']][[', .m, ']]'), sep='\n')
+        }
+        # for PDF, need to render the table with the kable function
+        else if(input$report_format == 'pdf') {
+          report <<- paste(report, paste0('kable(params[["plots"]][[', .t, ']][[', .m, ']])'), sep='\n')
+        }
       }
       
       # for text output, just render normally
