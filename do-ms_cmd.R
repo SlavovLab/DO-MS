@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 ## DO-MS, but on the command-line
 ##
 ## this is just a bunch of code cribbed from server.R and other dependent scripts
@@ -21,29 +23,59 @@
 source('global.R')
 source(file.path('server', 'generate_report.R'))
 
+p_load(argparse)
+
+# helper functions
+
 prnt <- function(message) {
   if(verbose) print(message)
 }
 
+
+# build command-line arguments --------------------------------------------
+
+parser <- ArgumentParser(description='Generate DO-MS report')
+
+parser$add_argument('config_file', type='character',
+                    help='Path to config file (YAML format). Required')
+
+parser$add_argument('-v', '--verbose', action='store_true', default=T, 
+                    help='Print detailed output (default: true)')
+parser$add_argument('-i', '--input-folders', type='character', nargs='+',
+                    help='One or more folder paths to generate report from')
+parser$add_argument('-o', '--output', type='character',
+                    help='Path to report file output. e.g., "/path/to/report.html"')
+parser$add_argument('-f', '--input-file-types', type='character', nargs='+',
+                    help='Names of MaxQuant text files to process. e.g., "summary evidence allPeptides"')
+
+parser$add_argument('--include_exps', type='character',
+                    help='Include raw files matching this regular expression. e.g., "SQC98[ABC]"')
+parser$add_argument('--exclude_exps', type='character',
+                    help='Exclude raw files matching this regular expression. e.g., "SQC98[ABC]"')
+parser$add_argument('--exp_names', type='character', nargs='+',
+                    help='Rename raw files with short names. e.g., "Control 2X 4X 10X"')
+parser$add_argument('--pep_threshold', type='double',
+                    help='PEP threshold for identified peptides, remove all below this threshold. e.g., "0.01"')
+
+# parser$print_help()
+args <- parser$parse_args()
+
 # load config file --------------------------------------------------------
 
-args <- commandArgs(trailingOnly=T)
-# args <- 'config.yaml'
+config <- read_yaml(args$config_file)
 
-# validate command line args. only accept single YAML file
-print(args)
-if(class(args) == 'character' & length(args) == 1 & 
-   file.exists(args) & substr(args, nchar(args)-4, nchar(args)) == '.yaml') {
-  print('Valid config file')
-} else {
-  stop('Invalid command-line usage. Please input the path to one config file (YAML format, ending in .yaml)')
-}
-
-config <- read_yaml(args)
+# override config file items with command-line items, if they exist
+if(!is.null(args$input_folders)) config$input_folders <- args$input_folders
+if(!is.null(args$output)) config$output <- args$output
+if(!is.null(args$input_file_types)) config$input_files <- args$input_file_types
+if(!is.null(args$include_exps)) config$include_files <- args$include_exps
+if(!is.null(args$exclude_exps)) config$exclude_files <- args$exclude_exps
+if(!is.null(args$exp_names)) config$exp_names <- args$exp_names
+if(!is.null(args$pep_threshold)) config$pep_thresh <- args$pep_threshold
 
 # validate config file ----------------------------------------------------
 
-verbose <- config[['verbose']]
+verbose <- args$verbose
 if(is.null(verbose)) verbose <- F # if not specified, set to false
 
 input_folders <- config[['input_folders']]
@@ -239,8 +271,6 @@ for(f in load_input_files) {
     # get the raw files for this input file
     .raw_files <- levels(data[[file$name]]$Raw.file)
     
-    prnt(.raw_files)
-    
     for(raw_file in .raw_files) {
       # if the raw file is not in the list of raw files, then add it
       if(!raw_file %in% raw_files) {
@@ -306,8 +336,17 @@ for(f in load_input_files) {
   if('Raw.file' %in% colnames(data[[file$name]])) {
     
     # rename the levels of this file
+    .levels <- levels(data[[file$name]]$Raw.file)
+    .labels <- file_levels
+    
+    # if this file has a subset of raw files
+    # then take the same subset of the labels vector
+    if(length(.labels) > length(.levels)) {
+      .labels <- .labels[1:length(.levels)]
+    }
+    
     data[[file$name]]$Raw.file <- factor(data[[file$name]]$Raw.file,
-      levels=levels(data[[file$name]]$Raw.file), labels=file_levels)
+                                         levels=.levels, labels=.labels)
   }
 }
 

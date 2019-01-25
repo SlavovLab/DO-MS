@@ -1,8 +1,6 @@
 ## DO-MS command line configuration
 ## for use with do-ms_cmd.R
 
-verbose: true
-
 ## Input/Output
 
 # paths to folders with MaxQuant txt output
@@ -16,6 +14,7 @@ input_files:
   - msms
   - msmsScans
   - allPeptides
+  - summary
   - parameters
   
 # match up with misc_input_files list in global.R
