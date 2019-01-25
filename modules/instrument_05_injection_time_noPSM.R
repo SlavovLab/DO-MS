@@ -37,7 +37,7 @@ init <- function() {
     validateFunc=.validate,
     plotdataFunc=.plotdata,
     plotFunc=.plot,
-    dynamic_width=75
+    dynamic_width=150
   ))
 }
 

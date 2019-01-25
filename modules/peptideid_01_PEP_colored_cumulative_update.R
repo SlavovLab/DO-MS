@@ -71,6 +71,8 @@ init <- function() {
     source.file=source.file,
     validateFunc=.validate,
     plotdataFunc=.plotdata,
-    plotFunc=.plot
+    plotFunc=.plot,
+    box_width=12, # bootstrap column units
+    plot_height=500 # pixels
   ))
 }
