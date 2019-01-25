@@ -82,7 +82,16 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
   params[['plots']] <- list()
   params[['meta']] <- list()
   
+  # get number of total modules, so we can update the progress bar accordingly
+  num_modules <- 0
+  for(t in 1:length(tabs)) { for(m in 1:length(modules[[t]])) {
+    num_modules <- num_modules + 1
+  }}
+  
   for(t in 1:length(tabs)) { local({
+    
+    # need to create copies of these indices in the local environment
+    # otherwise, the indices will be frozen for each iteration, only generating the last one
     .t <- t
     tab <- tabs[.t]
     
@@ -90,9 +99,7 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
                      paste0('## ', tab),
                      sep='\n')
     
-    modules_in_tab <- modules[sapply(modules, function(m) { 
-      gsub('([0-9])+(\\s|_)', '', m$tab) == tab 
-    })]
+    modules_in_tab <- modules[[.t]]
     
     plots <- list()
     meta <- list() # module metadata
@@ -102,7 +109,7 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       module <- modules_in_tab[[.m]]
       
       if(progress_bar) {
-        progress$inc(0.45/length(modules), detail=paste0('Adding module ', .m, ' from tab ', .t))
+        progress$inc(0.45/num_modules, detail=paste0('Adding module ', .m, ' from tab ', .t))
       }
       
       # create chunk name from module box title

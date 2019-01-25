@@ -67,8 +67,13 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
   # of each iteration will default to to the last one.
   # see: https://gist.github.com/wch/5436415/
   
-  for(m in modules) { local({
-    module <- m
+  for(t in 1:length(tabs)) { for(m in 1:length(modules[[t]])) { local({
+    
+    # need to create copies of these indices in the local environment
+    # otherwise, the indices will be frozen for each iteration, only generating the last one
+    .t <- t; .m <- m
+    
+    module <- modules[[.t]][[.m]]
     ns <- NS(module$id)
     
     # simple table output, no javascript
@@ -141,7 +146,7 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
       filename=function() { paste0(gsub('\\s', '_', module$boxTitle), '.txt') },
       content=download_data(module)
     )
-  }) }
+  }) }}
 }
 
 
@@ -174,10 +179,13 @@ render_modules <- function(input, output) {
   # need local({}) to isolate each instance of the for loop - or else the output
   # of each iteration will default to to the last one.
   # see: https://gist.github.com/wch/5436415/
-  for(tab in tabs) { local({
-    modules_in_tab <- modules[sapply(modules, function(module) { 
-      gsub('([0-9])+(\\s|_)', '', module$tab) == tab 
-    })]
+  for(t in 1:length(tabs)) { local({
+    
+    # need to create copies of these indices in the local environment
+    # otherwise, the indices will be frozen for each iteration, only generating the last one
+    .t <- t
+    tab <- tabs[.t]
+    modules_in_tab <- modules[[.t]]
     
     plots <- lapply(modules_in_tab, function(module) {
       ns <- NS(module$id)

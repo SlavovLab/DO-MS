@@ -23,10 +23,10 @@
 source('global.R')
 source(file.path('server', 'generate_report.R'))
 
-p_load(argparse)
+# command-line specific packages
+p_load(argparse, yaml)
 
 # helper functions
-
 prnt <- function(message) {
   if(verbose) print(message)
 }

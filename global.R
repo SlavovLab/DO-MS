@@ -6,35 +6,53 @@ library(pacman)
 
 # install/load dependencies
 p_load(shiny, shinydashboard, shinyWidgets, dplyr, ggplot2, lattice, knitr,
-       reshape2, RColorBrewer, readr, rmarkdown, stats, DT, stringr, yaml)
+       reshape2, RColorBrewer, readr, rmarkdown, stats, DT, stringr)
+
+# load tabs first
+tabs <- list.dirs('modules', recursive=F, full.names=F)
+# remove commented-out tabs (folders that start with "__")
+tabs <- tabs[substr(tabs, 1, 2) != '__']
+
+# sort tabs
+tabs <- sort(tabs)
+# store paths separately before we change names
+tab_paths <- tabs
+# remove ordering prefixes and prettify names
+tabs <- gsub('([0-9])+(\\s|_)', '', tabs)
+# also remove all underscores and replace with whitespace
+tabs <- gsub('_', ' ', tabs)
 
 modules <- list()
-
-module_files <- list.files('modules')
-for(module in module_files) {
-  # skip module if it begins with '__'
-  if(substr(module, 1, 2) == '__') { next }
+# loop thru tabs and populate modules
+for(i in 1:length(tabs)) {
+  tab_path <- tab_paths[i]
   
-  # source module to load the init named list
-  source(file.path('modules', module))
-  # load the module into the module list
-  module_name <- gsub('.R', '', module)
-  modules[[module_name]] <- init()
-  modules[[module_name]][['id']] <- module_name
+  # put modules for this tab in its own list
+  modules[[i]] <- list()
   
-  # default type = 'plot'
-  if(is.null(modules[[module_name]][['type']])) {
-    modules[[module_name]][['type']] <- 'plot'
+  module_files <- list.files(file.path('modules', tab_path))
+  for(j in 1:length(module_files)) {
+    module_file <- module_files[j]
+    
+    # skip module if it begins with '__'
+    if(substr(module_file, 1, 2) == '__') { next }
+    
+    # source module to load the init named list
+    source(file.path('modules', tab_path, module_file))
+    # load the module into the module list
+    module_name <- gsub('.R', '', module_file)
+    modules[[i]][[j]] <- init()
+    modules[[i]][[j]][['id']] <- module_name
+    
+    # set module defaults
+    
+    # default type = 'plot'
+    if(is.null(modules[[i]][[j]][['type']])) {
+      modules[[i]][[j]][['type']] <- 'plot'
+    }
   }
 }
 
-# collect all tab names
-tabs <- c()
-for(module in modules) {
-  tabs <- c(tabs, module$tab)
-}
-tabs <- sort(unique(tabs))
-tabs <- gsub('([0-9])+(\\s|_)', '', tabs)
 
 # to get custom panel heading colors for each tab,
 # need to dynamically inject some CSS into the app_css string
@@ -148,7 +166,3 @@ get_os <- function() {
     stop("Unknown OS")
   }
 }
-
-
-# clean up
-rm(module, module_name)

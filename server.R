@@ -353,7 +353,8 @@ shinyServer(function(input, output, session) {
     # reassign data object
     data(.data)
   })
-   
+  
+  # count and catalogue raw files across combined input files 
   raw_files <- reactive({
     f_data <- data()
     
