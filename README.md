@@ -58,6 +58,8 @@ $ Rscript do-ms_cmd.R config_file.yaml
 
 This requires a configuration file, and you can [find an example one here](https://github.com/SlavovLab/DO-MS/blob/master/example/config_file.yaml).
 
+See the document [automation.md](https://github.com/SlavovLab/DO-MS/blob/master/documentation/automation.md) for more details and instructions.
+
 ## Customization
 
 The UI for this application is generated dynamically from the contents of the ```modules``` folder. Users can add their own modules to this folder, following the template provided in ```modules/__template.R```. Modules can be disabled by appending two underscores to the filename, e.g., ```disable_module.R``` --> ```__disable_module.R```.
