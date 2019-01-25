@@ -470,9 +470,17 @@ shinyServer(function(input, output, session) {
         f_data[[file$name]]$Raw.file.orig <- f_data[[file$name]]$Raw.file
         
         # rename the levels of this file
+        .levels <- levels(f_data[[file$name]]$Raw.file)
+        .labels <- file_levels()
+        
+        # if this file has a subset of raw files
+        # then take the same subset of the labels vector
+        if(length(.labels) > length(.levels)) {
+          .labels <- .labels[1:length(.levels)]
+        }
+        
         f_data[[file$name]]$Raw.file <- factor(f_data[[file$name]]$Raw.file,
-          levels=levels(f_data[[file$name]]$Raw.file),
-          labels=file_levels())
+          levels=.levels, labels=.labels)
         
         if(!is.null(input$Exp_Sets)) {
           # Filter for experiments as specified by user

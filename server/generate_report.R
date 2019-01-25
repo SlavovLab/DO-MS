@@ -127,9 +127,9 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       
       plot_height <- ''
       # override existing/default plot height if it is explicitly defined
-      if(!is.null(module$plot_height)) {
-        plot_height <- paste0(', fig.height=', round(module$plot_height))
-      }
+      # if(!is.null(module$plot_height)) {
+      #   plot_height <- paste0(', fig.height=', round(module$plot_height / input$ppi))
+      # }
       
       report <<- paste(report,
                        paste0('### ', module$boxTitle, ' {.plot-title}'), '',

@@ -60,6 +60,11 @@ input_files <- list(
     name='allPeptides',
     file='allPeptides.txt',
     help='MaxQuant allPeptides.txt file'),
+  summary=list(
+    name='summary',
+    file='summary.txt',
+    help='MaxQuant summary.txt file'
+  ),
   parameters=list(
     name='parameters',
     file='parameters.txt',
