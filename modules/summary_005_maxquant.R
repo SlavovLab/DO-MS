@@ -24,11 +24,13 @@ init <- function() {
     
     # return a string
     paste(
-      paste0('MaxQuant Version: ', plotdata$Value[plotdata$Parameter == 'Version']),
-      paste0('Search Date: ', plotdata$Value[plotdata$Parameter == 'Date of writing']),
-      paste0('FASTA File: ', plotdata$Value[plotdata$Parameter == 'Fasta file']),
-    sep='\n')
-    
+      paste0('MaxQuant Version: ', 
+             paste(unique(plotdata$Value[plotdata$Parameter == 'Version']), collapse=', ') ),
+      paste0('Search Date: ', 
+             paste(unique(plotdata$Value[plotdata$Parameter == 'Date of writing']), collapse=', ') ),
+      paste0('FASTA File: ', 
+             paste(unique(plotdata$Value[plotdata$Parameter == 'Fasta file']), collapse=', ') ),
+    sep='\n\n')
   }
   
   return(list(

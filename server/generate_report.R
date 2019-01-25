@@ -131,12 +131,20 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       #   plot_height <- paste0(', fig.height=', round(module$plot_height / input$ppi))
       # }
       
+      # prevent further processing with 'results=asis' flag?
+      results_flag <- ''
+      if(module$type == 'text') {
+        results_flag <- ", results='asis'"
+      }
+      
       report <<- paste(report,
                        paste0('### ', module$boxTitle, ' {.plot-title}'), '',
                        module$help, '',
                        paste0('```{r ', chunk_name, ', echo=FALSE, warning = FALSE, message = FALSE', 
                               # custom width/height definition
-                              plot_width, plot_height,
+                              plot_width, plot_height, 
+                              # results flag
+                              results_flag,
                               '}'),
                        'options( warn = -1 )',
                        sep='\n')
@@ -207,7 +215,7 @@ render_module <- function(tab_index, module_index, type, format) {
       render_code <- paste0('kable(params[["plots"]][[', tab_index, ']][[', module_index, ']])')
     }
     else if(type == 'text') {
-      render_code <- paste0('params[["plots"]][[', tab_index, ']][[', module_index, ']]')
+      render_code <- paste0('cat(params[["plots"]][[', tab_index, ']][[', module_index, ']])')
     }
     
   } 
@@ -228,7 +236,7 @@ render_module <- function(tab_index, module_index, type, format) {
         'list(), params[["meta"]][[', tab_index, ']][[', module_index, ']][["datatable_options"]])', ')')
     }
     else if(type == 'text') {
-      render_code <- paste0('params[["plots"]][[', tab_index, ']][[', module_index, ']]')
+      render_code <- paste0('cat(params[["plots"]][[', tab_index, ']][[', module_index, ']])')
     }
   }
   
