@@ -1,6 +1,10 @@
 # AUTOMATION
 
-Automated report generation is available via. the ```do-ms_cmd.R``` script. Simply run ```Rscript do-ms_cmd.R config_file.yaml``` to generate a report. 
+Automated report generation is available via. the ```do-ms_cmd.R``` script. To generate a report, simply run:
+
+```
+Rscript do-ms_cmd.R config_file.yaml
+```
 
 ### Configuration file
 
