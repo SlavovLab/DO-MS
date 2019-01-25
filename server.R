@@ -270,13 +270,8 @@ shinyServer(function(input, output, session) {
           cols_new  <- colnames(.dat)
           common_cols <- intersect(cols_prev, cols_new)
           
-          if(length(common_cols) < length(cols_prev)) {
-            # take only common cols, if there is a difference
-            .data[[file$name]] <- .data[[file$name]][,common_cols]
-            .dat              <- .dat[,common_cols]
-          }
-          
-          .data[[file$name]] <- rbind(.data[[file$name]], .dat)
+          # merge dataframes, with only common columns between the two frames
+          .data[[file$name]] <- rbind(.data[[file$name]][,common_cols], .dat[,common_cols])
         }
       }
     }
