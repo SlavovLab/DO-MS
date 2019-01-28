@@ -1,15 +1,13 @@
 init <- function() {
   
-  boxTitle <- 'Error Probability Update'
-  help <- '2D Densities of PSM error probabilities, given by MaxQuant (Spectra) and DART-ID. Points below the 45 degree line indicate boosted confidence (and lowered error probability), and vice versa for above the 45 degree line. Set the PEP slider to 1 to see all PSMs regardless of initial confidence.'
   type <- 'plot'
-  source.file <- 'evidence'
+  box_title <- 'Error Probability Update'
+  help_text <- '2D Densities of PSM error probabilities, given by MaxQuant (Spectra) and DART-ID. Points below the 45 degree line indicate boosted confidence (and lowered error probability), and vice versa for above the 45 degree line. Set the PEP slider to 1 to see all PSMs regardless of initial confidence.'
+  source_file <- 'evidence'
   
   .validate <- function(data, input) {
     
-    validate(need(
-      data()[['evidence']],
-      paste0("Upload ", source.file, ".txt")
+    validate(need(data()[['evidence']], paste0('Upload evidence.txt')
     ))
     
     # ensure that table has the DART-ID PEP
@@ -61,7 +59,7 @@ init <- function() {
     rng <- seq(-5, 0, 1)
     nbins <- 80
     
-    p <- ggplot(plotdata, aes(x=PEP, y=pep_new)) +
+    ggplot(plotdata, aes(x=PEP, y=pep_new)) +
       stat_bin2d(bins=nbins, drop=TRUE, geom='tile', aes(fill=..density..)) +
       geom_abline(slope=1, intercept=0, color='black', size=0.5) +
       geom_vline(xintercept=1e-2, linetype='dotted', color='black', size=0.5) +
@@ -73,20 +71,16 @@ init <- function() {
                     breaks=10 ** rng, labels=fancy_scientific) +
       labs(x='Spectra', y='DART-ID', fill='Density', title='Error Probability (PEP)') +
       theme_base(input=input)
-    
-    return(p)
   }
   
-  # package all these variables and functions into a named list
-  # that our application can build its UI from
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot
   ))
 }
 

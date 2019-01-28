@@ -1,17 +1,16 @@
 init <- function() {
   
-  boxTitle <- 'Apex Offset'
-  help <- 'Plotting the distance from the peak of the elution profile the MS2
-    events were executed.'
   type <- 'plot'
-  source.file<-'msmsScans'
+  box_title <- 'Apex Offset'
+  help_text <- 'Plotting the distance from the peak of the elution profile the MS2 events were executed.'
+  source_file <- 'msmsScans'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
+    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Precursor.apex.offset.time")]
+    plotdata <- data()[[source_file]][,c('Raw.file', 'Precursor.apex.offset.time')]
     
     plotdata$Precursor.apex.offset.time <- plotdata$Precursor.apex.offset.time * 60
     plotdata$Precursor.apex.offset.time[plotdata$Precursor.apex.offset.time > 8] <- 9
@@ -21,27 +20,25 @@ init <- function() {
   }
   
   .plot <- function(data, input) {
-    # validate
     .validate(data, input)
-    # get plot data
     plotdata <- .plotdata(data, input)
     
     ggplot(plotdata, aes(Precursor.apex.offset.time)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram() + 
       coord_flip() + 
-      labs(x="Apex Offset (sec)", y='Count') + 
+      labs(x='Apex Offset (sec)', y='Count') + 
       theme_base(input=input)
   }
   
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot,
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot,
     dynamic_width=150
   ))
 }

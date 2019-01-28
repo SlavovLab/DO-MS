@@ -33,7 +33,7 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
       fig_width <- dynamic_fig_width(isolate(length(exp_sets())), module$dynamic_width)
     }
     
-    ggsave(filename=file, plot=module$plotFunc(filtered_data, input), 
+    ggsave(filename=file, plot=module$plot_func(filtered_data, input), 
            device=format, 
            units=input$download_figure_units,
            width=fig_width, 
@@ -50,8 +50,8 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     on.exit(progress$close())
     progress$set(message='Gathering Data...', value=0)
     
-    module$validateFunc(filtered_data, input)
-    plotdata <- module$plotdataFunc(filtered_data, input)
+    module$validate_func(filtered_data, input)
+    plotdata <- module$plotdata_func(filtered_data, input)
     # TODO: options to configure output format (CSV, delimeters, quotes, etc)
     write_tsv(plotdata, path=file)
     
@@ -79,7 +79,7 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     # simple table output, no javascript
     if(module$type == 'table') {
       output[[ns('table')]] <- renderTable({
-        module$plotFunc(filtered_data, input)
+        module$plot_func(filtered_data, input)
       })
       output[[ns('plot.ui')]] <- renderUI({
         tableOutput(ns('table'))
@@ -93,7 +93,7 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
       if(is.null(datatable_options)) datatable_options <- list() # set to empty if not defined
       
       output[[ns('table')]] <- renderDataTable({  
-        module$plotFunc(filtered_data, input) }, options=datatable_options)
+        module$plot_func(filtered_data, input) }, options=datatable_options)
       output[[ns('plot.ui')]] <- renderUI({
         dataTableOutput(ns('table'), width='100%', height='auto')
       })
@@ -101,7 +101,7 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     
     # plain, unformatted text output
     else if (module$type == 'text') {
-      output[[ns('text')]] <- renderText({ module$plotFunc(filtered_data, input) })
+      output[[ns('text')]] <- renderText({ module$plot_func(filtered_data, input) })
       output[[ns('plot.ui')]] <- renderUI({
         verbatimTextOutput(ns('text'))
       })
@@ -110,7 +110,7 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     # plot output (image/plot object/ggplot object)
     else if (module$type == 'plot') {
       output[[ns('plot')]] <- renderPlot({
-        module$plotFunc(filtered_data, input)
+        module$plot_func(filtered_data, input)
       })
       output[[ns('plot.ui')]] <- renderUI({
         
@@ -133,17 +133,17 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     }
     
     output[[ns('downloadPDF')]] <- downloadHandler(
-      filename=function() { paste0(gsub('\\s', '_', module$boxTitle), '.pdf') },
+      filename=function() { paste0(gsub('\\s', '_', module$box_title), '.pdf') },
       content=download_figure(module, 'pdf')
     )
     
     output[[ns('downloadPNG')]] <- downloadHandler(
-      filename=function() { paste0(gsub('\\s', '_', module$boxTitle), '.png') },
+      filename=function() { paste0(gsub('\\s', '_', module$box_title), '.png') },
       content=download_figure(module, 'png')
     )
     
     output[[ns('downloadData')]] <- downloadHandler(
-      filename=function() { paste0(gsub('\\s', '_', module$boxTitle), '.txt') },
+      filename=function() { paste0(gsub('\\s', '_', module$box_title), '.txt') },
       content=download_data(module)
     )
   }) }}
@@ -207,13 +207,13 @@ render_modules <- function(input, output) {
       return(div(class=paste0('col-sm-', box_width), div(class='box box-solid', style='',
         # header
         div(class='box-header',
-          h3(class='box-title', module$boxTitle),
+          h3(class='box-title', module$box_title),
            
             # tooltip information:
             # https://getbootstrap.com/docs/3.3/javascript/#tooltips
             
             tags$button(class='btn btn-secondary tooltip-btn', 
-                       `data-toggle`='tooltip', `data-placement`='right', title=module$help,
+                       `data-toggle`='tooltip', `data-placement`='right', title=module$help_text,
                        icon('question-sign', lib='glyphicon')  
             ),
            

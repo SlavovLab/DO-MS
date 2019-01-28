@@ -1,22 +1,21 @@
 init <- function() {
   
-  boxTitle <- 'Intensity of z=1 across gradient'
-  help <- 'Plotting the intensity of z=1 ions observed. This will give an
-  if you are seeing mostly peptides or non-peptide species and where they occur
-  in the gradient'
   type <- 'plot'
-  source.file <- 'allPeptides'
+  box_title <- 'Intensity of z=1 across gradient'
+  help_text <- 'Plotting the intensity of z=1 ions observed. This will give an if you are seeing mostly peptides or non-peptide species and where they occur in the gradient'
+  source_file <- 'allPeptides'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
+    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Charge","Intensity","Retention.time")]
+    plotdata <- data()[[source_file]][,c('Raw.file', 'Charge', 'Intensity', 'Retention.time')]
     
-    plotdata <- plotdata[plotdata$Charge == 1,]
-    plotdata$Intensity[plotdata$Intensity == 0] <- NA
-    plotdata$Retention.time <- floor(plotdata$Retention.time)
+    plotdata <- plotdata %>%
+      filter(Charge == 1) %>%
+      mutate_at('Intensity', funs(ifelse(. == 0, NA, .))) %>%
+      mutate(Retention.time=floor(Retention.time))
     
     return(plotdata)
   }
@@ -27,22 +26,21 @@ init <- function() {
     
     ggplot(plotdata, aes(x=Retention.time, y=Intensity)) + 
       geom_bar(stat='identity', width=1) + 
-      facet_wrap(~Raw.file, nrow = 1) + 
+      facet_wrap(~Raw.file, nrow=1) + 
+      scale_y_continuous(labels=scales::scientific) +
       coord_flip() + 
-      #scale_y_continuous(trans='log10', limits=c(NA, 12)) + 
-      labs(x="Retention Time (min)", y=expression(bold("Precursor Intensity"))) +
-      theme_base(input=input) +
-      scale_y_continuous(labels = scales::scientific)
+      labs(x='Retention Time (min)', y=expression(bold('Precursor Intensity'))) +
+      theme_base(input=input) 
   }
   
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot,
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot,
     dynamic_width=150
   ))
 }

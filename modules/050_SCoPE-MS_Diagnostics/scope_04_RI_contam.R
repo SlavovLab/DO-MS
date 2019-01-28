@@ -1,71 +1,61 @@
 init <- function() {
   
-  boxTitle <- 'Reporter Ion Intensities vs. Carrier Intensities'
-  help <- 'Comparing the reporter ion intensities for all TMT channels
-  to the carrier channel, chosen automatically as the most intense 
-  channel (median intensity).'
   type <- 'plot'
-  source.file<-"msms"
+  box_title <- 'Reporter Ion Intensities vs. Carrier Intensities'
+  help_text <- 'Comparing the reporter ion intensities for all TMT channels to the carrier channel, chosen automatically as the most intense channel (median intensity).'
+  source_file <- 'msms'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
+    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
     
     # require reporter ion quantification data
-    validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[[source.file]]))), 
+    validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[[source_file]]))), 
                   paste0('Loaded data does not contain reporter ion quantification')))
     
-    plotdata <- data()[[source.file]]
-    validate(need((length(unique(plotdata[,"Raw.file"])) == 1),"Please select a single experiment"))
+    validate(need((length(unique(data()[[source_file]][,'Raw.file'])) == 1),
+                  'Please select a single experiment'))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]]
+    plotdata <- data()[[source_file]]
   
-    uniqRaw<-unique(plotdata$Raw.file)
+    exps <- unique(plotdata$Raw.file)
+    RI <- colnames(plotdata)[grep('Reporter.intensity.corrected', colnames(plotdata))]
     
-    RI<-colnames(plotdata)[ grep("Reporter.intensity.corrected", colnames(plotdata)) ]
+    median_RI <- sapply(plotdata[,RI], median, na.rm=T)
+    max_RI<-names(median_RI)[median_RI == max(median_RI)]
     
-    medianNA<-function(X){ median(X, na.rm = T) }
+    plotdata_melt <- melt(plotdata[,RI[ RI != maxRI ] ])
+    plotdata_melt$max_RI <- rep(plotdata[,max_RI], length(RI) - 1)
     
-    medianRI<-sapply(plotdata[,RI], medianNA)
+    plotdata_melt[,c('value', 'max_RI')] <- log10(plotdata_melt[,c('value', 'max_RI')])
+    colnames(plotdata_melt) <- c('TMT_RI', 'Other_Channels', 'Highest_Channel')
+    plotdata_melt$Raw.file <- exps
     
-    maxRI<-names(medianRI)[medianRI==max(medianRI)]
-    
-    plotdata_melt<-melt(plotdata[,RI[RI!=maxRI] ])
-    plotdata_melt$maxRI<-rep(plotdata[,maxRI], length(RI)-1)
-    
-    plotdata_melt[,c("value","maxRI")]<-log10(plotdata_melt[,c("value","maxRI")])
-    colnames(plotdata_melt)<-c("TMT_RI","Other_Channels","Highest_Channel")
-    plotdata_melt$Raw.file<-uniqRaw
-    
-    plotdata<-plotdata_melt
-    return(plotdata)
+    return(plotdata_melt)
   }
   
   .plot <- function(data, input) {
-    # validate
     .validate(data, input)
-    # get plot data
     plotdata <- .plotdata(data, input)
     
     ggplot(plotdata, aes(x=Highest_Channel, y=Other_Channels)) + 
-      xlab("Highest TMT Channel (log10)") +
-      ylab("All Other TMT Channels (log10)") + 
+      xlab('Highest TMT Channel (log10)') +
+      ylab('All Other TMT Channels (log10)') + 
       ggtitle(unique(plotdata$Raw.file)) + 
-      geom_point(size = 0.1, alpha = 0.1) + 
+      geom_point(size=0.1, alpha=0.1) + 
       theme_base(input=input) + 
-      theme(axis.text.x = element_text(angle=0, hjust = 0.5)) +
-      geom_abline(intercept = 0, slope = 1, color = "red", size = 1)
-    
+      theme(axis.text.x=element_text(angle=0, hjust=0.5)) +
+      geom_abline(intercept=0, slope=1, color='red', size=1)
   }
   
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot
   ))
 }

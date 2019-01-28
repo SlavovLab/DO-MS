@@ -1,19 +1,19 @@
 init <- function() {
   
-  boxTitle <- 'MaxQuant Search Summary'
-  help <- 'MaxQuant Search Summary'
   type <- 'text'
-  source.file <- 'parameters'
+  box_title <- 'MaxQuant Search Summary'
+  help_text <- 'MaxQuant Search Summary'
+  source_file <- 'parameters'
   
   .validate <- function(data, input) {
     validate(need(
-      data()[[source.file]],
-      paste0('Upload ', source.file, '.txt')
+      data()[[source_file]],
+      paste0('Upload ', source_file, '.txt')
     ))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]]
+    plotdata <- data()[[source_file]]
     return(plotdata)
   }
   
@@ -34,12 +34,12 @@ init <- function() {
   
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot
   ))
 }
 

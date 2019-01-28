@@ -145,7 +145,7 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       }
       
       report <<- paste(report,
-                       paste0('### ', module$boxTitle, ' {.plot-title}'), '',
+                       paste0('### ', module$box_title, ' {.plot-title}'), '',
                        module$help, '',
                        paste0('```{r ', chunk_name, ', echo=FALSE, warning = FALSE, message = FALSE', 
                               # custom width/height definition
@@ -161,7 +161,7 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       
       
       # store the output from the module plot function
-      plots[[.m]] <<- tryCatch(module$plotFunc(filtered_data, input),
+      plots[[.m]] <<- tryCatch(module$plot_func(filtered_data, input),
         error = function(e) { paste0('Plot failed to render. Reason: ', e) },
         finally={}
       )

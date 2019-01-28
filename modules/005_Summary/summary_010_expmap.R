@@ -1,19 +1,19 @@
 init <- function() {
   
-  boxTitle <- 'Experiment Map'
-  help <- 'Map of raw file names to short names'
   type <- 'table'
-  source.file <- 'evidence'
+  box_title <- 'Experiment Map'
+  help_text <- 'Map of raw file names to short names'
+  source_file <- 'evidence'
   
   .validate <- function(data, input) {
     validate(need(
-      data()[[source.file]],
-      paste0('Upload ', source.file, '.txt')
+      data()[[source_file]],
+      paste0('Upload ', source_file, '.txt')
     ))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]] %>%
+    plotdata <- data()[[source_file]] %>%
       dplyr::select(c('Raw.file','Raw.file.orig')) %>%
       distinct(Raw.file, .keep_all=T) %>%
       arrange(Raw.file) %>%
@@ -33,12 +33,12 @@ init <- function() {
   
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot
   ))
 }
 

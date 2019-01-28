@@ -1,138 +1,126 @@
 init <- function() {
   
-  boxTitle <- 'Inclusion List Evaluation'
-  help <- 'Showing the success of targeting specific m/z values at specific Retention time (RT) windows.'
   type <- 'plot'
-  source.file<-"allPeptides"
+  box_title <- 'Inclusion List Evaluation'
+  help_text <- 'Showing the success of targeting specific m/z values at specific Retention time (RT) windows.'
+  source_file <- 'allPeptides, evidence, inclusion_list'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source.file]], paste0("Upload ", source.file,".txt")))
-    validate(need(data()[["evidence"]], paste0("Upload ", "evidence",".txt")))
-    validate(need(data()[["inclusion_list"]], paste0("Upload ", "inclusion list ")))
-    
+    validate(need(data()[['allPeptides']], paste0('Upload allPeptides.txt')))
+    validate(need(data()[['evidence']], paste0('Upload evidence.txt')))
+    validate(need(data()[['inclusion_list']], paste0('Upload inclusion list')))
   }
   
   .plotdata <- function(data, input) {
-    allPeptides <- data()[[source.file]]
-    evidence <- data()[["evidence"]]
-    inc <- data()[["inclusion_list"]]
+    allPeptides <- data()[['allPeptides']]
+    evidence <- data()[['evidence']]
+    inc <- data()[['inclusion_list']]
     
     # Define variables
-    mz<-inc$mz
-    RT.start<-inc$RTstart
-    RT.end<-inc$RTend
-    mz.tolerance<-20
-    inc.sequence<-inc$Sequence
+    mz <- inc$mz
+    RT_start <- inc$RTstart
+    RT_end <- inc$RTend
+    mz_tolerance <- 20 # in 10^-6 Da
+    inc_sequence <- inc$Sequence
     
     # Set up data frame
-    inc[,"never.seen"]<-1
-    inc[,"seen.outside.RT"]<-0
-    inc[,"seen.inside.RT"]<-0
-    inc[,"seen.inside.RT.ID"]<-0
-    inc[,"sequence.match"]<-0
-    inc$Raw.file<-NA
+    inc[,'never_seen'] <- 1
+    inc[,'seen_outside_RT'] <- 0
+    inc[,'seen_inside_RT'] <- 0
+    inc[,'seen_inside_RT_ID'] <- 0
+    inc[,'sequence_match'] <- 0
+    inc$Raw.file <- NA
     
-    incF<-inc[0,]
+    incF <- inc[0,]
     for(X in unique(allPeptides$Raw.file)){
       
-      inc$Raw.file<-X
+      inc$Raw.file <- X
+      allPeptides_t <- allPeptides[allPeptides$Raw.file %in% X,]
       
-      allPeptides.t<-allPeptides[allPeptides$Raw.file%in%X,]
       
-      # Never seen
-      for(i in 1:nrow(inc)){
+      for(i in 1:nrow(inc)) {
         
-        res.t<-length(which(
-          
-          (allPeptides.t$Uncalibrated.m.z > mz[i] - mz[i]*mz.tolerance/1e6) & (allPeptides.t$Uncalibrated.m.z < mz[i] + mz[i]*mz.tolerance/1e6)
-          
-        ))
+        # Never seen
+        res_t <- sum(
+          (allPeptides_t$Uncalibrated.m.z > mz[i] - mz[i] * mz_tolerance / 1e6) & 
+          (allPeptides_t$Uncalibrated.m.z < mz[i] + mz[i] * mz_tolerance / 1e6)
+        )
         
-        if(res.t>0){inc$never.seen[i] <- 0}
+        if(res_t > 0){ inc$never_seen[i] <- 0 }
+      
+        # Seen outside RT
+        res_t <- sum(
+          (allPeptides_t$Uncalibrated.m.z > (mz[i] - mz[i] * mz_tolerance / 1e6 ) ) & 
+          (allPeptides_t$Uncalibrated.m.z < (mz[i] + mz[i] * mz_tolerance / 1e6)) &
+          (allPeptides_t$Retention.time < RT_start[i]) & 
+          (allPeptides_t$Retention.time > RT_end[i])
+        )
+        
+        if(res_t > 0){ inc$seen_outside_RT[i] <- 1 }
+        
+        # Seen inside RT  
+        res_t <- sum(
+          (allPeptides_t$Uncalibrated.m.z > (mz[i] - mz[i] * mz_tolerance / 1e6)) & 
+          (allPeptides_t$Uncalibrated.m.z < (mz[i] + mz[i] * mz_tolerance / 1e6)) &
+          (allPeptides_t$Retention.time > RT_start[i]) & 
+          (allPeptides_t$Retention.time < RT_end[i])
+        )
+        
+        if(res_t > 0){ inc$seen_inside_RT[i] <- 1 }
+      
+        # See inside RT and IDd  
+        res_t <- sum(
+          (allPeptides_t$Uncalibrated.m.z > mz[i] - mz[i] * mz_tolerance / 1e6) & 
+          (allPeptides_t$Uncalibrated.m.z < mz[i] + mz[i] * mz_tolerance / 1e6) &
+          (allPeptides_t$Retention.time > RT_start[i]) & 
+          (allPeptides_t$Retention.time < RT_end[i]) & 
+          (allPeptides_t$Score > 0)
+        )
+        
+        if(res_t > 0){ inc$seen_inside_RT_ID[i] <- 1 }
         
       }
       
-      # Seen outside RT
-      for(i in 1:nrow(inc)){
-        
-        res.t<-length(which(
-          
-          (allPeptides.t$Uncalibrated.m.z > (mz[i] - mz[i]*mz.tolerance/1e6 ) ) & (allPeptides.t$Uncalibrated.m.z < (mz[i] + mz[i]*mz.tolerance/1e6)) &
-            (allPeptides.t$Retention.time < RT.start[i]) & (allPeptides.t$Retention.time > RT.end[i])
-          
-        ))
-        
-        if(res.t>0){inc$seen.outside.RT[i] <- 1}
-        
-      }
+      inc$sequence_match <- as.numeric(
+        as.character(inc_sequence) %in% as.character(evidence$Sequence[evidence$Raw.file %in% X])
+      )
       
-      # Seen inside RT
-      for(i in 1:nrow(inc)){
-        
-        res.t<-length(which(
-          
-          (allPeptides.t$Uncalibrated.m.z > (mz[i] - mz[i]*mz.tolerance/1e6)) & (allPeptides.t$Uncalibrated.m.z < (mz[i] + mz[i]*mz.tolerance/1e6)) &
-            (allPeptides.t$Retention.time > RT.start[i]) & (allPeptides.t$Retention.time < RT.end[i])
-          
-        ))
-        
-        if(res.t>0){inc$seen.inside.RT[i] <- 1}
-        
-      }
-      
-      # See inside RT and IDd
-      for(i in 1:nrow(inc)){
-        
-        res.t<-length(which(
-          
-          (allPeptides.t$Uncalibrated.m.z > mz[i] - mz[i]*mz.tolerance/1e6) & (allPeptides.t$Uncalibrated.m.z < mz[i] + mz[i]*mz.tolerance/1e6) &
-            (allPeptides.t$Retention.time > RT.start[i]) & (allPeptides.t$Retention.time < RT.end[i]) & (allPeptides.t$Score > 0)
-          
-        ))
-        
-        if(res.t>0){inc$seen.inside.RT.ID[i] <- 1}
-        
-      }
-      
-      inc$sequence.match<-as.numeric( as.character(inc.sequence) %in% as.character(evidence$Sequence[evidence$Raw.file%in%X]) )
-      
-      incF<-rbind(incF,inc)
-      
+      incF <- rbind(incF,inc)
     }
     
-    df<-aggregate(. ~ Raw.file, data = incF[,c("never.seen","seen.outside.RT","seen.inside.RT","seen.inside.RT.ID","sequence.match","Raw.file")], mean)
+    df <- aggregate(. ~ Raw.file, 
+                    data = incF[,c('never_seen', 'seen_outside_RT', 'seen_inside_RT',
+                                   'seen_inside_RT_ID', 'sequence_match', 'Raw.file')], 
+                    mean)
     
-    df_melt<-melt(df, id="Raw.file")
+    df_melt <- melt(df, id='Raw.file')
     
-    #ggplot(df_melt, aes(x = Raw.file, y = value, fill = variable)) + geom_bar(stat = "identity") 
+    colnames(df_melt) <- c('Experiment', 'Observation', 'Percentage')
+    levels(df_melt$Observation) <- c('Never observed', 'Observed outside RT', 
+      'Observed inside RT, no ID', 'Observed inside RT, ID', 'Sequence match')
     
-    colnames(df_melt)<-c("Experiment", "Observation", "Percentage")
-    levels(df_melt$Observation) <- c("Never observed", "Observed outside RT", "Observed inside RT, no ID", "Observed inside RT, ID", "Sequence match")
-    
-    plotdata <- df_melt
-    
-    return(plotdata)
+    return(df_melt)
   }
   
   .plot <- function(data, input) {
-    # validate
     .validate(data, input)
-    # get plot data
     plotdata <- .plotdata(data, input)
     
-    ggplot(plotdata, aes(x = Experiment, y = Percentage, color = Observation)) + geom_point(size=2) + theme_base() + theme(legend.position = "right", legend.key = element_rect(fill = "white")) + scale_y_continuous(limits = c(0, 1))
-    #ggplot(plotdata, aes(x = Raw.file, y = value, color = variable)) + geom_point(size=2) + theme_base(input=input)
-    
-    
+    ggplot(plotdata, aes(x=Experiment, y=Percentage, color=Observation)) + 
+      geom_point(size=2) + 
+      scale_y_continuous(limits=c(0, 1)) +
+      theme_base() + 
+      theme(legend.position='right', 
+            legend.key=element_rect(fill='white'))
   }
   
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot
   ))
 }

@@ -1,16 +1,13 @@
 init <- function() {
   
-  boxTitle <- 'Increase in Confident PSMs'
-  help <- 'Fold-change increase of PSMs at given confidence thresholds (in this case, FDR thresholds)'
   type <- 'plot'
-  source.file <- 'evidence'
+  box_title <- 'Increase in Confident PSMs'
+  help_text <- 'Fold-change increase of PSMs at given confidence thresholds (in this case, FDR thresholds)'
+  source_file <- 'evidence'
   
   .validate <- function(data, input) {
     
-    validate(need(
-      data()[['evidence']],
-      paste0("Upload ", source.file, ".txt")
-    ))
+    validate(need(data()[['evidence']], paste0('Upload evidence.txt')))
     
     # ensure that table has the DART-ID PEP
     validate(need(
@@ -20,7 +17,6 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    
     ev <- data()[['evidence']] 
     ev <- ev %>%
       # ceil PEPs to 1
@@ -106,7 +102,7 @@ init <- function() {
     
     rng <- seq(-3, 0, 1)
 
-    fold.change <- ggplot(plotdata) +
+    fold_change <- ggplot(plotdata) +
       geom_path(aes(x=x, y=(ratio-1)*100, color=Method), size=1) +
       geom_hline(aes(yintercept=1, color='Spectra'), size=1) +
       geom_vline(xintercept=1e-2, color='black', linetype='dotted', size=0.5) +
@@ -126,19 +122,19 @@ init <- function() {
         legend.text=element_text(size=input$figure_axis_font_size)
       )
 
-    return(fold.change)
+    return(fold_change)
   }
   
   # package all these variables and functions into a named list
   # that our application can build its UI from
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot
   ))
 }
 

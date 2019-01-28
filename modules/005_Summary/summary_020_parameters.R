@@ -1,9 +1,9 @@
 init <- function() {
   
-  boxTitle <- 'MaxQuant Parameters'
-  help <- 'MaxQuant Search Parameters'
   type <- 'datatable'
-  source.file <- 'parameters'
+  box_title <- 'MaxQuant Parameters'
+  help_text <- 'MaxQuant Search Parameters'
+  source_file <- 'parameters'
   
   .validate <- function(data, input) {
     validate(need(
@@ -25,12 +25,12 @@ init <- function() {
   
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot,
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot,
     datatable_options=list(
       pageLength=10,
       dom='lfptp',

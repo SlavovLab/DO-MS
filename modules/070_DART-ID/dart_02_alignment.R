@@ -1,16 +1,13 @@
 init <- function() {
   
-  boxTitle <- 'RT Alignment Error'
-  help <- 'Alignment Error (Predicted RT - Observed RT) for the RT Alignment in DART-ID'
   type <- 'plot'
-  source.file <- 'evidence'
+  box_title <- 'RT Alignment Error'
+  help_text <- 'Alignment Error (Predicted RT - Observed RT) for the RT Alignment in DART-ID'
+  source_file <- 'evidence'
   
   .validate <- function(data, input) {
     
-    validate(need(
-      data()[['evidence']],
-      paste0("Upload ", source.file, ".txt")
-    ))
+    validate(need(data()[['evidence']], paste0('Upload evidence.txt')))
     
     # ensure that table has the DART-ID residual RT
     validate(need(
@@ -31,28 +28,23 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    p <- ggplot(plotdata) +
+    ggplot(plotdata) +
       geom_boxplot(aes(Raw.file, residual), outlier.shape=NA) +
       scale_y_continuous(limits=c(-5, 5)) + 
       scale_x_discrete() +
       labs(x='Raw file', y='Residual RT (min)') +
       theme_base(input=input) +
-      theme(
-        axis.text.x=element_text(angle=45, vjust=1, hjust=1)
-      )
-    return(p)
+      theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1))
   }
   
-  # package all these variables and functions into a named list
-  # that our application can build its UI from
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot,
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot,
     dynamic_width=50
   ))
 }

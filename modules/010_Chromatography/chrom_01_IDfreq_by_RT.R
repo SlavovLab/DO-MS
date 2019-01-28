@@ -1,16 +1,16 @@
 init <- function() {
   
-  boxTitle <- 'Identification frequency across gradient'
-  help <- 'Plotting the frequency of peptide identification across thechromatographic gradient.'
   type <- 'plot'
-  source.file <- 'evidence'
+  box_title <- 'Identification frequency across gradient'
+  help_text <- 'Plotting the frequency of peptide identification across the chromatographic gradient.'
+  source_file <- 'evidence'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source.file]],paste0("Upload ", source.file,".txt")))
+    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c("Raw.file","Retention.time","PEP")]
+    plotdata <- data()[[source_file]][,c('Raw.file', 'Retention.time', 'PEP')]
     return(plotdata)
   }
   
@@ -30,12 +30,12 @@ init <- function() {
   
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot,
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot,
     dynamic_width=150
   ))
 }

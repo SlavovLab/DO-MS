@@ -1,17 +1,20 @@
 init <- function() {
   
-  boxTitle <- 'm/z Distribution for +1 ions'
-  help <- 'Plotting the m/z distribution of +1 ions, a diagnostic of non-peptide contaminants'
   type <- 'plot'
-  source.file <- 'allPeptides'
+  box_title <- 'm/z Distribution for +1 ions'
+  help_text <- 'Plotting the m/z distribution of +1 ions, a diagnostic of non-peptide contaminants'
+  source_file <- 'allPeptides'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source.file]],paste0("Upload ", source.file, ".txt")))
+    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source.file]][,c('Raw.file', 'Charge', 'm.z')] %>% 
+    plotdata <- data()[[source_file]][,c('Raw.file', 'Charge', 'm.z')] 
+    
+    plotdata <- plotdata %>% 
       filter(Charge == 1)
+    
     return(plotdata)
   }
   
@@ -20,7 +23,7 @@ init <- function() {
     plotdata <- .plotdata(data, input)
     
     ggplot(plotdata, aes(m.z)) + 
-      facet_wrap(~Raw.file, nrow = 1) + 
+      facet_wrap(~Raw.file, nrow=1) + 
       geom_histogram(bins=100) + 
       coord_flip() + 
       labs(y='Count', x='m/z') +
@@ -29,12 +32,12 @@ init <- function() {
   
   return(list(
     type=type,
-    boxTitle=boxTitle,
-    help=help,
-    source.file=source.file,
-    validateFunc=.validate,
-    plotdataFunc=.plotdata,
-    plotFunc=.plot,
+    box_title=box_title,
+    help_text=help_text,
+    source_file=source_file,
+    validate_func=.validate,
+    plotdata_func=.plotdata,
+    plot_func=.plot,
     dynamic_width=150
   ))
 }
