@@ -46,7 +46,6 @@ Modules are displayed alphabetically in both the web interface and report. Numer
 Deleting a module will remove it. If you want to keep it without displaying it, you can "comment out" similar to tabs, by appending the module file name with two underscores like so: ```__hide_this_module.R```
 
 
-
 -----------
 
 
