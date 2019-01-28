@@ -15,3 +15,6 @@ folder_list.txt
 # old but useful files
 __archive/**/*
 
+# compiled markdown documentation
+README.html
+documentation/*.html

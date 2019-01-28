@@ -9,12 +9,14 @@ Adapting the core module technology of this application to the output of other s
 
 If you like the current modules and would like to keep their current display and features, the quickest strategy is to convert your search engine's output into tab-delimited text that shares the same structure (i.e., column names) as MaxQuant's output.
 
-Our application mainly uses four tab-delimited files from MaxQuant (for non-DIA searches): 
+Our application mainly uses six tab-delimited files from MaxQuant (for non-DIA searches): 
 
 1. ```allPeptides```, which describes ions on the MS1 level
 2. ```msmsScans```, which describes MS2 scans
 3. ```msms```, which describes PSMs
 4. ```evidence```, which describes peptide-level data
+4. ```parameters```, which describes MaxQuant search parameters
+4. ```summary```, which summarizes search results per experiment
 
 If your search engine has the same general hierarchy of outputs, then the files and column names can be renamed to fit the general shape of the MaxQuant output. Otherwise, modules may need to be tweaked or removed for total compatibility.
 
