@@ -7,8 +7,11 @@ Icon/**/*
 .Rhistory
 
 # test modules folder
-_modules/**/*
-__archive/**/*
+modules/__Archive/**/*
 
 # generated files
 folder_list.txt
+
+# old but useful files
+__archive/**/*
+
