@@ -27,7 +27,7 @@ for(t in 1:length(tabs)) {
   
   documentation_tab[[t+1]] <- div(
     class='documentation-tab', 
-    style=paste0('border-left:10px solid ', tab_colors[t], ';'),
+    style=paste0('border-left:10px solid ', config[['tab_colors']][t], ';'),
     tab_list)
   
   tab_nav_links[[t]] <- tags$li(tags$a(href=paste0('#', tab_link), tabs[t]))
