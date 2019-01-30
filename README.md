@@ -14,11 +14,11 @@ Install this application by downloading it from the [release page](https://githu
 
 The easiest way to run the app is directly through RStudio, by opening the ```DO-MS.Rproj``` Rproject file
 
-![](https://github.com/SlavovLab/DO-MS/raw/master/documentation/do-ms-proj.png "Open DO-MS.Rproj")
+<img src="https://github.com/SlavovLab/DO-MS/raw/master/documentation/do-ms-proj.png" title="Open DO-MS.Rproj" height="100">
 
 and clicking the "Run App" button at the top of the application. We recommend checking the "Run External" option to open the application in your default browser instead of the RStudio Viewer.
 
-![](https://github.com/SlavovLab/DO-MS/raw/master/documentation/do-ms-run.png "Run DO-MS")
+<img src="https://github.com/SlavovLab/DO-MS/raw/master/documentation/do-ms-run.png" title="Run DO-MS" height="100">
 
 You can also start the application by running the ```start_server.R``` script.
 
