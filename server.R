@@ -12,6 +12,7 @@ shinyServer(function(input, output, session) {
   
   folders <- reactiveVal(data.frame(
     Folder.Name=as.character(c()),
+    Has.Files=as.logical(c()),
     Path=as.character(c())
   ))
   
@@ -69,45 +70,55 @@ shinyServer(function(input, output, session) {
       directory <- substr(directory, 0, nchar(directory)-1)
     }
     
+    new_folders <- c()
     # what to do with this folder
     if(input$add_folder_options == 'children' | input$add_folder_options == 'recursive') {
       
       # if add_children is checked, then look for child folders within the one specified
       # and add all of those. again, don't have to check if they contain relevant files, yet
-      child_dirs <- list.dirs(path=directory, recursive=input$add_folder_options == 'recursive')
+      child_dirs <- list.dirs(path=directory, recursive=(input$add_folder_options == 'recursive'))
       
       # for each child directory, check if it exists already and add if not
       for(child_dir in child_dirs) {
         
         # if folder chosen by user is already in the list, then ignore
         if(child_dir %in% .folders$Path) {
-          showNotification(paste0('Folder ', basename(directory), ' already in list. Skipping...'), type='warning')
+          showNotification(paste0('Folder ', basename(child_dir), ' already in list. Skipping...'), type='warning')
           next
         }
         
         # add folder to list
-        .folders <- rbind(.folders, data.frame(
-          Folder.Name=basename(child_dir),
-          Path=child_dir
-        ))
+        new_folders <- c(new_folders, child_dir)
       }
       
     } else {
-      
-      # if we're not looking for child folders, then allow this addition
-      # we could check for membership of certain files (evidence.txt, etc) later,
-      # but now just let the user add whatever they want
-      
       # if folder chosen by user is already in the list, then ignore
       if(directory %in% .folders$Path) {
         showNotification(paste0('Folder ', basename(directory), ' already in list. Skipping...'), type='warning')
         return()
       }
-      
       # add folder to list
+      new_folders <- c(new_folders, directory)
+    }
+    
+    # transform char vector into data table
+    # at the same time, check if MaxQuant output files exist
+    for(folder in new_folders) {
+      folder_files <- list.files(path=folder)
+      # require that it has all files
+      has_files <- all(sapply(config[['input_files']], function(i) { i$file }) %in% folder_files)
+      
+      # if the user wants to skip folders without all files present...
+      if(!config[['allow_all_folders']] & !has_files) {
+        showNotification(paste0('Folder ', folder, ' does not have all input files and user has specified to skip such folders. Skipping...'), type='warning')
+        next
+      }
+      
+      # add folder to table
       .folders <- rbind(.folders, data.frame(
-        Folder.Name=basename(directory),
-        Path=directory
+        Folder.Name=as.character(basename(folder)),
+        Has.Files=as.logical(has_files),
+        Path=as.character(folder)
       ))
     }
     
@@ -150,7 +161,8 @@ shinyServer(function(input, output, session) {
     columnDefs=list(
       list(visible=FALSE, targets=0), # hide the row number
       list(title='Folder', targets=1), # rename folder list columns
-      list(title='Path', targets=2)),
+      list(title='Has Files', targets=2),
+      list(title='Path', targets=3)),
     pageLength=5,
     dom='lftp',
     lengthMenu=c(5, 10, 15, 20, 50)

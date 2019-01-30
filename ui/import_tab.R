@@ -51,7 +51,7 @@ import_tab <- tabItem(tabName='import', fluidPage(
       div(class='selected-folders-output',
         htmlOutput('selected_folders')
       ),
-      p('For help adding directories, please view ...'),
+      p('Click on a row in the table to select that folder. Click multiple rows to select multiple folders, and use Shift to select a series of folders.'),
       p('Once you are finished selecting folders, scroll down to continue the import process.')
     ))
   ),

@@ -34,7 +34,7 @@ settings_tab <- tabItem(tabName='settings', fluidPage(
     ),
     fluidRow(
       column(12, numericInput('figure_line_width', 'Line Width', 
-                              min=1, max=10, step=0.25, value=config[['figure_line_width']]))
+                             min=1, max=10, step=0.25, value=config[['figure_line_width']]))
     ),
     fluidRow(
       column(12, checkboxInput('figure_show_grid', 'Show Background Grid', 

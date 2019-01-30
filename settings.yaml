@@ -41,6 +41,9 @@ misc_input_files:
     name: 'inclusion_list'
     help: 'Inclusion List .txt file'
     
+# Allow addition of folders without MaxQuant txt output files?
+allow_all_folders: false
+    
 
 ## Filtering options
 
