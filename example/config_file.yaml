@@ -5,8 +5,9 @@
 
 # paths to folders with MaxQuant txt output
 input_folders:
-  - /gd/MS/SCoPE/phospho/dat/PS095
-  - /gd/MS/SCoPE/phospho/dat/PS096
+  - /path/to/MaxQuant/output/a
+  - /path/to/MaxQuant/output/b
+  - /path/to/MaxQuant/output/c
   
 # match up with the input_files list in global.R
 input_files:
@@ -21,13 +22,13 @@ input_files:
 #misc_input_files:
 #  inclusion_list: /path/to/inclusion_list.txt
 
-output: /Users/albert/Desktop/report.html
+output: /path/to/report.html
 
 ## Filters
 
 # regular expressions to match raw file names against
-include_files: PS096
-exclude_files: PS096D
+include_files: '180614_S'
+exclude_files: '180614_S_A'
 
 # custom names for files
 exp_names:
@@ -35,7 +36,6 @@ exp_names:
   - '2X'
   - '4X'
   - '10X'
-  - 'this shouldnt show'
 
 pep_thresh: 0.01
 remove_decoy: REV_
