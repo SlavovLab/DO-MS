@@ -6,11 +6,11 @@ init <- function() {
   source_file <- 'evidence'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
+    validate(need(data()[['evidence']], paste0('Upload evidence.txt')))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source_file]][,c('Raw.file', 'PEP')]
+    plotdata <- data()[['evidence']][,c('Raw.file', 'PEP')]
 
     pep <- as.data.frame(table(plotdata[,c('Raw.file', 'PEP')]))
     pep <- pep[pep$Freq != 0,]

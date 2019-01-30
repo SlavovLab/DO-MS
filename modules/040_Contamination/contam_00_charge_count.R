@@ -7,11 +7,11 @@ init <- function() {
 
   
   .validate <- function(data, input) {
-    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
+    validate(need(data()[['allPeptides']], paste0('Upload allPeptides.txt')))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source_file]][,c('Raw.file', 'Charge')]
+    plotdata <- data()[['allPeptides']][,c('Raw.file', 'Charge')]
     
     plotdata$Charge[plotdata$Charge > 3] <- 4
     

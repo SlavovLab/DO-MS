@@ -3,18 +3,18 @@ init <- function() {
   type <- 'plot'
   box_title <- 'TMT Channel Spearman Correlations vs. Intensity'
   help_text <- 'Calculating the spearman correlation between the peptide quantitation in different TMT channels to the carry channel for every experiment, plotted against the median RI intensity for that channel.'
-  source_file<-"evidence"
+  source_file <- 'evidence'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
+    validate(need(data()[['evidence']], paste0('Upload evidence.txt')))
     
     # require reporter ion quantification data
-    validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[[source_file]]))), 
+    validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[['evidence']]))), 
                   paste0('Loaded data does not contain reporter ion quantification')))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source_file]]
+    plotdata <- data()[['evidence']]
     
     plotdata <- plotdata %>% 
       dplyr::select('Raw.file', starts_with('Reporter.intensity.corrected'))

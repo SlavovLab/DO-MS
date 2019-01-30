@@ -6,11 +6,11 @@ init <- function() {
   source_file <- 'allPeptides'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
+    validate(need(data()[['allPeptides']], paste0('Upload allPeptides.txt')))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source_file]][,c('Raw.file', 'Charge', 'Intensity', 'MS.MS.Count')]
+    plotdata <- data()[['allPeptides']][,c('Raw.file', 'Charge', 'Intensity', 'MS.MS.Count')]
     plotdata$Intensity <- log10(plotdata$Intensity)
     plotdata$Intensity <- log10(plotdata$Intensity)
     plotdata <- plotdata[plotdata$MS.MS.Count >= 1,]

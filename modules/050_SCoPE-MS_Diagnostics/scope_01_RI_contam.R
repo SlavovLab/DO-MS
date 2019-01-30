@@ -6,18 +6,18 @@ init <- function() {
   source_file <- 'msms'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
+    validate(need(data()[['msms']], paste0('Upload msms.txt')))
     
     # require reporter ion quantification data
-    validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[[source_file]]))), 
+    validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[['msms']]))), 
                   paste0('Loaded data does not contain reporter ion quantification')))
     
-    validate(need((length(unique(data()[[source_file]][,'Raw.file'])) == 1),
+    validate(need((length(unique(data()[['msms']][,'Raw.file'])) == 1),
                   'Please select a single experiment'))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source_file]]
+    plotdata <- data()[['msms']]
   
     exps <- unique(plotdata$Raw.file)
     

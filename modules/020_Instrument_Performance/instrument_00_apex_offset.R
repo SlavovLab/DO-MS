@@ -6,11 +6,11 @@ init <- function() {
   source_file <- 'msmsScans'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
+    validate(need(data()[['msmsScans']], paste0('Upload msmsScans.txt')))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[[source_file]][,c('Raw.file', 'Precursor.apex.offset.time')]
+    plotdata <- data()[['msmsScans']][,c('Raw.file', 'Precursor.apex.offset.time')]
     
     plotdata$Precursor.apex.offset.time <- plotdata$Precursor.apex.offset.time * 60
     plotdata$Precursor.apex.offset.time[plotdata$Precursor.apex.offset.time > 8] <- 9

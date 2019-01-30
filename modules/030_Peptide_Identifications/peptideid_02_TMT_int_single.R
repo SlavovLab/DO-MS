@@ -6,15 +6,15 @@ init <- function() {
   source_file <- 'evidence'
   
   .validate <- function(data, input) {
-    validate(need(data()[[source_file]], paste0('Upload ', source_file, '.txt')))
+    validate(need(data()[['evidence']], paste0('Upload evidence.txt')))
     # require reporter ion quantification data
-    validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[[source_file]]))), 
+    validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[['evidence']]))), 
                   paste0('Loaded data does not contain reporter ion quantification')))
   }
   
   .plotdata <- function(data, input) {
     
-    plotdata <- data()[[source_file]] %>% 
+    plotdata <- data()[['evidence']] %>% 
       dplyr::select(dplyr::starts_with('Reporter.intensity.corrected'))
     
     plotdata <- reshape2::melt(plotdata)
