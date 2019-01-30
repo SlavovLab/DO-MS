@@ -12,10 +12,15 @@ Install this application by downloading it from the [release page](https://githu
 
 ## Running
 
-The easiest way to run the app is directly through RStudio, by opening the ```DO-MS.Rproj``` Rproject file 
-and clicking the "Run App" button at the top of the application.
+The easiest way to run the app is directly through RStudio, by opening the ```DO-MS.Rproj``` Rproject file
 
-You can also run the application by running the ```start_server.R``` script.
+![](https://github.com/SlavovLab/DO-MS/raw/master/documentation/do-ms-proj.png "Open DO-MS.Rproj")
+
+and clicking the "Run App" button at the top of the application. We recommend checking the "Run External" option to open the application in your default browser instead of the RStudio Viewer.
+
+![](https://github.com/SlavovLab/DO-MS/raw/master/documentation/do-ms-run.png "Run DO-MS")
+
+You can also start the application by running the ```start_server.R``` script.
 
 ## Automated Report Generation
 
