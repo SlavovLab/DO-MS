@@ -21,11 +21,11 @@ init <- function() {
     # return a string
     paste(
       paste0('MaxQuant Version: ', 
-             paste(unique(plotdata$Value[plotdata$Parameter == 'Version']), collapse=', ') ),
+             paste(unique(as.character(plotdata[plotdata$Parameter == 'Version',-1])), collapse=', ') ),
       paste0('Search Date: ', 
-             paste(unique(plotdata$Value[plotdata$Parameter == 'Date of writing']), collapse=', ') ),
+             paste(unique(as.character(plotdata[plotdata$Parameter == 'Date of writing',-1])), collapse=', ') ),
       paste0('FASTA File: ', 
-             paste(unique(plotdata$Value[plotdata$Parameter == 'Fasta file']), collapse=', ') ),
+             paste(unique(as.character(plotdata[plotdata$Parameter == 'Fasta file',-1])), collapse=', ') ),
     sep='\n\n')
   }
   
