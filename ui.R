@@ -71,17 +71,7 @@ shinyUI(
       ),
       
       tags$hr(),
-      #Experimental Subsetting Box
-      #selectInput('Exp_Sets', 'sets', choices = NULL, multiple = TRUE),
-      #p("(Remove items via backspace)", style="padding:20px;"),
       tags$h4('Select Experiments to Display'),
-      div(class='exp_check_btn_row',
-        tags$button(id='exp_check_all', class='btn exp_check_all',
-               'Select All'),
-        tags$button(id='exp_check_none', class='btn exp_check_none',
-               'Select None')
-      ),
-      
       shinyWidgets::pickerInput(
         inputId = "Exp_Sets", choices = NULL, selected=NULL, multiple = TRUE, 
         options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = 'count > 1')

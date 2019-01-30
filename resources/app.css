@@ -48,26 +48,6 @@ button.action-button:hover, button.action-button:active {
   margin-bottom: 5px;
 }
 
-.main-sidebar .exp_check_btn_row {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  padding-left: 10px;
-  margin-top: 10px;
-}
-.main-sidebar button#exp_check_all, .main-sidebar button#exp_check_none {
-  background-color: #555;
-  color: #EEE;
-  transition: all 0.1s ease-in-out;
-  margin: 0px 5px;
-  padding: 2px 8px;
-}
-.main-sidebar button#exp_check_all:hover, .main-sidebar button#exp_check_none:hover {
-  background-color: #666;
-  color: #FFF;
-}
-
 .main-sidebar #Exp_Sets label.control-label {
   display: none;
 }
