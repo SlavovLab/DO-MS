@@ -278,8 +278,9 @@ shinyServer(function(input, output, session) {
           # rename value column to folder name as well
           colnames(.dat)[2] <- folder$Folder.Name
         } else {
-          # store folder name
-          .dat$Folder <- folder$Folder.Name
+          # store folder name and path
+          .dat$Folder.Name <- folder$Folder.Name
+          .dat$Folder.Path <- folder$Path
         }
         
         # if field is not initialized yet, set field
@@ -407,7 +408,7 @@ shinyServer(function(input, output, session) {
             
             # store the folder it came from as the name of the raw file
             names(raw_file) <- first(unique(
-              f_data[[file$name]] %>% filter(`Raw.file` == raw_file) %>% pull(Folder)
+              f_data[[file$name]] %>% filter(`Raw.file` == raw_file) %>% pull(Folder.Name)
             ))
             
             .raw_files <- c(.raw_files, raw_file)

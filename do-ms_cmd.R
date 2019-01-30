@@ -143,8 +143,9 @@ for(f in config[['load_input_files']]) {
       # rename value column to folder name as well
       colnames(.dat)[2] <- basename(folder)
     } else {
-      # store folder name
-      .dat$Folder <- basename(folder)
+      # store folder name and path
+      .dat$Folder.Name <- basename(folder)
+      .dat$Folder.Path <- folder
     }
     
     # if field is not initialized yet, set field
@@ -297,7 +298,7 @@ for(f in config[['load_input_files']]) {
         
         # store the folder it came from as the name of the raw file
         names(raw_file) <- first(unique(
-          data[[file$name]] %>% filter(`Raw.file` == raw_file) %>% pull(Folder)
+          data[[file$name]] %>% filter(`Raw.file` == raw_file) %>% pull(Folder.Name)
         ))
         
         raw_files <- c(raw_files, raw_file)

@@ -11,11 +11,13 @@ init <- function() {
   
   .plotdata <- function(data, input) {
     plotdata <- data()[['evidence']] %>%
-      dplyr::select(c('Raw.file','Raw.file.orig')) %>%
+      dplyr::select(c('Raw.file','Raw.file.orig', 'Folder.Name', 'Folder.Path')) %>%
       distinct(Raw.file, .keep_all=T) %>%
       arrange(Raw.file) %>%
       rename(`Short name`=Raw.file,
-             `Raw file`=Raw.file.orig)
+             `Raw file`=Raw.file.orig,
+             Folder=Folder.Name,
+             Path=Folder.Path)
     
     return(plotdata)
   }
@@ -35,7 +37,8 @@ init <- function() {
     source_file=source_file,
     validate_func=.validate,
     plotdata_func=.plotdata,
-    plot_func=.plot
+    plot_func=.plot,
+    box_width=12
   ))
 }
 
