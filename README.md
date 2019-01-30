@@ -16,7 +16,7 @@ The easiest way to run the app is directly through RStudio, by opening the ```DO
 
 <img src="https://github.com/SlavovLab/DO-MS/raw/master/documentation/do-ms-proj.png" title="Open DO-MS.Rproj" height="100">
 
-and clicking the "Run App" button at the top of the application. We recommend checking the "Run External" option to open the application in your default browser instead of the RStudio Viewer.
+and clicking the "Run App" button at the top of the application, after opening the ```server.R``` file. We recommend checking the "Run External" option to open the application in your default browser instead of the RStudio Viewer.
 
 <img src="https://github.com/SlavovLab/DO-MS/raw/master/documentation/do-ms-run.png" title="Run DO-MS" height="100">
 
