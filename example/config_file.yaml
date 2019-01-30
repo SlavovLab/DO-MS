@@ -30,6 +30,12 @@ output: /path/to/report.html
 include_files: '180614_S'
 exclude_files: '180614_S_A'
 
+# experiment name format string
+# %i -- index of raw file
+# %f -- folder name
+# %e -- raw file name
+exp_name_format: 'Exp %f %i'
+
 # custom names for files
 exp_names:
   - Control

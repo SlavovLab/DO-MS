@@ -255,6 +255,8 @@ shinyServer(function(input, output, session) {
         if('Raw.file' %in% colnames(.dat)) {
           .dat$Raw.file <- factor(.dat$Raw.file)
         }
+        # store folder name
+        .dat$Folder <- folder$Folder.Name
         
         # if field is not initialized yet, set field
         if(is.null(.data[[file$name]])) {
@@ -372,6 +374,12 @@ shinyServer(function(input, output, session) {
         for(raw_file in ..raw_files) {
           # if the raw file is not in the list of raw files, then add it
           if(!raw_file %in% .raw_files) {
+            
+            # store the folder it came from as the name of the raw file
+            names(raw_file) <- first(unique(
+              f_data[[file$name]] %>% filter(`Raw.file` == raw_file) %>% pull(Folder)
+            ))
+            
             .raw_files <- c(.raw_files, raw_file)
           }
         }
@@ -384,10 +392,52 @@ shinyServer(function(input, output, session) {
     .raw_files
   })
   
-  # keep track of user-defined experiment names
-  # first debounce the Exp_Names input to prevent errors
-  exp_names <- debounce(reactive({ input$Exp_Names }), 1000)
-  file_levels <- reactive({
+  
+  # custom, user-defined experiment names
+  exp_name_table <- reactive({
+    data.frame(
+      `Raw file`=raw_files(),
+      Labels=file_levels()
+    )
+  })
+  
+  output$exp_name_table <- DT::renderDataTable({
+    validate(need(raw_files(), 'Please import data before proceeding'))
+    validate(need(file_levels(), 'Please import data before proceeding'))
+    exp_name_table()
+  }, selection='none', editable=T, options=list(
+    pageLength=10,
+    dom='ltp',
+    lengthMenu=c(5, 10, 15, 20, 50)
+  ))
+  exp_name_table_proxy <- dataTableProxy('exp_name_table')
+  
+  # observe changes to the experiment name table
+  observeEvent(input$exp_name_table_cell_edit, {
+    info = input$exp_name_table_cell_edit
+    i = info$row
+    j = info$col + 1  # column index offset by 1
+    v = info$value
+    
+    # Replace the data object of a table output and avoid regenerating the full table,
+    .exp_name_table <- isolate(exp_name_table())
+    # don't need DT::coerceValue like they use in example -- this will always be a string
+    .exp_name_table[i, j] <- as.character(v)
+    DT::replaceData(exp_name_table_proxy, .exp_name_table, resetPaging = FALSE, rownames = FALSE)
+    
+    # update the file_levels vector
+    .file_levels <- isolate(file_levels())
+    .file_levels[i] <- as.character(v)
+    file_levels(.file_levels)
+  })
+  
+  exp_name_format <- debounce(reactive({ input$exp_name_format }), 1000)
+  
+  file_levels <- reactiveVal()
+  
+  # recalculate file levels
+  # only triggers when raw files or format has changed
+  observe({
     .raw_files <- raw_files()
     
     # if raw files (i.e., data) haven't been loaded yet, break
@@ -395,32 +445,41 @@ shinyServer(function(input, output, session) {
       return(c())
     }
     
-    level_prefixes <- paste0('Exp ', seq(1, 100))
-    # create the nickname vector
-    .file_levels <- level_prefixes[1:length(.raw_files)]
+    # load naming format
+    .format <- exp_name_format()
+    .file_levels <- rep(.format, length(.raw_files))
     
-    named_exps <- trimws(unlist(strsplit(paste(exp_names()), ",")))
-    if(length(named_exps) > 0) {
-      if(length(named_exps) < length(.file_levels)) {
-        .file_levels[1:length(named_exps)] <- named_exps
-      } else if(length(named_exps) > length(.file_levels)) {
-        .file_levels <- named_exps[1:length(.file_levels)]
-      } else {
-        # same length
-        .file_levels <- named_exps
-      }
-    }
+    # replace flags in the format
+    # replacements have to be character vectors with same length as raw file vector
+    
+    # replace %i with the index
+    .file_levels <- str_replace(.file_levels, '\\%i', as.character(seq(1, length(.raw_files))))
+    
+    # replace %f with the folder name
+    # folder name is stored as the names of the raw files vector
+    .file_levels <- str_replace(.file_levels, '\\%f', names(.raw_files))
+    
+    # replace %e with the raw file name
+    .file_levels <- str_replace(.file_levels, '\\%e', .raw_files)
+    
+    file_levels(.file_levels)
+  })
+  
+  # deal with duplicates in file_levels
+  observe({
+    .raw_files <- isolate(raw_files())
+    .file_levels <- file_levels()
     
     # ensure there are no duplicate names
     # if so, then append a suffix to duplicate names to prevent refactoring errors
     
     # only do this if we have more than one experiment
     if(length(.raw_files) > 1) {
-      
       for(i in 1:(length(.file_levels)-1)) {
         duplicate_counter <- 0
         for(j in (i+1):length(.file_levels)) {
           if(.file_levels[i] == .file_levels[j]) {
+            showNotification(paste0('Label "', .file_levels[i], '" is a duplicate of label "', .file_levels[j], '". Adjusting file names to prevent collisions.'), type='warning')
             # if j is a duplicate, append the corresponding duplicate number and increment
             .file_levels[j] <- paste0(.file_levels[j], '_', duplicate_counter + 2)
             duplicate_counter <- duplicate_counter + 1
@@ -431,10 +490,9 @@ shinyServer(function(input, output, session) {
           .file_levels[i] <- paste0(.file_levels[i], '_1')
         }
       }
-      
     }
     
-    .file_levels
+    file_levels(.file_levels) # update
   })
   
   # listen to the experiment selection checkboxes
@@ -467,6 +525,11 @@ shinyServer(function(input, output, session) {
         # rename the levels of this file
         .levels <- levels(f_data[[file$name]]$Raw.file)
         .labels <- file_levels()
+        
+        # if labels are still not loaded or defined yet, then default them to the levels
+        if(is.null(.labels) | length(.labels) < 1) {
+          .labels <- .levels
+        }
         
         # if this file has a subset of raw files
         # then take the same subset of the labels vector

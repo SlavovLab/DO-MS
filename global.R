@@ -132,7 +132,7 @@ get_os <- function() {
 }
 
 merge_list <- function(a, b) {
-  for(i in names(a)) {
+  for(i in names(b)) {
     a[[i]] <- b[[i]]
   }
   return(a)

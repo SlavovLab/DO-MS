@@ -49,6 +49,8 @@ pif_thresh: 0.7
 remove_decoy: REV_
 remove_contam: CON_
 
+exp_name_format: 'Exp %f %i'
+
 ## Figure rendering options
 
 ppi: 150

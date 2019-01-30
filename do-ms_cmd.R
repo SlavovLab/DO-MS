@@ -63,6 +63,9 @@ args <- parser$parse_args()
 # load config file --------------------------------------------------------
 
 config <- merge_list(config, read_yaml(args$config_file))
+
+# remove entries from args that are null
+args <- args[sapply(args, function(i) { !is.null(i) })]
 # override with command-line args
 config <- merge_list(config, args)
 
@@ -128,6 +131,8 @@ for(f in config[['load_input_files']]) {
     if('Raw.file' %in% colnames(.dat)) {
       .dat$Raw.file <- factor(.dat$Raw.file)
     }
+    # store folder name
+    .dat$Folder <- basename(folder)
     
     # if field is not initialized yet, set field
     if(is.null(data[[file$name]])) {
@@ -193,10 +198,6 @@ for(f in config[['load_input_files']]) {
   
   # for each file, check if it has a raw file column
   if('Raw.file' %in% colnames(data[[file$name]])) {
-    
-    # rename the levels of this file
-    # data[[file$name]]$Raw.file <- factor(data[[file$name]]$Raw.file,
-    #   levels=levels(data[[file$name]]$Raw.file), labels=file_levels())
     
     # Filter by raw file name, by matching against regular expressions in config_file
     
@@ -274,6 +275,12 @@ for(f in config[['load_input_files']]) {
     for(raw_file in .raw_files) {
       # if the raw file is not in the list of raw files, then add it
       if(!raw_file %in% raw_files) {
+        
+        # store the folder it came from as the name of the raw file
+        names(raw_file) <- first(unique(
+          data[[file$name]] %>% filter(`Raw.file` == raw_file) %>% pull(Folder)
+        ))
+        
         raw_files <- c(raw_files, raw_file)
       }
     }
@@ -285,22 +292,22 @@ for(f in config[['load_input_files']]) {
 raw_files <- sort(raw_files)
 
   
-level_prefixes <- paste0('Exp ', seq(1, 100))
-# create the nickname vector
-file_levels <- level_prefixes[1:length(raw_files)]
-  
-named_exps <- config[['exp_names']]
-if(!is.null(named_exps) & length(named_exps) > 0) {
-  if(length(named_exps) < length(file_levels)) {
-    file_levels[1:length(named_exps)] <- named_exps
-  } else if(length(named_exps) > length(file_levels)) {
-    file_levels <- named_exps[1:length(file_levels)]
-  } else {
-    # same length
-    file_levels <- named_exps
-  }
-}
-  
+# load naming format
+file_levels <- rep(config[['exp_name_format']], length(raw_files))
+
+# replace flags in the format
+# replacements have to be character vectors with same length as raw file vector
+
+# replace %i with the index
+file_levels <- str_replace(file_levels, '\\%i', as.character(seq(1, length(raw_files))))
+
+# replace %f with the folder name
+# folder name is stored as the names of the raw files vector
+file_levels <- str_replace(file_levels, '\\%f', names(raw_files))
+
+# replace %e with the raw file name
+file_levels <- str_replace(file_levels, '\\%e', raw_files)
+
 # ensure there are no duplicate names
 # if so, then append a suffix to duplicate names to prevent refactoring errors
 
@@ -316,14 +323,15 @@ if(length(raw_files) > 1) {
         duplicate_counter <- duplicate_counter + 1
       }
     }
-    # if there were any duplicates, change .file_levels[i]
+    # if there were any duplicates, change file_levels[i]
     if(duplicate_counter > 0) {
       file_levels[i] <- paste0(file_levels[i], '_1')
     }
   }
-  
 }
 
+prnt('File labels: ')
+prnt(paste(file_levels, collapse=', '))
 
 # re-filter data ----------------------------------------------------------
 

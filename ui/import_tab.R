@@ -125,18 +125,18 @@ import_tab <- tabItem(tabName='import', fluidPage(
   p('Rename raw file names to more readable or sensible names, for easier interpretation of figures'),
   wellPanel(
     div(class='well-header', h4('Raw File Renaming')),
-    p('Enter a comma-separated list of short labels for each raw file/experiment. By default raw files will be named "Exp1, Exp2, Exp3, ..."'),
-    p('For example: "Control,Drug1,Drug2,Drug3,2xDrug1"'),
-    textInput("Exp_Names", "Exp Names", value = "",
-              width = NULL, placeholder = "Comma-separated Exp Names")
+    p('Choose a format to name experiments. Use flags to automatically name experiments from their metadata. Available flags are listed below'),
+    tags$ul(
+      tags$li(tags$b('%i'), tags$span('  Index of the experiment. i.e., "3"')),
+      tags$li(tags$b('%f'), tags$span('  Name of the folder the experiment was loaded from.')),
+      tags$li(tags$b('%e'), tags$span('  Name of the experiment raw file.'))
+    ),
+    p('For example, "file_%f-%i" would render to "file_SCOPE-3" given the folder "SCOPE" and the index 3'),
+    textInput('exp_name_format', 'Experiment Label Format', value=config[['exp_name_format']],
+              width=NULL, placeholder='Experiment naming format'),
+    p('Or, use the table below to manually rename experiments'),
+    p('Double click on an entry in the "Label" column to begin editing. Press enter or click outside of the table to finish editing and confirm the changes.'),
+    DT::dataTableOutput('exp_name_table'),
+    tags$br()
   )
-
-  # End tabs
-  #p("After uploading your evidence.txt file, please wait for your experiments to appear in the sidebar before uploading msmsScans.txt and allPeptides.txt"),
-  #p("You can then explore your data in the Dashboard."),
-  #uiOutput('input_forms'),
-  #tags$hr(),
-  #p("Enter a comma-separated list of short labels for each Raw-file/exp"),
-  #textInput("Exp_Names", "Exp Names", value = "", 
-  #          width = NULL, placeholder = "Comma Sep Exp Names")
 ))
