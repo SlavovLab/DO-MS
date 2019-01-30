@@ -4,26 +4,18 @@
 
 ## Requirements
 
-This application has been tested on R 3.4.4, OSX 10.14 / Windows 7/8/10.
-
-R can be downloaded from the main [R Project page](https://www.r-project.org/)
-or downloaded with the [RStudio Application](https://www.rstudio.com/products/rstudio/download/)
+This application has been tested on R 3.4.4, OSX 10.14 / Windows 7/8/10. R can be downloaded from the main [R Project page](https://www.r-project.org/) or downloaded with the [RStudio Application](https://www.rstudio.com/products/rstudio/download/)
 
 ## Installation
 
-DO-MS requires an R installation with the ```shiny``` package.
-
-The easiest way to install and run is: ```shiny::runGitHub('DO-MS', 'SlavovLab')```
-
-Or, install this application by downloading it from the GitHub page as a .zip archive, 
-or from a bundle on the [release page](https://github.com/SlavovLab/DO-MS/releases).
+Install this application by downloading it from the [release page](https://github.com/SlavovLab/DO-MS/releases).
 
 ## Running
 
 The easiest way to run the app is directly through RStudio, by opening the ```DO-MS.Rproj``` Rproject file 
 and clicking the "Run App" button at the top of the application.
 
-You can also run the application by running the script ```start_server.sh``` (OSX/Linux), or ```start_server.bat``` (Windows).
+You can also run the application by running the ```start_server.R``` script.
 
 ## Automated Report Generation
 
@@ -33,9 +25,7 @@ You can automatically generate PDF/HTML reports without having to launch the ser
 $ Rscript do-ms_cmd.R config_file.yaml
 ```
 
-This requires a configuration file, and you can [find an example one here](https://github.com/SlavovLab/DO-MS/blob/master/example/config_file.yaml).
-
-See the document [automation.md](https://github.com/SlavovLab/DO-MS/blob/master/documentation/automation.md) for more details and instructions.
+This requires a configuration file, and you can [find an example one here](https://github.com/SlavovLab/DO-MS/blob/master/example/config_file.yaml). See the document [automation.md](https://github.com/SlavovLab/DO-MS/blob/master/documentation/automation.md) for more details and instructions.
 
 ## Customization
 
