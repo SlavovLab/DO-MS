@@ -28,9 +28,7 @@ tab_items <- list(
 for(i in 1:length(tabs)) {
   # for tabName, replace spaces/whitespace with dashes '-'
   tab_items[[i+length(tab_items)]] <- tabItem(tabName=paste0(gsub('\\s', '-', tabs[i]), '-', i), 
-    fluidPage(
-      uiOutput(tabs[i])
-    )
+    fluidPage( uiOutput(tabs[i]) )
   )
 }
 
@@ -38,13 +36,13 @@ for(i in 1:length(tabs)) {
 for(i in 1:length(tabs)) {
   tab_name <- paste0(gsub('\\s', '-', tabs[i]), '-', i)
   app_css <- paste0(app_css, ' .tab-pane[id*=\"', tab_name , '\"] .box-header {',
-                    'background-color: ', tab_colors[i], '; color: white; }')
+                    'background-color: ', config[['tab_colors']][i], '; color: white; }')
   # also add a border to the menu item
   app_css <- paste0(app_css, '.treeview ul.treeview-menu a[data-value*=\"', tab_name , '\"] {',
-                    'border-left: 10px solid ', tab_colors[i], '; }')
+                    'border-left: 10px solid ', config[['tab_colors']][i], '; }')
   # and make the color the background when the menuitem is active
   app_css <- paste0(app_css, '.treeview-menu li.active a[data-value*=\"', tab_name , '\"] {',
-                    'background-color: ', tab_colors[i], '; color: white; }')
+                    'background-color: ', config[['tab_colors[i]']], '; color: white; }')
 }
 
 shinyUI(
@@ -85,22 +83,19 @@ shinyUI(
       ),
       
       shinyWidgets::pickerInput(
-        inputId = "Exp_Sets", 
-        choices = NULL, selected=NULL, 
-        options = list(
-          `actions-box` = TRUE, 
-          size = 10,
-          `selected-text-format` = "count > 1"
-        ), 
-        multiple = TRUE
+        inputId = "Exp_Sets", choices = NULL, selected=NULL, multiple = TRUE, 
+        options = list(`actions-box` = TRUE, size = 10, `selected-text-format` = 'count > 1')
       ),
       
       tags$hr(),
       
-      #PEP selection slider
-      shinyWidgets::sliderTextInput("slider", "PEP Threshold:", 
-        choices=c(1e-4,0.001,.01,0.1,1), selected=0.1, grid = T)
-      #tags$script(HTML("$('body').addClass('fixed');"))
+      # PEP filter slider
+      shinyWidgets::sliderTextInput('pep_thresh', 'PEP Threshold:', grid = T,
+        choices=c(1e-4, 1e-3, 1e-2, 1e-1, 1), selected=config[['pep_thresh']]),
+      
+      # PIF filter slider
+      shinyWidgets::sliderTextInput('pif_thresh', 'PIF Threshold:', grid = T,
+        choices=seq(0, 1, by=0.1), selected=config[['pif_thresh']])
     ),
     dashboardBody(
       tags$head(

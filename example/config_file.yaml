@@ -9,8 +9,8 @@ input_folders:
   - /path/to/MaxQuant/output/b
   - /path/to/MaxQuant/output/c
   
-# match up with the input_files list in global.R
-input_files:
+# files to load from each folder
+load_input_files:
   - evidence
   - msms
   - msmsScans
@@ -38,6 +38,7 @@ exp_names:
   - '10X'
 
 pep_thresh: 0.01
+pif_thresh: 0.7
 remove_decoy: REV_
 remove_contam: CON_
 

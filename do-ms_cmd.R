@@ -24,7 +24,7 @@ source('global.R')
 source(file.path('server', 'generate_report.R'))
 
 # command-line specific packages
-p_load(argparse, yaml)
+p_load(argparse)
 
 # helper functions
 prnt <- function(message) {
@@ -45,16 +45,16 @@ parser$add_argument('-i', '--input-folders', type='character', nargs='+',
                     help='One or more folder paths to generate report from')
 parser$add_argument('-o', '--output', type='character',
                     help='Path to report file output. e.g., "/path/to/report.html"')
-parser$add_argument('-f', '--input-file-types', type='character', nargs='+',
+parser$add_argument('-f', '--load-input-files', type='character', nargs='+',
                     help='Names of MaxQuant text files to process. e.g., "summary evidence allPeptides"')
 
-parser$add_argument('--include_exps', type='character',
+parser$add_argument('--include-files', type='character',
                     help='Include raw files matching this regular expression. e.g., "SQC98[ABC]"')
-parser$add_argument('--exclude_exps', type='character',
+parser$add_argument('--exclude-files', type='character',
                     help='Exclude raw files matching this regular expression. e.g., "SQC98[ABC]"')
 parser$add_argument('--exp_names', type='character', nargs='+',
                     help='Rename raw files with short names. e.g., "Control 2X 4X 10X"')
-parser$add_argument('--pep_threshold', type='double',
+parser$add_argument('--pep_thresh', type='double',
                     help='PEP threshold for identified peptides, remove all below this threshold. e.g., "0.01"')
 
 # parser$print_help()
@@ -62,16 +62,9 @@ args <- parser$parse_args()
 
 # load config file --------------------------------------------------------
 
-config <- read_yaml(args$config_file)
-
-# override config file items with command-line items, if they exist
-if(!is.null(args$input_folders)) config$input_folders <- args$input_folders
-if(!is.null(args$output)) config$output <- args$output
-if(!is.null(args$input_file_types)) config$input_files <- args$input_file_types
-if(!is.null(args$include_exps)) config$include_files <- args$include_exps
-if(!is.null(args$exclude_exps)) config$exclude_files <- args$exclude_exps
-if(!is.null(args$exp_names)) config$exp_names <- args$exp_names
-if(!is.null(args$pep_threshold)) config$pep_thresh <- args$pep_threshold
+config <- merge_list(config, read_yaml(args$config_file))
+# override with command-line args
+config <- merge_list(config, args)
 
 # validate config file ----------------------------------------------------
 
@@ -83,7 +76,7 @@ if(is.null(input_folders)) stop('"input_folders" missing. Please provide list of
 if(length(input_folders) == 0) stop('No input folders specified in the "input_folders" list. Please provide list of folders to import and analyze')
 if(class(input_folders) != 'character') stop('Folder paths in "input_folders" list must be strings')
 
-load_input_files <- config[['input_files']]
+load_input_files <- config[['load_input_files']]
 if(is.null(load_input_files)) stop('"input_files" missing. Please provide list of files to load from each folder')
 if(length(load_input_files) == 0) stop('No input files specified in the "input_files" list. Please provide list of files to load from each folder')
 if(class(load_input_files) != 'character') stop('Input file list in "input_files" list must be strings')
@@ -105,9 +98,9 @@ prnt('Loading folders')
 data <- list()
 
 # loop thru input files
-for(f in load_input_files) {
+for(f in config[['load_input_files']]) {
   # get the input file object as defined in global.R
-  file <- input_files[[f]]
+  file <- config[['input_files']][[f]]
   
   # if it isn't defined, break out
   if(is.null(file)) {
@@ -117,7 +110,7 @@ for(f in load_input_files) {
   prnt(paste0('Loading file: ', file[['file']]))
   
   # loop thru folders
-  for(folder in input_folders) {
+  for(folder in config[['input_folders']]) {
   
     prnt(paste0('Loading file: ', file[['file']], ' from: ', folder))
     
@@ -161,13 +154,13 @@ prnt('Finished loading folders')
 # load misc files ---------------------------------------------------------
 
 # loop thru all misc input files and add it to the data list
-if(length(load_misc_input_files) > 0) {
-for(i in 1:length(load_misc_input_files)) {
+if(length(config[['load_misc_input_files']]) > 0) {
+for(i in 1:length(config[['load_misc_input_files']])) {
   
-  name <- names(load_misc_input_files)[i]
-  path <- load_misc_input_files[[i]]
+  name <- names(config[['load_misc_input_files']])[i]
+  path <- config[['load_misc_input_files']][[i]]
   
-  file <- misc_input_files[[name]]
+  file <- config[['misc_input_files']][[name]]
   
   # if it isn't defined, break out
   if(is.null(file)) {
@@ -193,8 +186,8 @@ for(i in 1:length(load_misc_input_files)) {
 
 prnt('Begin filtering data')
 
-for(f in load_input_files) {
-  file <- input_files[[f]]
+for(f in config[['load_input_files']]) {
+  file <- config[['input_files']][[f]]
   
   prnt(paste0('Filtering data for ', file$name))
   
@@ -247,6 +240,13 @@ for(f in load_input_files) {
       filter(PEP < config[['pep_thresh']])
   }
   
+  # Filter by PIF
+  if('PIF' %in% colnames(data[[file$name]])) {
+    prnt(paste0('Filtering by PIF, with threshold ', config[['pif_thresh']]))
+    data[[file$name]] <- data[[file$name]] %>%
+      filter(PIF > config[['pif_thresh']])
+  }
+  
   ## More filters, like PIF? Intensity?
 }
 
@@ -256,8 +256,8 @@ prnt('Finished filtering data')
 
 raw_files <- c()
 
-for(f in load_input_files) {
-  file <- input_files[[f]]
+for(f in config[['load_input_files']]) {
+  file <- config[['input_files']][[f]]
   
   # for each file, check if it has a raw file column
   if('Raw.file' %in% colnames(data[[file$name]])) {
@@ -329,8 +329,8 @@ if(length(raw_files) > 1) {
 
 prnt('Renaming raw files...')
 
-for(f in load_input_files) {
-  file <- input_files[[f]]
+for(f in config[['load_input_files']]) {
+  file <- config[['input_files']][[f]]
   
   # for each file, check if it has a raw file column
   if('Raw.file' %in% colnames(data[[file$name]])) {

@@ -1,7 +1,7 @@
 # load import tab
 
-file_vals <- names(input_files)
-file_names <- lapply(input_files, function(i) {
+file_vals <- names(config[['input_files']])
+file_names <- lapply(config[['input_files']], function(i) {
   tags$div(class='input_file_choice',
     tags$span(i[['name']]),
     tags$button(class='btn btn-secondary tooltip-btn', 
@@ -9,6 +9,10 @@ file_names <- lapply(input_files, function(i) {
                 icon('question-sign', lib='glyphicon'))
   )
 })
+default_selected_files <- file_vals[
+  sapply(config[['input_files']], function(i) { i$default_enabled })
+]
+
 # this list can't be named -- shiny will complain
 names(file_names) <- NULL
 
@@ -65,14 +69,11 @@ import_tab <- tabItem(tabName='import', fluidPage(
     div(class='well input-file-select-well',
       div(class='well-header', h4('Input File Selection')),
       div(class='exp_check_btn_row',
-          tags$button(id='files_check_all', class='btn files_check_all',
-                      'Select All'),
-          tags$button(id='files_check_none', class='btn files_check_none',
-                      'Select None')
+          tags$button(id='files_check_all', class='btn files_check_all', 'Select All'),
+          tags$button(id='files_check_none', class='btn files_check_none', 'Select None')
       ),
-      checkboxGroupInput('input_files', '',
-                         choiceNames=file_names,
-                         selected=file_vals, choiceValues=file_vals)
+      checkboxGroupInput('input_files', '', choiceNames=file_names,
+                         selected=default_selected_files, choiceValues=file_vals)
     )
   )),
   
@@ -96,9 +97,6 @@ import_tab <- tabItem(tabName='import', fluidPage(
     column(6,
       wellPanel(
         div(class='well-header', h4('Status')),
-        # div(class='selected-folders-output',
-        #     htmlOutput('selected_folders')
-        # ),
         htmlOutput('data_status')
       )
     )

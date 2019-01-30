@@ -21,43 +21,4 @@ Experiment short names specified in ```exp_names``` are applied _after_ filterin
 
 Some, but not all, of the fields in the configuration file can also be specified via. the command line. This is useful for automated pipelines where programatically editing the config file would be problematic. View the available arguments by running ```Rscript do-ms_cmd.R -h```
 
-```
-$ Rscript do-ms_cmd.R -h
-usage: do-ms_cmd.R [-h] [-v] [-i INPUT_FOLDERS [INPUT_FOLDERS ...]]
-                   [-o OUTPUT] [-f INPUT_FILE_TYPES [INPUT_FILE_TYPES ...]]
-                   [--include_exps INCLUDE_EXPS] [--exclude_exps EXCLUDE_EXPS]
-                   [--exp_names EXP_NAMES [EXP_NAMES ...]]
-                   [--pep_threshold PEP_THRESHOLD]
-                   config_file
-
-Generate DO-MS report
-
-positional arguments:
-  config_file           Path to config file (YAML format). Required
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -v, --verbose         Print detailed output (default: true)
-  -i INPUT_FOLDERS [INPUT_FOLDERS ...], --input-folders INPUT_FOLDERS [INPUT_FOLDERS ...]
-                        One or more folder paths to generate report from
-  -o OUTPUT, --output OUTPUT
-                        Path to report file output. e.g.,
-                        "/path/to/report.html"
-  -f INPUT_FILE_TYPES [INPUT_FILE_TYPES ...], --input-file-types INPUT_FILE_TYPES [INPUT_FILE_TYPES ...]
-                        Names of MaxQuant text files to process. e.g.,
-                        "summary evidence allPeptides"
-  --include_exps INCLUDE_EXPS
-                        Include raw files matching this regular expression.
-                        e.g., "SQC98[ABC]"
-  --exclude_exps EXCLUDE_EXPS
-                        Exclude raw files matching this regular expression.
-                        e.g., "SQC98[ABC]"
-  --exp_names EXP_NAMES [EXP_NAMES ...]
-                        Rename raw files with short names. e.g., "Control 2X
-                        4X 10X"
-  --pep_threshold PEP_THRESHOLD
-                        PEP threshold for identified peptides, remove all
-                        below this threshold. e.g., "0.01"
-```
-
-Adding more options via. the command-line can be done by editing the beginning of the ```do-ms_cmd.R``` script. Or, open an issue and we can take care of it.
+Adding more options via. the command-line can be done by editing the beginning of the ```do-ms_cmd.R``` script. Or, open a GitHub issue.

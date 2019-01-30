@@ -1,0 +1,94 @@
+---
+
+# Global Settings for the DO-MS app and report
+
+# Input files to load from each search output folder
+input_files:
+  evidence:
+    name: 'evidence'
+    file: 'evidence.txt'
+    help: 'MaxQuant evidence.txt file'
+    default_enabled: true
+  msms:
+    name: 'msms'
+    file: 'msms.txt'
+    help: 'MaxQuant msms.txt file'
+    default_enabled: true
+  msmsScans:
+    name: 'msmsScans'
+    file: 'msmsScans.txt'
+    help: 'MaxQuant msmsScans.txt file'
+    default_enabled: true
+  allPeptides:
+    name: 'allPeptides'
+    file: 'allPeptides.txt'
+    help: 'MaxQuant allPeptides.txt file'
+    default_enabled: false
+  summary:
+    name: 'summary'
+    file: 'summary.txt'
+    help: 'MaxQuant summary.txt file'
+    default_enabled: true
+  parameters:
+    name: 'parameters'
+    file: 'parameters.txt'
+    help: 'MaxQuant parameters.txt file'
+    default_enabled: true
+
+# Misc. input files to provide upload forms for
+misc_input_files:
+  inclusion_list:
+    name: 'inclusion_list'
+    help: 'Inclusion List .txt file'
+    
+
+## Filtering options
+
+pep_thresh: 0.001
+pif_thresh: 0.7
+remove_decoy: REV_
+remove_contam: CON_
+
+## Figure rendering options
+
+ppi: 150
+
+## download figure settings
+download_figure_units: 'in'
+download_figure_width: 5
+download_figure_height: 5
+
+# label font size
+figure_title_font_size: 16
+# axis tick label font size
+figure_axis_font_size: 12
+# facet label font size
+figure_facet_font_size: 12
+# line width
+figure_line_width: 1
+# show background grid
+figure_show_grid: true
+
+## Report options
+
+# choices: pdf, html
+report_format: html
+
+# choices: default, cerulean, flatly, darkly, readable, 
+# spacelab, united, cosmo, lumen, paper, sandstone, simplex, yeti
+# previews: https://bootswatch.com/3/
+report_theme: readable
+
+# figure size (in inches)
+report_figure_width: 5
+report_figure_height: 5
+
+# figure format. choices: pdf, png
+report_figure_format: png
+
+## Structural Display Options
+
+# if there are more tabs than tab colors, will repeat this array
+# taken from: c(RColorBrewer::brewer.pal(5, 'Set1'), RColorBrewer::brewer.pal(8, 'Dark2')[c(1, 4, 3, 5, 2)])
+tab_colors: ['#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', '#1B9E77', '#E7298A', '#7570B3', '#66A61E', '#D95F02']
+

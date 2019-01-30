@@ -1,12 +1,16 @@
 # first, get pacman
-if(!'pacman' %in% installed.packages()[,"Package"]) {
+if(!'pacman' %in% installed.packages()[,'Package']) {
   install.packages('pacman')
 }
 library(pacman)
 
 # install/load dependencies
 p_load(shiny, shinydashboard, shinyWidgets, dplyr, ggplot2, lattice, knitr,
-       reshape2, RColorBrewer, readr, rmarkdown, stats, DT, stringr)
+       reshape2, readr, rmarkdown, stats, DT, stringr, yaml)
+
+# load application settings
+config <- read_yaml('settings.yaml')
+
 
 # load tabs first
 tabs <- list.dirs('modules', recursive=F, full.names=F)
@@ -55,54 +59,14 @@ for(i in 1:length(tabs)) {
 
 
 # to get custom panel heading colors for each tab,
-# need to dynamically inject some CSS into the app_css string
-tab_colors <- c(RColorBrewer::brewer.pal(5, 'Set1'), 
-                RColorBrewer::brewer.pal(8, 'Dark2')[c(1, 4, 3, 5, 2)])
-# repeat by 10 so we never run out of tab colors
-tab_colors <- rep(tab_colors, 10)
-
-input_files <- list(
-  evidence=list(
-    name='evidence',
-    file='evidence.txt',
-    help='MaxQuant evidence.txt file'),
-  msms=list(
-    name='msms',
-    file='msms.txt',
-    help='MaxQuant msms.txt file'),
-  msmsScans=list(
-    name='msmsScans',
-    file='msmsScans.txt',
-    help='MaxQuant msmsScans.txt file'),
-  allPeptides=list(
-    name='allPeptides',
-    file='allPeptides.txt',
-    help='MaxQuant allPeptides.txt file'),
-  summary=list(
-    name='summary',
-    file='summary.txt',
-    help='MaxQuant summary.txt file'
-  ),
-  parameters=list(
-    name='parameters',
-    file='parameters.txt',
-    help='MaxQuant parameters.txt file')
-)
-
-misc_input_files <- list(
-  inclusion_list=list(
-    name='inclusion_list',
-    help='Inclusion list .txt file')
-)
+config[['tab_colors']] <- rep(config[['tab_colors']], 10)
 
 # load app.css into string
 app_css <- paste(readLines(file.path('resources', 'app.css')), collapse='')
-
 # load app.js into string
 app_js <- paste(readLines(file.path('resources', 'app.js')), collapse='\n')
 
 theme_base <- function(input=list(), show_legend=F) {
-  
   # default values
   axis_font_size <- ifelse(is.null(input[['figure_axis_font_size']]), 
                      12, input[['figure_axis_font_size']])
@@ -165,4 +129,11 @@ get_os <- function() {
   } else {
     stop("Unknown OS")
   }
+}
+
+merge_list <- function(a, b) {
+  for(i in names(a)) {
+    a[[i]] <- b[[i]]
+  }
+  return(a)
 }

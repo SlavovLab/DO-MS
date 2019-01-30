@@ -218,8 +218,7 @@ render_modules <- function(input, output) {
             ),
            
             div(class='box-tools pull-right',
-                tags$button(class='btn btn-box-tool', `data-widget`='collapse',
-                            shiny::icon('minus'))
+                tags$button(class='btn btn-box-tool', `data-widget`='collapse', shiny::icon('minus'))
           )
         ),
         div(class='box-body plot-module-body', style=paste0('height:', box_height, 'px;'),

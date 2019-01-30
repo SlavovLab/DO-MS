@@ -24,8 +24,7 @@ shinyServer(function(input, output, session) {
       title='Add Folder(s)',
       textInput('add_folder_path', 'Folder Path'),
       radioButtons('add_folder_options', 'Options', selected=character(0),
-                         choices=c('Add Child Folders' = 'children', 
-                                   'Add Recursively' = 'recursive')),
+                         choices=c('Add Child Folders' = 'children', 'Add Recursively' = 'recursive')),
       p('"Add Child Folders" adds all child folders that are directly below the path entered'),
       p('"Add Recursively" adds all folders recursively below the path entered. Warning: selecting many folders will take a long time and may bloat the table.'),
       footer = tagList(
@@ -230,7 +229,7 @@ shinyServer(function(input, output, session) {
     # loop thru input files
     for(file in .input_files) {
       # get the input file object as defined in global.R
-      file <- input_files[[file]]
+      file <- config[['input_files']][[file]]
       
       # loop thru selected folders
       for(s in selected) {
@@ -285,7 +284,7 @@ shinyServer(function(input, output, session) {
   # for each misc. input file, create a form object
   # which will then be displayed on the import tab page
   misc_input_forms <- list()
-  for(file in misc_input_files) {
+  for(file in config[['misc_input_files']]) {
     # for now, all files are specified to be csv/tsv files,
     # but a input file type can be added later so that we can support
     # multiple file types
@@ -311,7 +310,7 @@ shinyServer(function(input, output, session) {
     
     # create a progress bar, only if theres data somewhere
     all_empty <- TRUE
-    for(file in misc_input_files) {
+    for(file in config[['misc_input_files']]) {
       if(!is.null(input[[file$name]])) {
         progress <- shiny::Progress$new()
         on.exit(progress$close())
@@ -327,9 +326,9 @@ shinyServer(function(input, output, session) {
     }
     
     # loop thru all misc input files and add it to the data list
-    for(file in misc_input_files) {
+    for(file in config[['misc_input_files']]) {
       # update progress bar
-      progress$inc(1/length(misc_input_files), detail=paste0('Reading ', file$name))
+      progress$inc(1 / length(config[['misc_input_files']]), detail=paste0('Reading ', file$name))
       
       # get the fileinput object
       .file <- input[[file$name]]
@@ -365,7 +364,7 @@ shinyServer(function(input, output, session) {
     
     .raw_files <- c()
     
-    for(file in input_files) {
+    for(file in config[['input_files']]) {
       # for each file, check if it has a raw file column
       if('Raw.file' %in% colnames(f_data[[file$name]])) {
         # get the raw files for this input file
@@ -457,7 +456,7 @@ shinyServer(function(input, output, session) {
   filtered_data <- debounce(reactive({
     f_data <- data()
     
-    for(file in input_files) {
+    for(file in config[['input_files']]) {
       
       # for each file, check if it has a raw file column
       if('Raw.file' %in% colnames(f_data[[file$name]])) {
@@ -489,18 +488,29 @@ shinyServer(function(input, output, session) {
       
       # Filter out decoys and contaminants, if the leading razor protein column exists
       if('Leading.razor.protein' %in% colnames(f_data[[file$name]])) {
-        f_data[[file$name]] <- f_data[[file$name]] %>% 
-          filter(!grepl("CON", Leading.razor.protein)) %>%
-          filter(!grepl("REV", Leading.razor.protein))
+        if(!is.null(config[['remove_contam']])) {
+          f_data[[file$name]] <- f_data[[file$name]] %>% 
+            filter(!grepl(config[['remove_contam']], Leading.razor.protein))
+        }
+        if(!is.null(config[['remove_decoy']])) {
+          f_data[[file$name]] <- f_data[[file$name]] %>% 
+            filter(!grepl(config[['remove_decoy']], Leading.razor.protein))
+        }
       }
       
       # Filter by PEP
       if('PEP' %in% colnames(f_data[[file$name]])) {
         f_data[[file$name]] <- f_data[[file$name]] %>%
-          filter(PEP < input$slider)
+          filter(PEP < input$pep_thresh)
       }
       
-      ## More filters, like PIF? Intensity?
+      # Filter by PIF
+      if('PIF' %in% colnames(f_data[[file$name]])) {
+        f_data[[file$name]] <- f_data[[file$name]] %>%
+          filter(PIF > input$pif_thresh)
+      }
+      
+      ## More filters, like Intensity?
     }
     
     ## Filtered data
