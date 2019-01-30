@@ -236,13 +236,12 @@ shinyServer(function(input, output, session) {
         folder <- .folders[s,]
         
         # update progress bar
-        progress$inc(progress_step, detail=paste0('Reading ', file[['file']], 
-                                                  ' from ', folder$Folder.Name))
+        progress$inc(progress_step, 
+                     detail=paste0('Reading ', file[['file']], ' from ', folder$Folder.Name))
         
         # if file doesn't exist, skip
         if(!file.exists(file.path(folder$Path, file[['file']]))) {
-          showNotification(paste0(file.path(folder$Path, file[['file']]), ' does not exist'),
-                           type='error')
+          showNotification(paste0(file.path(folder$Path, file[['file']]), ' does not exist'), type='error')
           next
         }
         
@@ -251,16 +250,35 @@ shinyServer(function(input, output, session) {
         
         # rename columns (replace whitespace or special characters with '.')
         colnames(.dat) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', colnames(.dat))
-        # coerce raw file names to a factor
+        
         if('Raw.file' %in% colnames(.dat)) {
+          # Remove any rows where "Total" is a raw file (e.g., summary.txt)
+          .dat <- .dat %>% filter(!Raw.file == 'Total')
+          
+          # coerce raw file names to a factor
           .dat$Raw.file <- factor(.dat$Raw.file)
         }
-        # store folder name
-        .dat$Folder <- folder$Folder.Name
+        
+        # Custom behavior for parameters.txt
+        if(file$name == 'parameters') {
+          # store folder name/path as a value in parameters.txt
+          .dat <- rbind(c('Folder Name', folder$Folder.Name), c('Folder Path', folder$Path), .dat)
+          # rename value column to folder name as well
+          colnames(.dat)[2] <- folder$Folder.Name
+        } else {
+          # store folder name
+          .dat$Folder <- folder$Folder.Name
+        }
         
         # if field is not initialized yet, set field
         if(is.null(.data[[file$name]])) {
           .data[[file$name]] <- .dat
+        }
+        # if parameters.txt file, then cbind instead of rbind
+        else if(file$name == 'parameters') {
+          .data[[file$name]] <- cbind(.data[[file$name]], .dat[,-1])
+          # rename column to folder name
+          colnames(.data[[file$name]])[ncol(.data[[file$name]])] <- folder$Folder.Name
         }
         # otherwise, append to existing data.frame
         else {
