@@ -24,8 +24,9 @@ shinyServer(function(input, output, session) {
     modalDialog(
       title='Add Folder(s)',
       textInput('add_folder_path', 'Folder Path'),
-      radioButtons('add_folder_options', 'Options', selected=character(0),
-                         choices=c('Add Child Folders' = 'children', 'Add Recursively' = 'recursive')),
+      radioButtons('add_folder_options', 'Options', selected='parent',
+                         choices=c('Add Single Folder' = 'parent', 'Add Child Folders' = 'children', 
+                                   'Add Recursively' = 'recursive')),
       p('"Add Child Folders" adds all child folders that are directly below the path entered'),
       p('"Add Recursively" adds all folders recursively below the path entered. Warning: selecting many folders will take a long time and may bloat the table.'),
       footer = tagList(
