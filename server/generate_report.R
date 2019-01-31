@@ -37,7 +37,7 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
   report <- paste(
     '---',
     'title: DO-MS Report',
-    'date: "`r format(Sys.time(), \'Generated: %Y-%m-%d    %H:%M:%S\')`"',
+    paste0('date: "`r paste0(\'Version: ', version, ' | \',  format(Sys.time(), \'Generated: %Y-%m-%d    %H:%M:%S\'))`"'),
     'output:',
     sep='\n')
   

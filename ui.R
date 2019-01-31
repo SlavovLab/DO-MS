@@ -47,7 +47,9 @@ for(i in 1:length(tabs)) {
 
 shinyUI(
   dashboardPage(skin='blue',
-    dashboardHeader(title = "DO-MS Dashboard"
+    dashboardHeader(title = "DO-MS Dashboard",
+                    tags$li(class='dropdown', style='margin-top:12px;', 
+                            tags$span(class='version-string', paste0('Version: ', version)))
       # tags$li(class='dropdown',
       # tags$button(type='button', class='btn btn-default', `data-container`='body', `data-toggle`='popover',
       #             `data-placement`='bottom', 

@@ -381,3 +381,9 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   color: #888 !important; 
   background: #FFF;
 }
+
+.version-string {
+  font-size: 1.25em;
+  color: white;
+  padding-right: 10px;
+}

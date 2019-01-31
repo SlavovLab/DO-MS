@@ -1,3 +1,5 @@
+version <- '1.0.0'
+
 # first, get pacman
 if(!'pacman' %in% installed.packages()[,'Package']) {
   install.packages('pacman')
