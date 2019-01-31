@@ -17,7 +17,7 @@ A folder path is the folder's absolute location on your machine. On Windows, you
 
 On Mac/OSX, you can get the folder path by first going into the folder info panel (Right click -> "Get Info", or Cmd+I) and then copying the path with Cmd+C.
 
-<img src="https://github.com/SlavovLab/DO-MS/raw/master/documentation/images/do-ms-osx-folder-info.png" height="100">
+<img src="https://github.com/SlavovLab/DO-MS/raw/master/documentation/images/do-ms-osx-folder-info.png" height="250">
 
 ## Adding subfolders
 
