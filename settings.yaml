@@ -47,8 +47,8 @@ allow_all_folders: false
 
 ## Filtering options
 
-pep_thresh: 0.001
-pif_thresh: 0.7
+pep_thresh: 1
+pif_thresh: 0
 remove_decoy: REV_
 remove_contam: CON_
 
