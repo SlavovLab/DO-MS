@@ -52,7 +52,8 @@ import_tab <- tabItem(tabName='import', fluidPage(
         htmlOutput('selected_folders')
       ),
       p('Click on a row in the table to select that folder. Click multiple rows to select multiple folders, and use Shift to select a series of folders.'),
-      p('Once you are finished selecting folders, scroll down to continue the import process.')
+      p('Once you are finished selecting folders, scroll down to continue the import process.'),
+      p(tags$a('Click here for help adding folders', href='https://github.com/SlavovLab/DO-MS/blob/master/documentation/adding_folders.md', target='_blank'))
     ))
   ),
   
