@@ -23,10 +23,12 @@ shinyServer(function(input, output, session) {
   add_folder_modal <- function() {
     modalDialog(
       title='Add Folder(s)',
+      p('Paths must be formatted according to your operating system. i.e., "C:\\path\\to\\folder" for Windows, and "/path/to/folder" for Mac OS/Linux'),
       textInput('add_folder_path', 'Folder Path'),
       radioButtons('add_folder_options', 'Options', selected='parent',
                          choices=c('Add Single Folder' = 'parent', 'Add Child Folders' = 'children', 
                                    'Add Recursively' = 'recursive')),
+      p('"Add Single Folder" only adds the folder entered'),
       p('"Add Child Folders" adds all child folders that are directly below the path entered'),
       p('"Add Recursively" adds all folders recursively below the path entered. Warning: selecting many folders will take a long time and may bloat the table.'),
       footer = tagList(
@@ -50,6 +52,7 @@ shinyServer(function(input, output, session) {
     .input_files <- isolate(input$input_files)
     
     directory <- input$add_folder_path
+    
     
     # does directory exist?
     finfo <- file.info(directory) # get file information
@@ -206,9 +209,9 @@ shinyServer(function(input, output, session) {
   selected_files <- reactiveVal(NULL)
   
   observeEvent(input$confirm_folders, {
-    selected <- isolate(input$folder_table_rows_selected)
-    .folders <- isolate(folders())
-    .input_files <- isolate(input$input_files)
+    selected <- input$folder_table_rows_selected
+    .folders <- folders()
+    .input_files <- input$input_files
     
     # if no folders are selected, break out
     if(length(selected) == 0 | is.null(selected)) {
@@ -424,9 +427,17 @@ shinyServer(function(input, output, session) {
     .raw_files
   })
   
-  
   # custom, user-defined experiment names
   exp_name_table <- reactive({
+    .raw_files <- raw_files()
+    .file_levels <- file_levels()
+    
+    # if lengths aren't equal, then we're in the middle of reloading our data
+    # return an empty dataframe so we don't crash out
+    if(length(.raw_files) != length(.file_levels)) {
+      return(data.frame())
+    }
+    
     data.frame(
       `Raw file`=raw_files(),
       Labels=file_levels()
@@ -559,7 +570,7 @@ shinyServer(function(input, output, session) {
         .labels <- file_levels()
         
         # if labels are still not loaded or defined yet, then default them to the levels
-        if(is.null(.labels) | length(.labels) < 1) {
+        if(is.null(.labels) | length(.labels) < 1 | length(.labels) != length(.levels)) {
           .labels <- .levels
         }
         
