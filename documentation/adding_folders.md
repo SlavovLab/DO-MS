@@ -15,9 +15,12 @@ A folder path is the folder's absolute location on your machine. On Windows, you
 <img src="https://github.com/SlavovLab/DO-MS/raw/master/documentation/images/do-ms-windows-path-before.png" height="100">
 <img src="https://github.com/SlavovLab/DO-MS/raw/master/documentation/images/do-ms-windows-path-after.png" height="100">
 
-On Mac/OSX, you can get the folder path by first going into the folder info panel (Right click -> "Get Info", or Cmd+I) and then copying the path with Cmd+C.
+On Mac/OSX, you can get the folder path by right clicking on the folder at the bottom of the Finder application and hitting "Copy <folder> as pathname".
 
-<img src="https://github.com/SlavovLab/DO-MS/raw/master/documentation/images/do-ms-osx-folder-info.png" height="250">
+<img src="https://github.com/SlavovLab/DO-MS/raw/master/documentation/images/do-ms-osx-path-before.png" height="250">
+<img src="https://github.com/SlavovLab/DO-MS/raw/master/documentation/images/do-ms-osx-path-after.png" height="250">
+
+Paths must be absolute and start from the root of the filesystem. For Windows, this means starting from the disk ("C:\\", "D:\\", etc). For Mac OS/Linux, this means starting from the filesystem root ("/"). Also note that path separators are platform specific ("\\" for Windows, "/" for Mac OS/Linux)
 
 ## Adding subfolders
 
