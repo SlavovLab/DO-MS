@@ -6,8 +6,6 @@
 ###                                                   ###
 #########################################################
 
-source('global.R')
-
 # attach module outputs/buttons to functions
 attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
 

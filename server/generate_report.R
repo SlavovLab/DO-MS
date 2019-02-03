@@ -4,9 +4,6 @@
 ###                                       ###
 #############################################
 
-
-source('global.R')
-
 download_report <- function(input, output, filtered_data, exp_sets) {
   output$download_report <- downloadHandler(
     filename = function() {
@@ -128,15 +125,15 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       }
       
       # override existing/default plot width if it is explicitly defined
-      if(!is.null(module$plot_width)) {
-        plot_width <- paste0(', fig.width=', round(module$plot_width))
+      if(!is.null(module$report_plot_width)) {
+        plot_width <- paste0(', fig.width=', module$report_plot_width)
       }
       
       plot_height <- ''
       # override existing/default plot height if it is explicitly defined
-      # if(!is.null(module$plot_height)) {
-      #   plot_height <- paste0(', fig.height=', round(module$plot_height / input$ppi))
-      # }
+      if(!is.null(module$report_plot_height)) {
+        plot_height <- paste0(', fig.height=', module$report_plot_height)
+      }
       
       # prevent further processing with 'results=asis' flag?
       results_flag <- ''

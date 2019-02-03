@@ -130,6 +130,14 @@ Value, in pixels, of the width of each experiment in the plot. For plots such as
 
 Height, in pixels, of the plot. Default is 370px. Will also scale the box height, unless it is also user-defined.
 
+```report_plot_width```
+
+Width, in inches, of the plot in the generated report. Defaults to a global report plot width, which is by default 5 inches.
+
+```report_plot_height```
+
+Height, in inches, of the plot in the generated report. Defaults to a global report plot height, which is by default 5 inches.
+
 
 #### Additional Options (datatable type)
 

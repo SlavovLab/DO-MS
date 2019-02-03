@@ -73,6 +73,8 @@ init <- function() {
     plotdata_func=.plotdata,
     plot_func=.plot,
     box_width=12, # bootstrap column units
-    plot_height=500 # pixels
+    plot_height=500, # pixels
+    report_plot_width=7, # inches
+    report_plot_height=5 # inches
   ))
 }
