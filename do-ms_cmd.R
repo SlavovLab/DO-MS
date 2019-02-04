@@ -36,7 +36,7 @@ prnt <- function(message) {
 
 # allow users to source this R script instead of forcing to run from command-line
 # so that they can integrate this into their own R workflows directly
-if(is.null(.config)) {
+if(!exists('.config')) {
   parser <- ArgumentParser(description='Generate DO-MS report')
   
   parser$add_argument('config_file', type='character',
