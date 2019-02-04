@@ -34,40 +34,49 @@ prnt <- function(message) {
 
 # build command-line arguments --------------------------------------------
 
-parser <- ArgumentParser(description='Generate DO-MS report')
+# allow users to source this R script instead of forcing to run from command-line
+# so that they can integrate this into their own R workflows directly
+if(is.null(.config)) {
+  parser <- ArgumentParser(description='Generate DO-MS report')
+  
+  parser$add_argument('config_file', type='character',
+                      help='Path to config file (YAML format). Required')
+  
+  parser$add_argument('-v', '--verbose', action='store_true', default=T, 
+                      help='Print detailed output (default: true)')
+  parser$add_argument('-i', '--input-folders', type='character', nargs='+',
+                      help='One or more folder paths to generate report from')
+  parser$add_argument('-o', '--output', type='character',
+                      help='Path to report file output. e.g., "/path/to/report.html"')
+  parser$add_argument('-f', '--load-input-files', type='character', nargs='+',
+                      help='Names of MaxQuant text files to process. e.g., "summary evidence allPeptides"')
+  
+  parser$add_argument('--include-files', type='character',
+                      help='Include raw files matching this regular expression. e.g., "SQC98[ABC]"')
+  parser$add_argument('--exclude-files', type='character',
+                      help='Exclude raw files matching this regular expression. e.g., "SQC98[ABC]"')
+  parser$add_argument('--exp_names', type='character', nargs='+',
+                      help='Rename raw files with short names. e.g., "Control 2X 4X 10X"')
+  parser$add_argument('--pep_thresh', type='double',
+                      help='PEP threshold for identified peptides, remove all below this threshold. e.g., "0.01"')
+  
+  # parser$print_help()
+  args <- parser$parse_args()
+  
+  # merge args with config YAML file
+  config <- merge_list(config, read_yaml(args$config_file))
+  
+  # remove entries from args that are null
+  args <- args[sapply(args, function(i) { !is.null(i) })]
+  # override with command-line args
+  config <- merge_list(config, args)
+  
+} else {
+  # fake command-line arguments with an empty list
+  args <- list()
+  config <- merge_list(config, .config)
+}
 
-parser$add_argument('config_file', type='character',
-                    help='Path to config file (YAML format). Required')
-
-parser$add_argument('-v', '--verbose', action='store_true', default=T, 
-                    help='Print detailed output (default: true)')
-parser$add_argument('-i', '--input-folders', type='character', nargs='+',
-                    help='One or more folder paths to generate report from')
-parser$add_argument('-o', '--output', type='character',
-                    help='Path to report file output. e.g., "/path/to/report.html"')
-parser$add_argument('-f', '--load-input-files', type='character', nargs='+',
-                    help='Names of MaxQuant text files to process. e.g., "summary evidence allPeptides"')
-
-parser$add_argument('--include-files', type='character',
-                    help='Include raw files matching this regular expression. e.g., "SQC98[ABC]"')
-parser$add_argument('--exclude-files', type='character',
-                    help='Exclude raw files matching this regular expression. e.g., "SQC98[ABC]"')
-parser$add_argument('--exp_names', type='character', nargs='+',
-                    help='Rename raw files with short names. e.g., "Control 2X 4X 10X"')
-parser$add_argument('--pep_thresh', type='double',
-                    help='PEP threshold for identified peptides, remove all below this threshold. e.g., "0.01"')
-
-# parser$print_help()
-args <- parser$parse_args()
-
-# load config file --------------------------------------------------------
-
-config <- merge_list(config, read_yaml(args$config_file))
-
-# remove entries from args that are null
-args <- args[sapply(args, function(i) { !is.null(i) })]
-# override with command-line args
-config <- merge_list(config, args)
 
 # validate config file ----------------------------------------------------
 
@@ -327,6 +336,13 @@ file_levels <- str_replace(file_levels, '\\%f', names(raw_files))
 
 # replace %e with the raw file name
 file_levels <- str_replace(file_levels, '\\%e', raw_files)
+
+# apply custom string extraction expression to file levels
+if(!is.null(config[['exp_name_pattern']])) {
+  file_levels <- str_extract(file_levels, config[['exp_name_pattern']])
+  # if string extraction failed, then will return NA. set NAs to "default"
+  file_levels[is.na(file_levels)] <- 'default'
+}
 
 # ensure there are no duplicate names
 # if so, then append a suffix to duplicate names to prevent refactoring errors
