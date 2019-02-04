@@ -344,6 +344,11 @@ if(!is.null(config[['exp_name_pattern']])) {
   file_levels[is.na(file_levels)] <- 'default'
 }
 
+# apply custom names, as defined in the "exp_names" config field
+if(!is.null(config[['exp_names']]) & length(config[['exp_names']]) > 0) {
+  file_levels[1:length(config[['exp_names']])] <- config[['exp_names']]
+}
+
 # ensure there are no duplicate names
 # if so, then append a suffix to duplicate names to prevent refactoring errors
 
