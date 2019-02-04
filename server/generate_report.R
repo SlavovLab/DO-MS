@@ -235,9 +235,14 @@ render_module <- function(tab_index, module_index, type, format) {
     # render an htmlwidget object which then becomes interactive in the HTML report
     else if(type == 'datatable') {
       # pull in datatable options from the meta object for this module
-      render_code <- paste0('datatable(params[["plots"]][[', tab_index, ']][[', module_index, ']], ',
+      render_code <- paste0('if("data.frame" %in% class(params[["plots"]][[', tab_index, ']][[', module_index, ']])) {')
+      render_code <- paste0(render_code, 'datatable(params[["plots"]][[', tab_index, ']][[', module_index, ']], ',
         'options=ifelse(is.null(params[["meta"]][[', tab_index, ']][[', module_index, ']][["datatable_options"]]), ',
         'list(), params[["meta"]][[', tab_index, ']][[', module_index, ']][["datatable_options"]])', ')')
+      # if not found, render as a table so that the validation error message shows
+      render_code <- paste0(render_code, '} else {')
+      render_code <- paste0(render_code, 'params[["plots"]][[', tab_index, ']][[', module_index, ']]')
+      render_code <- paste0(render_code, '}')
     }
     else if(type == 'text') {
       render_code <- paste0('cat(params[["plots"]][[', tab_index, ']][[', module_index, ']])')
