@@ -474,7 +474,17 @@ shinyServer(function(input, output, session) {
     file_levels(.file_levels)
   })
   
-  exp_name_format <- debounce(reactive({ input$exp_name_format }), 1000)
+  exp_name_format <- reactiveVal(config[['exp_name_format']])
+  # only change the exp_name_pattern when the apply button is pressed
+  observeEvent(input$exp_name_format_apply, {
+    exp_name_format(input$exp_name_format)
+  })
+  
+  exp_name_pattern <- reactiveVal(config[['exp_name_pattern']])
+  # only change the exp_name_pattern when the apply button is pressed
+  observeEvent(input$exp_name_pattern_apply, {
+    exp_name_pattern(input$exp_name_pattern)
+  })
   
   file_levels <- reactiveVal()
   
@@ -490,6 +500,7 @@ shinyServer(function(input, output, session) {
     
     # load naming format
     .format <- exp_name_format()
+    .pattern <- exp_name_pattern()
     .file_levels <- rep(.format, length(.raw_files))
     
     # replace flags in the format
@@ -504,6 +515,13 @@ shinyServer(function(input, output, session) {
     
     # replace %e with the raw file name
     .file_levels <- str_replace(.file_levels, '\\%e', .raw_files)
+    
+    # apply custom string extraction expression to file levels
+    if(!is.null(.pattern) & length(.pattern) > 0 & nchar(.pattern) > 0) {
+      .file_levels <- str_extract(.file_levels, .pattern)
+      # if string extraction failed, then will return NA. set NAs to "default"
+      .file_levels[is.na(.file_levels)] <- 'default'
+    }
     
     file_levels(.file_levels)
   })

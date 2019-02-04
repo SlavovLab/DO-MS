@@ -53,6 +53,7 @@ remove_decoy: REV_
 remove_contam: CON_
 
 exp_name_format: 'Exp %f %i'
+exp_name_pattern: ''
 
 ## Figure rendering options
 

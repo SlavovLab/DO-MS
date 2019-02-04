@@ -36,6 +36,10 @@ exclude_files: '180614_S_A'
 # %e -- raw file name
 exp_name_format: 'Exp %f %i'
 
+# optional regular expression pattern to extract
+# from the experiment names after applying the format string
+exp_name_pattern: '[0-9]{6}'
+
 # custom names for files
 exp_names:
   - Control
