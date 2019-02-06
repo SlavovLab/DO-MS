@@ -11,6 +11,10 @@ init <- function() {
     # require reporter ion quantification data
     validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[['evidence']]))), 
                   paste0('Loaded data does not contain reporter ion quantification')))
+    
+    validate(need((length(unique(data()[['evidence']][,'Raw.file'])) == 1),
+                  'Please select a single experiment'))
+    
   }
   
   .plotdata <- function(data, input) {
