@@ -16,7 +16,18 @@ init <- function() {
   .plotdata <- function(data, input) {
     plotdata <- data()[['evidence']][,c('Raw.file', 'Retention.length', 'PEP')]
     plotdata$Retention.length <- plotdata$Retention.length*60
-    plotdata$Retention.length[plotdata$Retention.length > 120] <- 120
+    #plotdata$Retention.length[plotdata$Retention.length > 120] <- 120
+    
+    # Thresholding data at 1 and 99th percentiles
+    ceiling <- quantile(plotdata$Retention.length, probs=.99, na.rm = TRUE)
+    floor <- quantile(plotdata$Retention.length, probs=.01, na.rm = TRUE)
+    
+    plotdata <- dplyr::filter(plotdata, is.finite(Retention.length))
+    factor(plotdata$Raw.file)
+    
+    plotdata[plotdata$Retention.length >= ceiling, 2] <- ceiling
+    plotdata[plotdata$Retention.length <= floor, 2] <- floor
+    
     return(plotdata)
   }
   
