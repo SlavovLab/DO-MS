@@ -16,6 +16,17 @@ init <- function() {
   .plotdata <- function(data, input) {
     plotdata <- data()[['allPeptides']][,c('Raw.file', 'Retention.length..FWHM.')]
     plotdata$Retention.length..FWHM.[plotdata$Retention.length..FWHM. > 45] <- 49
+    
+    # Thresholding data at 1 and 99th percentiles
+    ceiling <- quantile(plotdata$Retention.length..FWHM., probs=.99, na.rm = TRUE)
+    floor <- quantile(plotdata$Retention.length..FWHM., probs=.01, na.rm = TRUE)
+    
+    plotdata <- dplyr::filter(plotdata, is.finite(Retention.length..FWHM.))
+    factor(plotdata$Raw.file)
+    
+    plotdata[plotdata$Retention.length..FWHM. >= ceiling, 2] <- ceiling
+    plotdata[plotdata$Retention.length..FWHM. <= floor, 2] <- floor
+    
     return(plotdata)
   }
   
