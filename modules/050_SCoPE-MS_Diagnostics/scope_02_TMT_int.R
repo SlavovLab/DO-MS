@@ -18,9 +18,14 @@ init <- function() {
     plotdata <- data()[['evidence']] %>% 
       dplyr::select(starts_with('Reporter.intensity.corrected'))
     
+    plotdata2 <- data()[['evidence']] %>%
+      dplyr::select('Raw.file')
+    exp <- unique(plotdata2$Raw.file)
+    
     plotdata <- reshape2::melt(plotdata)
     plotdata$log10tran <- log10(plotdata$value)
-    
+    plotdata$Raw.file <- exp
+      
     return(plotdata)
   }
   
@@ -36,6 +41,7 @@ init <- function() {
       geom_violin(aes(group=variable), alpha=0.6, fill='black', 
                   kernel='rectangular') +    # passes to stat_density, makes violin rectangular 
       scale_x_discrete(name='TMT Channel', labels=plot_to_labels) +
+      ggtitle(unique(plotdata$Raw.file)) +
       xlab('TMT Channel') +             
       ylab(expression(bold('Log'[10]*' RI Intensity'))) + 
       theme_bw() + # make white background on plot
