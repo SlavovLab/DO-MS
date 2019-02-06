@@ -13,6 +13,17 @@ init <- function() {
     plotdata <- data()[['allPeptides']][,c('Raw.file', 'Charge', 'Intensity')]
     plotdata$Intensity <- log10(plotdata$Intensity)
     plotdata <- plotdata[plotdata$Charge > 1,]
+    
+    # Thresholding data at 1 and 99th percentiles
+    ceiling <- quantile(plotdata$Intensity, probs=.99, na.rm = TRUE)
+    floor <- quantile(plotdata$Intensity, probs=.01, na.rm = TRUE)
+    
+    plotdata <- dplyr::filter(plotdata, is.finite(Intensity))
+    factor(plotdata$Raw.file)
+    
+    plotdata[plotdata$Intensity >= ceiling, 3] <- ceiling
+    plotdata[plotdata$Intensity <= floor, 3] <- floor
+    
     return(plotdata)
   }
   

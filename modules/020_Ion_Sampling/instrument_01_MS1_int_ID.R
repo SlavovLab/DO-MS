@@ -12,6 +12,17 @@ init <- function() {
   .plotdata <- function(data, input) {
     plotdata <- data()[['evidence']][,c('Raw.file', 'Intensity')]
     plotdata$Intensity <- log10(plotdata$Intensity)
+    
+    # Thresholding data at 1 and 99th percentiles
+    ceiling <- quantile(plotdata$Intensity, probs=.99, na.rm = TRUE)
+    floor <- quantile(plotdata$Intensity, probs=.01, na.rm = TRUE)
+    
+    plotdata <- dplyr::filter(plotdata, is.finite(Intensity))
+    factor(plotdata$Raw.file)
+    
+    plotdata[plotdata$Intensity >= ceiling, 2] <- ceiling
+    plotdata[plotdata$Intensity <= floor, 2] <- floor
+    
     return(plotdata)
   }
   
