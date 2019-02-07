@@ -191,7 +191,7 @@ render_modules <- function(input, output) {
       # derive box height from plot height from module def. if null, default to 370px
       plot_height <- module$plot_height
       if(is.null(plot_height)) plot_height <- 370
-      box_height <- plot_height + 30 # add footer_height (30px)
+      box_height <- plot_height + 35 # add footer_height (30px) + padding to hide vertical scroll bar (5px)
       
       # pull box width from module def. if null, default to 6 (50%)
       box_width <- module$box_width
