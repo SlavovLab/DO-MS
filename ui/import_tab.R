@@ -21,10 +21,9 @@ import_tab <- tabItem(tabName='import', fluidPage(
   
   tags$ol(class='breadcrumb',
     tags$li(tags$a(href='#folder-select', '1. Select Folder(s)')),
-    tags$li(tags$a(href='#file-select', '2. Select File(s)')),
-    tags$li(tags$a(href='#load-data', '3. Load Data')),
-    tags$li(tags$a(href='#upload-optional-data', '4. Upload Optional Data')),
-    tags$li(tags$a(href='#rename-files', '5. Rename Files'))
+    tags$li(tags$a(href='#load-data', '2. Load Data')),
+    tags$li(tags$a(href='#upload-optional-data', '3. Upload Optional Data')),
+    tags$li(tags$a(href='#rename-files', '4. Rename Files'))
   ),
   
   ################################
@@ -57,36 +56,14 @@ import_tab <- tabItem(tabName='import', fluidPage(
     ))
   ),
   
-  
-  ##############################
-  ###  STEP 2: SELECT FILES  ###
-  ##############################
-  
-  a(name='file-select'),
-  div(class='import-header', span(class='num', '2'), 
-      h2('Select Files to Load')),
-  p(class='import-help', 'The text files to load from each folder selected. Unselect large files, such as "allPeptides.txt", if you are not analyzing unidentified ions and want to speed up load times.'),
-  fixedRow(column(12,
-    div(class='well input-file-select-well',
-      div(class='well-header', h4('Input File Selection')),
-      div(class='exp_check_btn_row',
-          tags$button(id='files_check_all', class='btn files_check_all', 'Select All'),
-          tags$button(id='files_check_none', class='btn files_check_none', 'Select None')
-      ),
-      checkboxGroupInput('input_files', '', choiceNames=file_names,
-                         selected=default_selected_files, choiceValues=file_vals)
-    )
-  )),
-  
-  
   ###########################
-  ###  STEP 3: LOAD DATA  ###
+  ###  STEP 2: LOAD DATA  ###
   ###########################
   
   a(name='load-data'),
-  div(class='import-header', span(class='num', '3'), 
+  div(class='import-header', span(class='num', '2'), 
       h2('Load Data')),
-  p(class='import-help', 'Once folders and files are selected, click "Load Data" to import the files and begin the analysis. The status panel below to the right will update when the data is imported.'),
+  p(class='import-help', 'Once folders are selected, click "Load Data" to import the files and begin the analysis. The status panel below to the right will update when the data is imported.'),
   fluidRow(
     column(6,
       div(class='upload-button-container',
@@ -105,11 +82,11 @@ import_tab <- tabItem(tabName='import', fluidPage(
   
   
   ##############################################
-  ###  STEP 4: UPLOAD OTHER DATA (optional)  ###
+  ###  STEP 3: UPLOAD OTHER DATA (optional)  ###
   ##############################################
   
   a(name='upload-optional-data'),
-  div(class='import-header', span(class='num', '4'), 
+  div(class='import-header', span(class='num', '3'), 
       h2('Upload Other Data (optional)')),
   p(class='import-help', 'Upload other miscellaneous files, such as inclusion lists, individually.'),
   fixedRow(column(12,
@@ -117,11 +94,11 @@ import_tab <- tabItem(tabName='import', fluidPage(
   )),
   
   ###############################################
-  ###  STEP 5: RENAME EXPERIMENTS (optional)  ###
+  ###  STEP 4: RENAME EXPERIMENTS (optional)  ###
   ###############################################
   
   a(name='rename-files'),
-  div(class='import-header', span(class='num', '5'), 
+  div(class='import-header', span(class='num', '4'), 
       h2('Rename Experiments (optional)')),
   p('Rename raw file names to more readable or sensible names, for easier interpretation of figures'),
   wellPanel(

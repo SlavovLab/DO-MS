@@ -1,7 +1,24 @@
 # load settings tab
 
 settings_tab <- tabItem(tabName='settings', fluidPage(
-  h1('Plotting Options'),
+  h2('Import Options'),
+  panel(
+    div(class='import-header', 
+        h3('Select Files to Load')),
+    p(class='import-help', 'The text files to load from each folder selected. Unselect large files, such as "allPeptides.txt", if you are not analyzing unidentified ions and want to speed up load times.'),
+    fixedRow(column(12,
+      div(class='well input-file-select-well',
+        div(class='well-header', h4('Input File Selection')),
+        div(class='exp_check_btn_row',
+          tags$button(id='files_check_all', class='btn files_check_all', 'Select All'),
+          tags$button(id='files_check_none', class='btn files_check_none', 'Select None')
+        ),
+        checkboxGroupInput('input_files', '', choiceNames=file_names,
+          selected=default_selected_files, choiceValues=file_vals)
+      )
+    ))
+  ),
+  h2('Plotting Options'),
   panel(
     h3('Global Display Options'),
     fluidRow(
