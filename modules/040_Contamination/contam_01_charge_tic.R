@@ -44,6 +44,7 @@ init <- function() {
     source_file=source_file,
     validate_func=.validate,
     plotdata_func=.plotdata,
-    plot_func=.plot
+    plot_func=.plot,
+    dynamic_width=100
   ))
 }
