@@ -105,6 +105,10 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       .m <- m
       module <- modules_in_tab[[.m]]
       
+      # debugging:
+      # print(paste0('tab ', .t))
+      # print(paste0('module ', .m))
+      
       if(progress_bar) {
         progress$inc(0.45/num_modules, detail=paste0('Adding module ', .m, ' from tab ', .t))
       }
@@ -118,16 +122,33 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       # R-markdown chunk instead
       # because dynamic width is defined in pixels -- need to convert to inches
       
-      plot_width = ''
+      plot_width = NA
       if(!is.null(module$dynamic_width)) {
         num_files <- length(exp_sets)
-        plot_width <- paste0(', fig.width=', ceiling(num_files * module$dynamic_width / input$ppi) + 1)
+        plot_width <- num_files * module$dynamic_width / input$ppi
+        
+        # allow for a base width. useful for plots where a legend can
+        # take up a fixed amount of horizontal space
+        if(!is.null(module$dynamic_width_base)) {
+          # units are in pixels, so convert to inches using ppi
+          plot_width <- plot_width + (module$dynamic_width_base / input$ppi)
+        } else {
+          # by default, add an inch of padding
+          plot_width <- plot_width + 1
+        }
+        
+        # round up to an integer
+        plot_width <- ceiling(plot_width)
       }
       
       # override existing/default plot width if it is explicitly defined
       if(!is.null(module$report_plot_width)) {
-        plot_width <- paste0(', fig.width=', module$report_plot_width)
+        plot_width <- module$report_plot_width
       }
+      
+      # if plot width was defined, then insert it into the block def
+      if(!is.na(plot_width)) { plot_width <- paste0(', fig.width=', plot_width) }
+      else { plot_width <- '' }
       
       plot_height <- ''
       # override existing/default plot height if it is explicitly defined

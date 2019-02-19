@@ -126,6 +126,10 @@ Height of the box in pixels. By default the box height is the height of the plot
 
 Value, in pixels, of the width of each experiment in the plot. For plots such as the vertical histograms used in the base set of DO-MS plots need to scale horizontally with the number of experiments.
 
+```dynamic_width_base```
+
+Value, in pixels, of the base width of a plot using the dynamic width. Useful for plots with elements taking up a fixed amount of horizontal space -- e.g., legends.
+
 ```plot_height```
 
 Height, in pixels, of the plot. Default is 370px. Will also scale the box height, unless it is also user-defined.

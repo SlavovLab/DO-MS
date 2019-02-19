@@ -116,8 +116,19 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
         plot_width <- '100%'
         if(!is.null(module$dynamic_width)) {
           if(!is.null(exp_sets())) {
+            
             num_files <- length(exp_sets())
-            plot_width <- paste0((num_files * module$dynamic_width * 0.5) + 50, 'px')
+            plot_width <- (num_files * module$dynamic_width * 0.5) + 50
+            
+            # add dynamic_width_base
+            if(!is.null(module$dynamic_width_base)) {
+              plot_width <- plot_width + module$dynamic_width_base
+            } else {
+              # by default add 150px
+              plot_width <- plot_width + 150
+            }
+            plot_width <- paste0(plot_width, 'px')
+            
           } else plot_width='400px' # default width when no data is loaded - to preserve DOM layout
         }
         

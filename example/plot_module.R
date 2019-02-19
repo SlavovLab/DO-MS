@@ -106,6 +106,13 @@ init <- function() {
     # if you do not intend to use dynamic width, then remove this line.
     dynamic_width=75,
     
+    # dynamic width base - a fixed amount of pixels to add after
+    # calculating the dynamic width. Useful for plots with legends that
+    # take up a fixed amount of space and do not scale with the
+    # number of experiments plotted. By default this is 150px
+    # and 1 inch in the report.
+    dynamic_width_base=150,
+    
     # override default plot height (370px)
     plot_height=500, # in pixels
     
