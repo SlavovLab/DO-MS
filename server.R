@@ -16,7 +16,17 @@ shinyServer(function(input, output, session) {
   ))
   
   if(file.exists('folder_list.txt')) {
-    folders <- reactiveVal(as.data.frame(read_tsv('folder_list.txt')))
+    .folders <- as.data.frame(read_tsv('folder_list.txt'))
+    
+    # patch older versions of the folder_list where Has.Files doesn't exist
+    if(ncol(.folders) < 3) {
+      print('Detected legacy version of folder_list.txt. Patching now...')
+      .folders$Has.Files <- TRUE # just set it to true for now
+      # reorder columns
+      .folders <- .folders[,c('Folder.Name', 'Has.Files', 'Path')]
+    }
+    
+    folders <- reactiveVal(.folders)
   }
   
   add_folder_modal <- function() {
