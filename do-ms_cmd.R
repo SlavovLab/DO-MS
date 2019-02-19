@@ -128,7 +128,8 @@ for(f in config[['load_input_files']]) {
     
     # if file doesn't exist, skip
     if(!file.exists(file.path(folder, file[['file']]))) {
-      stop(paste0(file.path(folder, file[['file']]), ' does not exist'))
+      prnt(paste0(file.path(folder, file[['file']]), ' does not exist'))
+      next
     }
     
     # read data into temporary data.frame
