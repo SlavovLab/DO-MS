@@ -9,6 +9,17 @@ source(file.path('server', 'generate_report.R'))
 
 shinyServer(function(input, output, session) {
   
+  # in addition to printing the version message, show it as a notification here
+  if(version == latest_version) {
+    showNotification(paste0('You are on the latest version of DO-MS: ', version))
+  } else if (version < latest_version) {
+    showNotification(paste0('An update to DO-MS has been released: ', latest_version, '. You can download the latest version from our GitHub page: https://github.com/SlavovLab/DO-MS/releases.', '\nYour version: ', version, ' << latest version: ', latest_version, '.\nClick the "x" to dismiss this message'), type='warning', duration=NULL)
+  } else {
+    # not supposed to happen
+    showNotification('Current version ahead of latest release. Ignoring versioning...')
+  }
+  
+  
   folders <- reactiveVal(data.frame(
     Folder.Name=as.character(c()),
     Has.Files=as.logical(c()),
