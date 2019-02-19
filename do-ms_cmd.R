@@ -133,7 +133,9 @@ for(f in config[['load_input_files']]) {
     }
     
     # read data into temporary data.frame
-    .dat <- as.data.frame(read_tsv(file=file.path(folder, file[['file']])))
+    .dat <- suppressWarnings(
+      as.data.frame(read_tsv(file=file.path(folder, file[['file']]), progress=FALSE, col_types = cols()))
+    )
     
     # rename columns (replace whitespace or special characters with '.')
     colnames(.dat) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', colnames(.dat))
