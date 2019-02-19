@@ -5,6 +5,17 @@ if(as.numeric(R.Version()$minor) < 5) {
   stop('R Version >= 3.5.0 required. Download the latest version of R from the CRAN page: https://cran.r-project.org/')
 }
 
+# first, get pacman
+if(!'pacman' %in% installed.packages()[,'Package']) {
+  install.packages('pacman')
+}
+library(pacman)
+
+# install/load dependencies
+p_load(shiny, shinydashboard, shinyWidgets, dplyr, tidyr, ggplot2, lattice, knitr,
+       reshape2, readr, rmarkdown, stats, DT, stringr, yaml, viridisLite)
+
+
 print('Checking online for latest version of DO-MS...')
 
 # check application version
@@ -12,7 +23,7 @@ print('Checking online for latest version of DO-MS...')
 tryCatch({
   # read tags from the GitHub API
   tags_conn <- url('https://api.github.com/repos/SlavovLab/DO-MS/tags', open='r')
-  release_tags <- read_yaml(tags_conn)
+  release_tags <- suppressWarnings(read_yaml(tags_conn))
   close(tags_conn) 
   
   # loop thru release tags and find highest version
@@ -40,16 +51,6 @@ tryCatch({
 })
 
 
-
-# first, get pacman
-if(!'pacman' %in% installed.packages()[,'Package']) {
-  install.packages('pacman')
-}
-library(pacman)
-
-# install/load dependencies
-p_load(shiny, shinydashboard, shinyWidgets, dplyr, tidyr, ggplot2, lattice, knitr,
-       reshape2, readr, rmarkdown, stats, DT, stringr, yaml, viridisLite)
 
 # load application settings
 config <- read_yaml('settings.yaml')
