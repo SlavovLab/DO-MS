@@ -6,7 +6,7 @@ init <- function() {
   source_file <- 'parameters'
   
   .validate <- function(data, input) {
-    validate(need(data()[['parameters']], paste0("Upload parameters.txt")))
+    validate(need(data()[['parameters']], paste0('Upload parameters.txt')))
   }
   
   .plotdata <- function(data, input) {
