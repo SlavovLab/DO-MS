@@ -328,6 +328,13 @@ shinyServer(function(input, output, session) {
           cols_new  <- colnames(.dat)
           common_cols <- intersect(cols_prev, cols_new)
           
+          # print warning about columns being lost
+          diff_cols <- setdiff(cols_prev, cols_new)
+          if(length(diff_cols) > 0) {
+            showNotification(paste0(length(diff_cols), ' columns in file \"', file$name, '\" are exclusive to some analyses but not others. Eliminating the different columns.'), type='warning')
+            print(paste0(length(diff_cols), ' columns in file ', file$name, ' are exclusive to some analyses but not others. Eliminating the different columns: ', paste(diff_cols, collapse=', ')))
+          }
+          
           # merge dataframes, with only common columns between the two frames
           .data[[file$name]] <- rbind(.data[[file$name]][,common_cols], .dat[,common_cols])
         }
