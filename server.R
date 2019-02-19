@@ -4,7 +4,6 @@
 ###                                                            ###
 ##################################################################
 
-source('global.R')
 source(file.path('server', 'build_modules.R'))
 source(file.path('server', 'generate_report.R'))
 
