@@ -1,4 +1,4 @@
-version <- '1.0.2'
+version <- '1.0.3'
 
 # check R version. required R >= 3.5.0
 if(as.numeric(R.Version()$minor) < 5) {
@@ -14,6 +14,43 @@ library(pacman)
 # install/load dependencies
 p_load(shiny, shinydashboard, shinyWidgets, dplyr, tidyr, ggplot2, lattice, knitr,
        reshape2, readr, rmarkdown, stats, DT, stringr, yaml, viridisLite)
+
+
+print('Checking online for latest version of DO-MS...')
+
+# check application version
+# grab release tags from github and compare them to the local version
+tryCatch({
+  # read tags from the GitHub API
+  tags_conn <- url('https://api.github.com/repos/SlavovLab/DO-MS/tags', open='r')
+  release_tags <- suppressWarnings(read_yaml(tags_conn))
+  close(tags_conn) 
+  
+  # loop thru release tags and find highest version
+  # also remove 'v' from tag version names
+  tag_versions <- sapply(release_tags, function(tag) { substring(tag$name, 2) })
+  
+  # get the latest version from the one that would be sorted last
+  latest_version <- rev(sort(tag_versions))[1]
+  
+  # do string order comparison to determine where the current version falls
+  if(version == latest_version) {
+    print(paste0('You are on the latest version of DO-MS: ', version))
+  } else if (version < latest_version) {
+    print(paste0('An update to DO-MS has been released: ', latest_version, '. You can download the latest version from our GitHub page: https://github.com/SlavovLab/DO-MS/releases.'))
+    print(paste0('Your version: ', version, ' << latest version: ', latest_version))
+  } else {
+    # not supposed to happen
+    print('Current version ahead of latest release. Ignoring versioning...')
+  }
+  
+}, error=function(e) {
+  print('Error fetching versions from GitHub. This will fail if you are not connected to the internet. Ignoring versioning...')
+}, finally={
+  
+})
+
+
 
 # load application settings
 config <- read_yaml('settings.yaml')

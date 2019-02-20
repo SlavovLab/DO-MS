@@ -1,5 +1,3 @@
-source('global.R')
-
 source(file.path('ui', 'documentation_tab.R')) # loads documentation_tab var
 source(file.path('ui', 'report_tab.R')) # loads report_tab var
 source(file.path('ui', 'import_tab.R')) # loads import_tab var

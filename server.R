@@ -4,11 +4,23 @@
 ###                                                            ###
 ##################################################################
 
-source('global.R')
 source(file.path('server', 'build_modules.R'))
 source(file.path('server', 'generate_report.R'))
 
 shinyServer(function(input, output, session) {
+  
+  if(exists('latest_version')) {
+    # in addition to printing the version message, show it as a notification here
+    if(version == latest_version) {
+      showNotification(paste0('You are on the latest version of DO-MS: ', version))
+    } else if (version < latest_version) {
+      showNotification(paste0('An update to DO-MS has been released: ', latest_version, '. You can download the latest version from our GitHub page: https://github.com/SlavovLab/DO-MS/releases.', '\nYour version: ', version, ' << latest version: ', latest_version, '.\nClick the "x" to dismiss this message'), type='warning', duration=NULL)
+    } else {
+      # not supposed to happen
+      showNotification('Current version ahead of latest release. Ignoring versioning...')
+    }
+  }
+  
   
   folders <- reactiveVal(data.frame(
     Folder.Name=as.character(c()),
@@ -17,7 +29,17 @@ shinyServer(function(input, output, session) {
   ))
   
   if(file.exists('folder_list.txt')) {
-    folders <- reactiveVal(as.data.frame(read_tsv('folder_list.txt')))
+    .folders <- as.data.frame(read_tsv('folder_list.txt'))
+    
+    # patch older versions of the folder_list where Has.Files doesn't exist
+    if(ncol(.folders) < 3) {
+      print('Detected legacy version of folder_list.txt. Patching now...')
+      .folders$Has.Files <- TRUE # just set it to true for now
+      # reorder columns
+      .folders <- .folders[,c('Folder.Name', 'Has.Files', 'Path')]
+    }
+    
+    folders <- reactiveVal(.folders)
   }
   
   add_folder_modal <- function() {
@@ -262,7 +284,11 @@ shinyServer(function(input, output, session) {
         }
         
         # read data into temporary data.frame
-        .dat <- as.data.frame(read_tsv(file=file.path(folder$Path, file[['file']])))
+        # increase the number of guesses from the default,
+        # since a lot of MS data is very sparse and only using the first 1000
+        # rows to guess may guess a column type wrong
+        .dat <- as.data.frame(read_tsv(file=file.path(folder$Path, file[['file']]),
+                                       guess_max=1e5))
         
         # rename columns (replace whitespace or special characters with '.')
         colnames(.dat) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', colnames(.dat))
@@ -305,6 +331,13 @@ shinyServer(function(input, output, session) {
           cols_prev <- colnames(.data[[file$name]])
           cols_new  <- colnames(.dat)
           common_cols <- intersect(cols_prev, cols_new)
+          
+          # print warning about columns being lost
+          diff_cols <- setdiff(cols_prev, cols_new)
+          if(length(diff_cols) > 0) {
+            showNotification(paste0(length(diff_cols), ' columns in file \"', file$name, '\" are exclusive to some analyses but not others. Eliminating the different columns.'), type='warning')
+            print(paste0(length(diff_cols), ' columns in file ', file$name, ' are exclusive to some analyses but not others. Eliminating the different columns: ', paste(diff_cols, collapse=', ')))
+          }
           
           # merge dataframes, with only common columns between the two frames
           .data[[file$name]] <- rbind(.data[[file$name]][,common_cols], .dat[,common_cols])

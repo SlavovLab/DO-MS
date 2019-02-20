@@ -90,6 +90,8 @@ button.action-button:hover, button.action-button:active {
   display: flex;
   justify-content: center;
   align-items: center;
+  /* force parent width -- important when module with dynamic width errors out */
+  max-width: 100% !important;
 }
 
 .box-footer {
@@ -194,7 +196,7 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   padding: 10px;
 }
 
-#shiny-tab-import .import-header {
+.import-header {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -202,7 +204,7 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   margin-top: 15px;
 }
 
-#shiny-tab-import .import-header span.num {
+.import-header span.num {
   font-size: 2em;
   /* padding: 10px; */
   background-color: #3c8dbc;
@@ -214,7 +216,7 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   font-weight: bold;
 }
 
-#shiny-tab-import .import-header h2 {
+.import-header h2 {
   margin: 0px;
   margin-left: 10px;
 }
@@ -278,11 +280,11 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   margin-bottom: 5px;
 }
 
-#shiny-tab-import .input-file-select-well {
+.input-file-select-well {
   max-width: 300px;
 }
 
-#shiny-tab-import .files_check_all, #shiny-tab-import .files_check_none {
+.files_check_all, .files_check_none {
   border: none;
   border-radius: 20px;
   background-color: #3c8dbc;
@@ -292,21 +294,21 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   margin-right: 5px;
   transition: 0.1s all ease-in-out;
 }
-#shiny-tab-import .files_check_all:hover, #shiny-tab-import .files_check_none:hover {
+.files_check_all:hover, .files_check_none:hover {
   border: none;
   background-color: #65a9d1;
   color: #FFF;
 }
-#shiny-tab-import #input_files {
+#input_files {
   margin-top: 30px;
 }
-#shiny-tab-import #input_files label.control-label {
+#input_files label.control-label {
   display: none;
 }
-#shiny-tab-import #input_files .checkbox {
-  
+#input_files .checkbox {
+
 }
-#shiny-tab-import #input_files .checkbox .btn.tooltip-btn {
+#input_files .checkbox .btn.tooltip-btn {
   padding: 0px 3px;
   margin: 0px;
   margin-left: 3px;

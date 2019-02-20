@@ -128,11 +128,14 @@ for(f in config[['load_input_files']]) {
     
     # if file doesn't exist, skip
     if(!file.exists(file.path(folder, file[['file']]))) {
-      stop(paste0(file.path(folder, file[['file']]), ' does not exist'))
+      prnt(paste0(file.path(folder, file[['file']]), ' does not exist'))
+      next
     }
     
     # read data into temporary data.frame
-    .dat <- as.data.frame(read_tsv(file=file.path(folder, file[['file']])))
+    .dat <- suppressWarnings(
+      as.data.frame(read_tsv(file=file.path(folder, file[['file']]), progress=FALSE, col_types = cols()))
+    )
     
     # rename columns (replace whitespace or special characters with '.')
     colnames(.dat) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', colnames(.dat))
@@ -157,7 +160,7 @@ for(f in config[['load_input_files']]) {
       .dat$Folder.Path <- folder
     }
     
-    # if field is not initialized yet, set field
+    # if field is not initialized yet or is empty, set field
     if(is.null(data[[file$name]])) {
       data[[file$name]] <- .dat
     }
@@ -175,6 +178,12 @@ for(f in config[['load_input_files']]) {
       cols_prev <- colnames(data[[file$name]])
       cols_new  <- colnames(.dat)
       common_cols <- intersect(cols_prev, cols_new)
+      
+      # print warning about columns being lost
+      diff_cols <- setdiff(cols_prev, cols_new)
+      if(length(diff_cols) > 0) {
+        prnt(paste0(length(diff_cols), ' columns in file ', file$name, ' are exclusive to some analyses but not others. Eliminating the different columns: ', paste(diff_cols, collapse=', ')))
+      }
       
       # merge dataframes, with only common columns between the two frames
       data[[file$name]] <- rbind(data[[file$name]][,common_cols], .dat[,common_cols])
