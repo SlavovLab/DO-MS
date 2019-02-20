@@ -403,8 +403,12 @@ for(f in config[['load_input_files']]) {
       .labels <- .labels[1:length(.levels)]
     }
     
+    # recalculate file levels
     data[[file$name]]$Raw.file <- factor(data[[file$name]]$Raw.file,
                                          levels=.levels, labels=.labels)
+    
+    # drop filtered-out or unused levels
+    droplevels(data[[file$name]]$Raw.file, reorder=FALSE)
   }
 }
 

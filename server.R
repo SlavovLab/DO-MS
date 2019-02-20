@@ -631,14 +631,18 @@ shinyServer(function(input, output, session) {
           .labels <- .labels[1:length(.levels)]
         }
         
+        # recalculate file levels
         f_data[[file$name]]$Raw.file <- factor(f_data[[file$name]]$Raw.file,
-          levels=.levels, labels=.labels)
+                                               levels=.levels, labels=.labels)
         
+        # Filter for experiments as specified by user
         if(!is.null(input$Exp_Sets)) {
-          # Filter for experiments as specified by user
           f_data[[file$name]] <- f_data[[file$name]] %>%
             filter(Raw.file %in% input$Exp_Sets)
         }
+        
+        # drop filtered-out levels
+        droplevels(f_data[[file$name]]$Raw.file, reorder=FALSE)
       }
       
       ## Filter observations

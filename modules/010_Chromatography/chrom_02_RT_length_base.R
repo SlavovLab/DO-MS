@@ -23,7 +23,6 @@ init <- function() {
     floor <- quantile(plotdata$Retention.length, probs=.01, na.rm = TRUE)
     
     plotdata <- dplyr::filter(plotdata, is.finite(Retention.length))
-    factor(plotdata$Raw.file)
     
     plotdata[plotdata$Retention.length >= ceiling, 2] <- ceiling
     plotdata[plotdata$Retention.length <= floor, 2] <- floor

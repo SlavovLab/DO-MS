@@ -21,7 +21,6 @@ init <- function() {
     floor <- quantile(plotdata$Intensity, probs=.01, na.rm = TRUE)
     
     plotdata <- dplyr::filter(plotdata, is.finite(Intensity))
-    factor(plotdata$Raw.file)
     
     plotdata[plotdata$Retention.length..FWHM. >= ceiling, 3] <- ceiling
     plotdata[plotdata$Retention.length..FWHM. <= floor, 3] <- floor

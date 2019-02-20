@@ -18,7 +18,6 @@ init <- function() {
     floor <- quantile(plotdata$Intensity, probs=.01, na.rm = TRUE)
     
     plotdata <- dplyr::filter(plotdata, is.finite(Intensity))
-    factor(plotdata$Raw.file)
     
     plotdata[plotdata$Intensity >= ceiling, 2] <- ceiling
     plotdata[plotdata$Intensity <= floor, 2] <- floor
