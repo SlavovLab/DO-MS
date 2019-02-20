@@ -284,7 +284,11 @@ shinyServer(function(input, output, session) {
         }
         
         # read data into temporary data.frame
-        .dat <- as.data.frame(read_tsv(file=file.path(folder$Path, file[['file']])))
+        # increase the number of guesses from the default,
+        # since a lot of MS data is very sparse and only using the first 1000
+        # rows to guess may guess a column type wrong
+        .dat <- as.data.frame(read_tsv(file=file.path(folder$Path, file[['file']]),
+                                       guess_max=1e5))
         
         # rename columns (replace whitespace or special characters with '.')
         colnames(.dat) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', colnames(.dat))
