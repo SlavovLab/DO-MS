@@ -90,6 +90,8 @@ button.action-button:hover, button.action-button:active {
   display: flex;
   justify-content: center;
   align-items: center;
+  /* force parent width -- important when module with dynamic width errors out */
+  max-width: 100% !important;
 }
 
 .box-footer {
