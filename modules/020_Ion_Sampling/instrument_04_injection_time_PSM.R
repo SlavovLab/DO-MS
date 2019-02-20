@@ -7,6 +7,15 @@ init <- function() {
   
   .validate <- function(data, input) {
     validate(need(data()[['msmsScans']], paste0('Upload msmsScans.txt')))
+    
+    # MQ: sometimes get this weird parsing error where all sequences are replaced with NAs
+    # unless we provide the exact column definitions (which is not viable) we can't recover
+    # the lost data. if this happens then this module will cause a global crash and prevent
+    # report generation, etc.
+    validate(need(
+      any(!is.na(data()[['msmsScans']][,'Sequence'])) & any(is.na(data()[['msmsScans']][,'Sequence'])), 
+      paste0('Parsing of peptide sequences in msmsScans.txt failed.')
+    ))
   }
   
   .plotdata <- function(data, input) {
