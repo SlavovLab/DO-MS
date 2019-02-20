@@ -1,6 +1,10 @@
 # DO-MS
 
-[https://www.biorxiv.org/content/early/2019/01/06/512152](https://www.biorxiv.org/content/early/2019/01/06/512152)
+Preprint: [https://www.biorxiv.org/content/early/2019/01/06/512152](https://www.biorxiv.org/content/early/2019/01/06/512152)
+
+Please read our getting started guides on our wiki:
+* [Getting started on the application](https://github.com/SlavovLab/DO-MS/wiki/Getting-Started-(Application))
+* [Getting started on the command-line](https://github.com/SlavovLab/DO-MS/wiki/Getting-Started-(Command-Line))
 
 ## Requirements
 
