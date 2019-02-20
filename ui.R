@@ -46,7 +46,10 @@ for(i in 1:length(tabs)) {
 shinyUI(
   dashboardPage(skin='blue',
     dashboardHeader(title = "DO-MS Dashboard",
-                    tags$li(class='dropdown', style='margin-top:12px;', 
+                    tags$li(class='dropdown', style='display:flex;flex-direction:row;align-items:center;height:50px', 
+                            tags$a(class='github-btn', style='padding:5px;border-radius:10px',
+                                   href='https://github.com/SlavovLab/DO-MS/', target='_blank',
+                                   tags$img(src='GitHub_Logo_White.png', height='30px')),
                             tags$span(class='version-string', paste0('Version: ', version)))
       # tags$li(class='dropdown',
       # tags$button(type='button', class='btn btn-default', `data-container`='body', `data-toggle`='popover',
