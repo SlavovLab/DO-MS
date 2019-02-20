@@ -30,19 +30,19 @@ You can automatically generate PDF/HTML reports without having to launch the ser
 $ Rscript do-ms_cmd.R config_file.yaml
 ```
 
-This requires a configuration file, and you can [find an example one here](https://github.com/SlavovLab/DO-MS/blob/master/example/config_file.yaml). See the document [automation.md](https://github.com/SlavovLab/DO-MS/blob/master/documentation/automation.md) for more details and instructions.
+This requires a configuration file, and you can [find an example one here](https://github.com/SlavovLab/DO-MS/blob/master/example/config_file.yaml). See [the Automation Wiki page](https://github.com/SlavovLab/DO-MS/wiki/Automation) for more details and instructions.
 
 ## Customization
 
-DO-MS is designed to be easily user-customizable for in-house proteomics workflows. Please see this document for more details: [modules.md](https://github.com/SlavovLab/DO-MS/blob/master/documentation/modules.md)
+DO-MS is designed to be easily user-customizable for in-house proteomics workflows. Please see [the Building Your Own Modules Wiki page](hhttps://github.com/SlavovLab/DO-MS/wiki/Building-Your-Own-Modules) for more details.
 
 ## Hosting as a Server
 
-Please see this document for more details: [hosting_as_server.md](https://github.com/SlavovLab/DO-MS/blob/master/documentation/hosting_as_server.md)
+Please see [the Hosting as a Server Wiki page](https://github.com/SlavovLab/DO-MS/wiki/Hosting-as-a-Server) for more details.
 
 ## Search Engines Other Than MaxQuant
 
-This application is currently maintained for MaxQuant >= 1.6.0.16. Adapting to other search engines is possible but not provided out-of-the-box. Please see [implement_other_search_engines.md](https://github.com/SlavovLab/DO-MS/blob/master/documentation/implement_other_search_engines.md) for more details.
+This application is currently maintained for MaxQuant >= 1.6.0.16. Adapting to other search engines is possible but not provided out-of-the-box. Please see [the Implementing Other Search Engines Wiki page](https://github.com/SlavovLab/DO-MS/wiki/Implementing-Other-Search-Engines) for more details.
 
 ## Help!
 

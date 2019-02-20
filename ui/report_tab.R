@@ -7,7 +7,7 @@ report_tab <- tabItem(tabName = "report", fluidPage(
     p('You can also output the figures as .png files alongside your report.'),
     p('We recommend an HTML report with PNG images for the most convenience and functionality'),
     p('Note: If running the application via. command line, required tools such as \"pandoc\" may not have been loaded, and this will result in an error when attempting to generate a report. Please see ',
-  a(href='https://github.com/SlavovLab/DO-MS/wiki/Known-Issues#pandoc-not-found', 'pandoc.md', target='_blank'),
+  a(href='https://github.com/SlavovLab/DO-MS/wiki/Known-Issues#pandoc-not-found', 'the pandoc section in Known Issues ', target='_blank'),
   'for more details.'),
     tags$hr(),
     fluidRow(
