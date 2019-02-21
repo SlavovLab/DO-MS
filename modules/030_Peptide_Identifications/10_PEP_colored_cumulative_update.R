@@ -12,15 +12,16 @@ init <- function() {
   .plotdata <- function(data, input) {
     plotdata <- data()[['evidence']][,c('Raw.file', 'PEP')]
 
-    pep <- as.data.frame(table(plotdata[,c('Raw.file', 'PEP')]))
-    pep <- pep[pep$Freq != 0,]
-    pep <- data.frame(pep$Raw.file, as.numeric(as.character(pep$PEP)), as.numeric(pep$Freq))
+    # build log10 PEP vector
+    peps <- seq(log10(max(c(min(plotdata$PEP)), 1e-5)), log10(max(plotdata$PEP)), length.out=500)
+    peps <- c(log10(.Machine$double.xmin), peps)
     
-    colnames(pep) <- c('Raw.file', 'PEP', 'Freq')
-    
-    plotdata <- pep %>% 
-      group_by(`Raw.file`) %>% 
-      mutate(cy=cumsum(Freq))
+    plotdata <- plotdata %>%
+      mutate(bin=findInterval(PEP, 10**peps)) %>%
+      group_by(Raw.file, bin) %>%
+      summarise(n=n()) %>%
+      mutate(cy=cumsum(n),
+             pep=10**peps[bin])
 
     return(plotdata)
   }
@@ -51,7 +52,7 @@ init <- function() {
     
     cc <- scales::seq_gradient_pal('red', 'blue', 'Lab')(seq(0, 1, length.out=length(rank_exp_ord)))
     
-    ggplot(plotdata, aes(x=PEP, color=factor(rank_ord), y=cy, group=Raw.file)) + 
+    ggplot(plotdata, aes(x=pep, color=factor(rank_ord), y=cy, group=Raw.file)) + 
       geom_line(size = input$figure_line_width) +
       scale_colour_manual(name='Experiment', values=cc, labels=names(rank_exp_ord)) +
       coord_flip() + 
@@ -60,7 +61,7 @@ init <- function() {
       theme_base(input=input) +
       theme(legend.position='right') + 
       theme(legend.key=element_rect(fill='white')) +
-      ylab('Number of IDs') 
+      xlab('PEP') + ylab('Number of IDs') 
     
   }
   
