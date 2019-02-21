@@ -17,7 +17,7 @@ init <- function() {
       group_by(Raw.file, Missed.cleavages) %>%
       tally() %>%
       spread(Missed.cleavages, n) %>%
-      mutate(`% Missed cleavages`=(`0` + `1` + `2`) / `0` * 100) %>%
+      mutate(`% Missed cleavages`=(`1` + `2`) / (`0` + `1` + `2`) * 100) %>%
       rename(None='0')
     
     return(plotdata)
