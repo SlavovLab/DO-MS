@@ -161,7 +161,6 @@ shinyServer(function(input, output, session) {
   
   # react when folders_d (debounced version) is updated
   observe({
-    showNotification('Writing folder list to file...', type='message')
     # write folder list to file (overwrite previous)
     write_tsv(folders_d(), path='folder_list.txt')
   })
@@ -291,7 +290,7 @@ shinyServer(function(input, output, session) {
                                        guess_max=1e5))
         
         # rename columns (replace whitespace or special characters with '.')
-        colnames(.dat) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', colnames(.dat))
+        .dat <- .dat %>% rename_all(make.names)
         
         if('Raw.file' %in% colnames(.dat)) {
           # Remove any rows where "Total" is a raw file (e.g., summary.txt)
@@ -684,12 +683,6 @@ shinyServer(function(input, output, session) {
   attach_module_outputs(input, output, filtered_data, exp_sets)
   render_modules(input, output)
   
-  ######################################################################################
-  ######################################################################################
-  # PDF Report Generation Area 
-  # [structure/code pulled from an official Shiny tutorial]
-  ######################################################################################
-  ######################################################################################
-  
+  # PDF Report Generation
   download_report(input, output, filtered_data, exp_sets)
 })
