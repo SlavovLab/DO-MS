@@ -12,7 +12,7 @@ if(!'pacman' %in% installed.packages()[,'Package']) {
 library(pacman)
 
 # install/load dependencies
-p_load(shiny, shinydashboard, shinyWidgets, dplyr, tidyr, ggplot2, lattice, knitr,
+p_load(shiny, shinydashboard, shinyWidgets, dplyr, tidyr, ggplot2, lattice, knitr, tibble,
        reshape2, readr, rmarkdown, stats, DT, stringr, yaml, viridisLite)
 
 
