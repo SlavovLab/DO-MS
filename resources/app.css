@@ -390,3 +390,30 @@ https://codepen.io/TrasherDK/pen/XRzgOR
   padding-right: 10px;
   padding-left: 10px;
 }
+
+/* tooltips for sliders */
+.slider-label-header {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 500px; /* purposely overflow to give more room for tooltip */
+  align-items: center;
+}
+
+.slider-label-header .slider-title {
+  margin-right: 10px;
+}
+
+.slider-label-header .tooltip-btn {
+  padding: 3px;
+  outline: none;
+  border: none;
+  color: white;
+  box-shadow: none;
+  background-color: transparent;
+  transition: 0.1s all ease-in-out;
+}
+
+.slider-label-header .tooltip-btn:hover {
+  color: rgba(255,255,255,0.75);
+}

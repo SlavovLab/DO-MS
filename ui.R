@@ -83,12 +83,28 @@ shinyUI(
       tags$hr(),
       
       # PEP filter slider
-      shinyWidgets::sliderTextInput('pep_thresh', 'PEP Threshold:', grid = T,
-        choices=c(1e-4, 1e-3, 1e-2, 1e-1, 1), selected=config[['pep_thresh']]),
+      shinyWidgets::sliderTextInput('pep_thresh', 
+        label=tags$div(class='slider-label-header',
+          tags$span(class='slider-title', 'PEP Threshold:'),
+          # tooltip: https://getbootstrap.com/docs/3.3/javascript/#tooltips
+          tags$button(class='btn btn-secondary tooltip-btn', icon('question-sign', lib='glyphicon'),
+                      `data-toggle`='tooltip', `data-placement`='right', 
+                      title='Filter identified peptides at an identification confidence threshold (Posterior error probability -- PEP). Peptides that have a PEP higher than this value will not be included in the module analyses or visualizations.'
+          )
+        ), 
+        grid = T, choices=c(1e-4, 1e-3, 1e-2, 1e-1, 1), selected=config[['pep_thresh']]),
       
       # PIF filter slider
-      shinyWidgets::sliderTextInput('pif_thresh', 'PIF Threshold:', grid = T,
-        choices=seq(0, 1, by=0.1), selected=config[['pif_thresh']])
+      shinyWidgets::sliderTextInput('pif_thresh', 
+        label=tags$div(class='slider-label-header',
+          tags$span(class='slider-title', 'PIF Threshold:'),
+          # tooltip: https://getbootstrap.com/docs/3.3/javascript/#tooltips
+          tags$button(class='btn btn-secondary tooltip-btn', icon('question-sign', lib='glyphicon'),
+                      `data-toggle`='tooltip', `data-placement`='right', 
+                      title='Filter identified peptides at an isolation purity score threshold (Precursor Ion Fraction -- PIF). Peptides that have a PIF lower than this value will not be included in the module analyses or visualizations'
+          )
+        ),
+        grid = T, choices=seq(0, 1, by=0.1), selected=config[['pif_thresh']])
     ),
     dashboardBody(
       tags$head(
