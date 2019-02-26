@@ -1,5 +1,10 @@
 /* GLOBAL STYLES */
 
+body {
+  position: initial;
+  min-height: inherit;
+}
+
 button.action-button {
   margin: 5px;
   border: none;

@@ -1,7 +1,7 @@
 // execute function when jquery is ready and good to go
 $(document).ready(function() {
   console.log('ready!');
-  $('body').addClass('fixed');
+  // $('body').addClass('fixed');
   
   // select all/select none in input files
   

@@ -1,4 +1,4 @@
-version <- '1.0.3'
+version <- '1.0.4'
 
 # check R version. required R >= 3.5.0
 if(as.numeric(R.Version()$minor) < 5) {
@@ -12,7 +12,7 @@ if(!'pacman' %in% installed.packages()[,'Package']) {
 library(pacman)
 
 # install/load dependencies
-p_load(shiny, shinydashboard, shinyWidgets, dplyr, tidyr, ggplot2, lattice, knitr, tibble,
+p_load(shiny, shinyWidgets, shinydashboard, dplyr, tidyr, ggplot2, lattice, knitr, tibble,
        reshape2, readr, rmarkdown, stats, DT, stringr, yaml, viridisLite)
 
 
@@ -49,7 +49,6 @@ tryCatch({
 }, finally={
   
 })
-
 
 
 # load application settings

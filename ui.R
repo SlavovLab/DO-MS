@@ -43,6 +43,19 @@ for(i in 1:length(tabs)) {
                     'background-color: ', config[['tab_colors[i]']], '; color: white; }')
 }
 
+
+## resolve dependency collisions between shinydashboard and shinyWidgets
+## we'll use these dependency handles to suppress warnings and then reinject them
+
+# get bootstrap dependency
+bsDep <- shiny::bootstrapLib()
+bsDep$name <- "bootstrap2"
+
+# get pickerInput dependency
+pkDep <- htmltools::findDependencies(shinyWidgets:::attachShinyWidgetsDep(tags$div(), widget = "picker"))
+pkDep[[2]]$name <- "picker2"
+
+
 shinyUI(
   dashboardPage(skin='blue',
     dashboardHeader(title = "DO-MS Dashboard",
@@ -107,6 +120,17 @@ shinyUI(
         grid = T, choices=seq(0, 1, by=0.1), selected=config[['pif_thresh']])
     ),
     dashboardBody(
+      
+      ## resolve dependency collisions between shinydashboard and shinyWidgets
+      ## https://github.com/dreamRs/shinyWidgets/issues/147
+      
+      # Suppress dependencies
+      htmltools::suppressDependencies("selectPicker"),
+      htmltools::suppressDependencies("bootstrap"),
+      
+      # reinject them
+      bsDep, pkDep,
+      
       tags$head(
         tags$style(HTML(app_css)),
         tags$script(HTML(app_js))
