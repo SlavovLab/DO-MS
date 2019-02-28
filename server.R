@@ -46,6 +46,7 @@ shinyServer(function(input, output, session) {
     modalDialog(
       title='Add Folder(s)',
       p('Paths must be formatted according to your operating system. i.e., "C:\\path\\to\\folder" for Windows, and "/path/to/folder" for Mac OS/Linux'),
+      p(a(href='https://github.com/SlavovLab/DO-MS/wiki/Adding-Folders', target='_blank', 'Please see this document for help adding folders or getting folder paths')),
       textInput('add_folder_path', 'Folder Path'),
       radioButtons('add_folder_options', 'Options', selected='parent',
                          choices=c('Add Single Folder' = 'parent', 'Add Child Folders' = 'children', 
