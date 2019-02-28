@@ -607,6 +607,9 @@ shinyServer(function(input, output, session) {
   filtered_data <- debounce(reactive({
     f_data <- data()
     
+    # skip if no data has been loaded yet
+    if(is.null(f_data)) return()
+    
     for(file in config[['input_files']]) {
       
       # for each file, check if it has a raw file column
@@ -661,13 +664,14 @@ shinyServer(function(input, output, session) {
       # Filter by PEP
       if('PEP' %in% colnames(f_data[[file$name]])) {
         f_data[[file$name]] <- f_data[[file$name]] %>%
-          filter(PEP < input$pep_thresh)
+          filter(PEP < input$pep_thresh | is.na(PEP))
       }
       
       # Filter by PIF
       if('PIF' %in% colnames(f_data[[file$name]])) {
+        # filter on PIF only if the value is not NA
         f_data[[file$name]] <- f_data[[file$name]] %>%
-          filter(PIF > input$pif_thresh)
+          filter(PIF > input$pif_thresh | is.na(PIF))
       }
       
       ## More filters, like Intensity?
