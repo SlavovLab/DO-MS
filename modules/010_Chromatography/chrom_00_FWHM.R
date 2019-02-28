@@ -8,8 +8,12 @@ init <- function() {
   .validate <- function(data, input) {
     validate(need(data()[['allPeptides']], paste0('Upload allPeptides.txt')))
     validate(need( 
-      ifelse('Retention.length..FWHM.' %in% colnames(data()[['allPeptides']]), T, NULL), # return NULL to fail loudly
+      'Retention.length..FWHM.' %in% colnames(data()[['allPeptides']]),
       'Column "Retention length (FWHM)" not found. Please run search with "Calculate peak properties" enabled (under Global Parameters/Advanced) in order to generate this column in the MaxQuant output.'
+    ))
+    validate(need( 
+      any(data()[['allPeptides']]$Retention.length..FWHM.) != 0 & any(!is.na(data()[['allPeptides']]$Retention.length..FWHM.)),
+      'Column "Retention length (FWHM)" contains all empty values. Please run search with "Calculate peak properties" enabled (under Global Parameters/Advanced) in order to generate this column in the MaxQuant output.'
     ))
   }
   
