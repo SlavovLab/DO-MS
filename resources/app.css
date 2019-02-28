@@ -85,13 +85,14 @@ button.action-button:hover, button.action-button:active {
 }
 
 .box-body .shiny-output-error-validation {
-  font-size: 2em;
+  font-size: 1.25em;
   color: #888;
   display: flex;
   justify-content: center;
   align-items: center;
   /* force parent width -- important when module with dynamic width errors out */
   max-width: 100% !important;
+  min-width: 100% !important;
 }
 
 .box-footer {
