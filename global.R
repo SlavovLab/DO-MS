@@ -180,3 +180,36 @@ merge_list <- function(a, b) {
   }
   return(a)
 }
+
+# load column aliases
+col_aliases <- config[['aliases']]
+
+apply_aliases <- function(dataframe) {
+  
+  for(colname in names(col_aliases)) {
+    # if the column exists in the dataframe, no extra work needed
+    if(colname %in% colnames(dataframe)) next
+    
+    # get list of aliases for this column from the col_aliases file
+    aliases <- col_aliases[[colname]]
+    
+    # if no aliases found from the col_alises file, fail loudly
+    if(is.null(aliases)) {
+      stop('Attempted to fetch aliases for column \"', colname, '\" but no aliases for this column name are defined in col_aliases.yaml. Please check your spelling or confirm that the col_aliases.yaml file does specify aliases for \"', colname, '\"')
+    }
+    
+    # find aliases in the dataframe columns. if found, rename the column
+    for(.alias in aliases) {
+      if(.alias %in% colnames(dataframe)) {
+        dataframe <- dataframe %>% rename_at(.alias, funs(paste0(colname)))
+      }
+    }
+    
+    # if we reach this point, none of the aliases matched
+    # TODO: something? here?? print a warning?
+  }
+  
+  # return the modified dataframe
+  return(dataframe)
+  
+}

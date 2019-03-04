@@ -98,3 +98,14 @@ report_figure_format: png
 # taken from: c(RColorBrewer::brewer.pal(5, 'Set1'), RColorBrewer::brewer.pal(8, 'Dark2')[c(1, 4, 3, 5, 2)])
 tab_colors: ['#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', '#1B9E77', '#E7298A', '#7570B3', '#66A61E', '#D95F02']
 
+## Column Aliases
+# rename columns to get backwards-compatibility with older versions of MaxQuant
+# can also be used to get compatiblity with other search engines or workflows (i.e., ProteomeDiscoverer)
+
+aliases:
+  'Raw.file':
+    - Raw.File
+    - RawFile
+  'Retention.time':
+    - Retention.Time
+    - RetentionTime
