@@ -93,7 +93,7 @@ init <- function() {
                                    'seen_inside_RT_ID', 'sequence_match', 'Raw.file')], 
                     mean)
     
-    df_melt <- melt(df, id='Raw.file')
+    df_melt <- reshape2::melt(df, id='Raw.file')
     
     colnames(df_melt) <- c('Experiment', 'Observation', 'Percentage')
     levels(df_melt$Observation) <- c('Never observed', 'Observed outside RT', 

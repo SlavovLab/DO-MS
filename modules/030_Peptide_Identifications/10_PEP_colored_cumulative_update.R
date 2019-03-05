@@ -17,11 +17,11 @@ init <- function() {
     peps <- c(log10(.Machine$double.xmin), peps)
     
     plotdata <- plotdata %>%
-      mutate(bin=findInterval(PEP, 10**peps)) %>%
-      group_by(Raw.file, bin) %>%
-      summarise(n=dplyr::n()) %>%
-      mutate(cy=cumsum(n),
-             pep=10**peps[bin])
+      dplyr::mutate(bin=findInterval(PEP, 10**peps)) %>%
+      dplyr::group_by(Raw.file, bin) %>%
+      dplyr::summarise(n=dplyr::n()) %>%
+      dplyr::mutate(cy=cumsum(n),
+                    pep=10**peps[bin])
 
     return(plotdata)
   }

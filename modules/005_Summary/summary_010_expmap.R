@@ -12,12 +12,12 @@ init <- function() {
   .plotdata <- function(data, input) {
     plotdata <- data()[['evidence']] %>%
       dplyr::select(c('Raw.file','Raw.file.orig', 'Folder.Name', 'Folder.Path')) %>%
-      distinct(Raw.file, .keep_all=T) %>%
-      arrange(Raw.file) %>%
-      rename(`Short name`=Raw.file,
-             `Raw file`=Raw.file.orig,
-             Folder=Folder.Name,
-             Path=Folder.Path)
+      dplyr::distinct(Raw.file, .keep_all=T) %>%
+      dplyr::arrange(Raw.file) %>%
+      dplyr::rename(`Short name`=Raw.file,
+                    `Raw file`=Raw.file.orig,
+                    Folder=Folder.Name,
+                    Path=Folder.Path)
     
     return(plotdata)
   }

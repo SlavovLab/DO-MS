@@ -22,12 +22,12 @@ init <- function() {
     conf_limit <- 1e-8
     
     ev.f <- data()[['evidence']] %>%
-      select(c('Sequence', 'PEP', 'pep_new')) %>%
-      filter(!is.na(pep_new)) %>%
-      filter(PEP > 0 & pep_new > 0 & PEP > conf_limit & pep_new > conf_limit) %>%
-      mutate_at(c('PEP', 'pep_new'), funs(ifelse(. > 1, 1, .))) %>%
-      mutate(pep_log=log10(PEP),
-             pep_new_log=log10(pep_new))
+      dplyr::select(c('Sequence', 'PEP', 'pep_new')) %>%
+      dplyr::filter(!is.na(pep_new)) %>%
+      dplyr::filter(PEP > 0 & pep_new > 0 & PEP > conf_limit & pep_new > conf_limit) %>%
+      dplyr::mutate_at(c('PEP', 'pep_new'), funs(ifelse(. > 1, 1, .))) %>%
+      dplyr::mutate(pep_log=log10(PEP),
+                    pep_new_log=log10(pep_new))
     
     return(ev.f)
   }

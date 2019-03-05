@@ -14,11 +14,11 @@ init <- function() {
     
     # group by raw file and number of missed cleavages, wrangle data
     plotdata <- plotdata %>%
-      group_by(Raw.file, Missed.cleavages) %>%
-      tally() %>%
-      spread(Missed.cleavages, n) %>%
-      mutate(`% Missed cleavages`=(`1` + `2`) / (`0` + `1` + `2`) * 100) %>%
-      rename(None='0')
+      dplyr::group_by(Raw.file, Missed.cleavages) %>%
+      dplyr::tally() %>%
+      tidyr::spread(Missed.cleavages, n) %>%
+      dplyr::mutate(`% Missed cleavages`=(`1` + `2`) / (`0` + `1` + `2`) * 100) %>%
+      dplyr::rename(None='0')
     
     return(plotdata)
   }

@@ -13,7 +13,7 @@ init <- function() {
     
     plotdata <- data()[['evidence']][,c('Raw.file', 'PIF')] %>%
       # restrict to between 0 and 1
-      mutate_at('PIF', funs(ifelse(. > 1, 1, .), ifelse(. < 0, 0, .)))
+      dplyr::mutate_at('PIF', funs(ifelse(. > 1, 1, .), ifelse(. < 0, 0, .)))
     
     return(plotdata)
   }

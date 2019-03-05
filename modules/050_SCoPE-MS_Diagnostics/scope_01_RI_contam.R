@@ -26,7 +26,7 @@ init <- function() {
     median_RI <- sapply(plotdata[,RI], median, na.rm=T)
     max_RI <- names(median_RI)[median_RI == max(median_RI)]
     
-    plotdata_melt <- melt(plotdata[,RI[ RI != max_RI ] ])
+    plotdata_melt <- reshape2::melt(plotdata[,RI[ RI != max_RI ] ])
     plotdata_melt$max_RI <- rep(plotdata[,max_RI], length(RI) - 1)
     
     plotdata_melt[,c('value', 'max_RI')] <- log10(plotdata_melt[,c('value', 'max_RI')])
