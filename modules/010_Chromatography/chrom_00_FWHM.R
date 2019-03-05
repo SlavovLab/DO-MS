@@ -12,7 +12,7 @@ init <- function() {
       'Column "Retention length (FWHM)" not found. Please run search with "Calculate peak properties" enabled (under Global Parameters/Advanced) in order to generate this column in the MaxQuant output.'
     ))
     validate(need( 
-      any(data()[['allPeptides']]$Retention.length..FWHM.) != 0 & any(!is.na(data()[['allPeptides']]$Retention.length..FWHM.)),
+      any(data()[['allPeptides']]$Retention.length..FWHM. != 0) & any(!is.na(data()[['allPeptides']]$Retention.length..FWHM.)),
       'Column "Retention length (FWHM)" contains all empty values. Please run search with "Calculate peak properties" enabled (under Global Parameters/Advanced) in order to generate this column in the MaxQuant output.'
     ))
   }

@@ -12,7 +12,7 @@ init <- function() {
       'Column "Precursor.apex.offset.time" not found. Please run search with "Calculate peak properties" enabled (under Global Parameters/Advanced) in order to generate this column in the MaxQuant output.'
     ))
     validate(need( 
-      any(data()[['msmsScans']]$Precursor.apex.offset.time) != 0 & any(!is.na(data()[['msmsScans']]$Precursor.apex.offset.time)),
+      any(data()[['msmsScans']]$Precursor.apex.offset.time != 0) & any(!is.na(data()[['msmsScans']]$Precursor.apex.offset.time)),
       'Column "Precursor.apex.offset.time" contains all empty values. Please run search with "Calculate peak properties" enabled (under Global Parameters/Advanced) in order to generate this column in the MaxQuant output.'
     ))
   }
