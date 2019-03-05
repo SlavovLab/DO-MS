@@ -16,8 +16,8 @@ init <- function() {
     plotdata$Charge[plotdata$Charge > 3] <- 4
     
     plotdata <- plotdata %>%
-      group_by(Raw.file, Charge) %>%
-      tally()
+      dplyr::group_by(Raw.file, Charge) %>%
+      dplyr::tally()
     
     return(plotdata)
   }
