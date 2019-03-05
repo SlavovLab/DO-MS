@@ -19,7 +19,7 @@ init <- function() {
     plotdata <- plotdata %>%
       mutate(bin=findInterval(PEP, 10**peps)) %>%
       group_by(Raw.file, bin) %>%
-      summarise(n=n()) %>%
+      summarise(n=dplyr::n()) %>%
       mutate(cy=cumsum(n),
              pep=10**peps[bin])
 

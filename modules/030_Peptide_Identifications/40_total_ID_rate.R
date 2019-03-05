@@ -16,7 +16,7 @@ init <- function() {
     a <- data()[['msmsScans']] %>%
       dplyr::select('Raw.file', 'Sequence') %>%
       group_by(Raw.file) %>%
-      summarise(scans=n(),
+      summarise(scans=dplyr::n(),
                 psms=sum(as.character(Sequence) != ' ', na.rm=T)) %>%
       arrange(Raw.file)
     
