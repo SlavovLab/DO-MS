@@ -293,6 +293,9 @@ shinyServer(function(input, output, session) {
         # rename columns (replace whitespace or special characters with '.')
         .dat <- .dat %>% rename_all(make.names)
         
+        # apply column aliases
+        .dat <- apply_aliases(.dat)
+        
         if('Raw.file' %in% colnames(.dat)) {
           # Remove any rows where "Total" is a raw file (e.g., summary.txt)
           .dat <- .dat %>% filter(!Raw.file == 'Total')
