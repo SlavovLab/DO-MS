@@ -20,20 +20,20 @@ init <- function() {
     ev <- data()[['evidence']] 
     ev <- ev %>%
       # ceil PEPs to 1
-      mutate_at(c('PEP', 'pep_updated'), funs(ifelse(. > 1, 1, .))) %>%
+      dplyr::mutate_at(c('PEP', 'pep_updated'), funs(ifelse(. > 1, 1, .))) %>%
       # calculate q-values
-      mutate(qval=(cumsum(PEP[order(PEP)]) /
-                     seq(1, nrow(ev)))[order(order(PEP))],
-             qval_updated=(cumsum(pep_updated[order(pep_updated)]) /
-                             seq(1, nrow(ev)))[order(order(pep_updated))])
+      dplyr::mutate(qval=(cumsum(PEP[order(PEP)]) /
+                          seq(1, nrow(ev)))[order(order(PEP))],
+                    qval_updated=(cumsum(pep_updated[order(pep_updated)]) /
+                                  seq(1, nrow(ev)))[order(order(pep_updated))])
 
     # flag peptides that don't have a single confident ID across all sets
     new_peptides <- ev %>%
       dplyr::group_by(Modified.sequence) %>%
       dplyr::summarise(min_pep=min(qval),
-                min_pep_new=min(qval_updated)) %>%
-      filter(min_pep > 0.01 & min_pep_new < 0.01) %>%
-      pull(Modified.sequence)
+                       min_pep_new=min(qval_updated)) %>%
+      dplyr::filter(min_pep > 0.01 & min_pep_new < 0.01) %>%
+      dplyr::pull(Modified.sequence)
 
     ev$qval_prev <- ev$qval_updated
     ev$qval_prev[ev$Modified.sequence %in% new_peptides] <- ev$qval[ev$Modified.sequence %in% new_peptides]

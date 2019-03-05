@@ -11,7 +11,7 @@ init <- function() {
   
   .plotdata <- function(data, input) {
     plotdata <- data()[['summary']] %>%
-      arrange(Raw.file) %>%
+      dplyr::arrange(Raw.file) %>%
       # put raw file and original raw file next to each other
       dplyr::select(Raw.file, Raw.file.orig, everything())
     

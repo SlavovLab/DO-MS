@@ -15,30 +15,30 @@ init <- function() {
     # MS2 Scans and PSMs
     a <- data()[['msmsScans']] %>%
       dplyr::select('Raw.file', 'Sequence') %>%
-      group_by(Raw.file) %>%
-      summarise(scans=dplyr::n(),
-                psms=sum(as.character(Sequence) != ' ', na.rm=T)) %>%
-      arrange(Raw.file)
+      dplyr::group_by(Raw.file) %>%
+      dplyr::summarise(scans=dplyr::n(),
+                       psms=sum(as.character(Sequence) != ' ', na.rm=T)) %>%
+      dplyr::arrange(Raw.file)
     
     # IDs at 5e-2 and 1e-2 PEP
     b <- data()[['evidence']] %>%
       dplyr::select('Raw.file', 'Sequence', 'PEP') %>%
-      group_by(Raw.file) %>%
-      summarise(ids_0p05=sum(PEP < 0.05),
-                ids_0p01=sum(PEP < 0.01)) %>%
-      arrange(Raw.file)
+      dplyr::group_by(Raw.file) %>%
+      dplyr::summarise(ids_0p05=sum(PEP < 0.05),
+                       ids_0p01=sum(PEP < 0.01)) %>%
+      dplyr::arrange(Raw.file)
     
     plotdata <- cbind(a, b[,-1]) %>%
       # get fractional rates, i.e., fraction of MSMS scans
-      mutate(psms = psms / scans,
-             ids_0p05 = ids_0p05 / scans,
-             ids_0p01 = ids_0p01 / scans) %>%
+      dplyr::mutate(psms = psms / scans,
+                    ids_0p05 = ids_0p05 / scans,
+                    ids_0p01 = ids_0p01 / scans) %>%
       # gather = dplyr equiv. of reshape2::melt
       tidyr::gather(key, value, -Raw.file) %>%
       # remove msms scans
-      filter(key != 'scans') %>%
+      dplyr::filter(key != 'scans') %>%
       # rename levels
-      mutate(key=factor(key, labels=c('IDs @ PEP < 0.01', 'IDs @ PEP < 0.05', 'PSMs')))
+      dplyr::mutate(key=factor(key, labels=c('IDs @ PEP < 0.01', 'IDs @ PEP < 0.05', 'PSMs')))
     
     return(plotdata)
   }

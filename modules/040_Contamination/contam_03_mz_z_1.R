@@ -13,7 +13,7 @@ init <- function() {
     plotdata <- data()[['allPeptides']][,c('Raw.file', 'Charge', 'm.z')] 
     
     plotdata <- plotdata %>% 
-      filter(Charge == 1)
+      dplyr::filter(Charge == 1)
     
     return(plotdata)
   }

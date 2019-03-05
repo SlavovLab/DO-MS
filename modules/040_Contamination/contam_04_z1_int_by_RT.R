@@ -13,9 +13,9 @@ init <- function() {
     plotdata <- data()[['allPeptides']][,c('Raw.file', 'Charge', 'Intensity', 'Retention.time')]
     
     plotdata <- plotdata %>%
-      filter(Charge == 1) %>%
-      mutate_at('Intensity', funs(ifelse(. == 0, NA, .))) %>%
-      mutate(Retention.time=floor(Retention.time))
+      dplyr::filter(Charge == 1) %>%
+      dplyr::mutate_at('Intensity', funs(ifelse(. == 0, NA, .))) %>%
+      dplyr::mutate(Retention.time=floor(Retention.time))
     
     return(plotdata)
   }

@@ -13,7 +13,7 @@ init <- function() {
     # the lost data. if this happens then this module will cause a global crash and prevent
     # report generation, etc.
     validate(need(
-      any(!is.na(data()[['msmsScans']][,'Sequence'])) & any(is.na(data()[['msmsScans']][,'Sequence'])), 
+      any(!is.na(data()[['msmsScans']][,'Sequence'])), 
       paste0('Parsing of peptide sequences in msmsScans.txt failed.')
     ))
   }

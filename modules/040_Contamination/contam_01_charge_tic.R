@@ -18,8 +18,8 @@ init <- function() {
     plotdata$Intensity[plotdata$Intensity == 0] <- NA
     
     plotdata <- plotdata %>%
-      group_by(Raw.file, Charge) %>%
-      summarise(Intensity=sum(Intensity))
+      dplyr::group_by(Raw.file, Charge) %>%
+      dplyr::summarise(Intensity=sum(Intensity))
     
     return(plotdata)
   }

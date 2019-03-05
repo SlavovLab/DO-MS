@@ -15,24 +15,24 @@ init <- function() {
     # MS2 Scans and PSMs
     a <- data()[['msmsScans']] %>%
       dplyr::select('Raw.file', 'Sequence') %>%
-      group_by(Raw.file) %>%
-      summarise(scans=dplyr::n(),
-                psms=sum(as.character(Sequence) != ' ', na.rm=T)) %>%
-      arrange(Raw.file)
+      dplyr::group_by(Raw.file) %>%
+      dplyr::summarise(scans=dplyr::n(),
+                       psms=sum(as.character(Sequence) != ' ', na.rm=T)) %>%
+      dplyr::arrange(Raw.file)
     
     # IDs at 5e-2 and 1e-2 PEP
     b <- data()[['evidence']] %>%
       dplyr::select('Raw.file', 'Sequence', 'PEP') %>%
-      group_by(Raw.file) %>%
-      summarise(ids_0p05=sum(PEP < 0.05),
-                ids_0p01=sum(PEP < 0.01)) %>%
-      arrange(Raw.file)
+      dplyr::group_by(Raw.file) %>%
+      dplyr::summarise(ids_0p05=sum(PEP < 0.05),
+                       ids_0p01=sum(PEP < 0.01)) %>%
+      dplyr::arrange(Raw.file)
     
     plotdata <- cbind(a, b[,-1]) %>%
       # gather = dplyr equiv. of reshape2::melt
       tidyr::gather(key, value, -Raw.file) %>%
       # rename levels
-      mutate(key=factor(key, labels=c('IDs @ PEP < 0.01', 'IDs @ PEP < 0.05', 'PSMs', 'MSMSs')))
+      dplyr::mutate(key=factor(key, labels=c('IDs @ PEP < 0.01', 'IDs @ PEP < 0.05', 'PSMs', 'MSMSs')))
     
     return(plotdata)
   }

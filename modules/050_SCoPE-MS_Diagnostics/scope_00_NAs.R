@@ -17,10 +17,10 @@ init <- function() {
     plotdata <- data()[['evidence']]
     
     plotdata <- plotdata %>%
-      select('Raw.file', starts_with('Reporter.intensity.corrected')) %>%
-      group_by(Raw.file) %>%
-      summarise_at(vars(starts_with('Reporter.intensity.corrected')), 
-                   function(.) { sum(. == 0) / length(.) } )
+      dplyr::select('Raw.file', starts_with('Reporter.intensity.corrected')) %>%
+      dplyr::group_by(Raw.file) %>%
+      dplyr::summarise_at(vars(starts_with('Reporter.intensity.corrected')), 
+                          function(.) { sum(. == 0) / length(.) } )
     
     # make RI channel names shorter -- easier to plot
     ri_col_names <- colnames(plotdata)[grep('Reporter.intensity.corrected.', colnames(plotdata))]
