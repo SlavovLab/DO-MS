@@ -24,7 +24,8 @@ init <- function() {
     
     # make RI channel names shorter -- easier to plot
     ri_col_names <- colnames(plotdata)[grep('Reporter.intensity.corrected.', colnames(plotdata))]
-    ri_col_names <- gsub('Reporter\\.intensity\\.corrected\\.', 'RI_', ri_col_names)
+    #ri_col_names <- gsub('Reporter\\.intensity\\.corrected\\.', '', ri_col_names)
+    ri_col_names <- paste0("C",1:length(ri_col_names))
     colnames(plotdata)[-1] <- ri_col_names
     
     return(plotdata)
