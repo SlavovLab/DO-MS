@@ -35,7 +35,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram() + 
       coord_flip() + 
-      labs(x='Apex Offset (sec)', y='Count') + 
+      labs(x='Apex Offset (sec)', y='Number of Ions') + 
       theme_base(input=input)
   }
   

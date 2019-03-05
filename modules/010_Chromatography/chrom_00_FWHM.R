@@ -41,7 +41,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins = 49) + 
       coord_flip() +  
-      labs(x='Retention Length FWHM (sec)', y='Count') +
+      labs(x='Retention Length FWHM (sec)', y='Number of Ions') +
       theme_base(input=input)
   }
   

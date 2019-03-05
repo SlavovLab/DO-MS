@@ -29,7 +29,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow=1) + 
       scale_y_continuous(labels=scales::scientific) +
       coord_flip() + 
-      labs(x='Retention Time (min)', y=expression(bold('Precursor Intensity'))) +
+      labs(x='Retention Time (min)', y=expression(bold('Summed Precursor Intensity'))) +
       theme_base(input=input) 
   }
   

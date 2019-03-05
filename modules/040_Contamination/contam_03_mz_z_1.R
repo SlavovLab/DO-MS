@@ -26,7 +26,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow=1) + 
       geom_histogram(bins=100) + 
       coord_flip() + 
-      labs(y='Count', x='m/z') +
+      labs(y='Number of Ions', x='m/z') +
       theme_base(input=input)
   }
   
