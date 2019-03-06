@@ -201,7 +201,7 @@ apply_aliases <- function(dataframe) {
     # find aliases in the dataframe columns. if found, rename the column
     for(.alias in aliases) {
       if(.alias %in% colnames(dataframe)) {
-        dataframe <- dataframe %>% rename_at(.alias, funs(paste0(colname)))
+        dataframe <- dataframe %>% dplyr::rename_at(.alias, funs(paste0(colname)))
       }
     }
     
@@ -212,4 +212,18 @@ apply_aliases <- function(dataframe) {
   # return the modified dataframe
   return(dataframe)
   
+}
+
+
+# sanitize text for display
+# very important for outputs like LaTeX
+sanitize_text_output <- function(text) {
+  # only operate on strings
+  if(class(text) != 'character') return(text)
+  
+  # replace "\\" with "/" - for LaTeX
+  text <- gsub('\\\\', '/', text)
+  
+  # return
+  text
 }
