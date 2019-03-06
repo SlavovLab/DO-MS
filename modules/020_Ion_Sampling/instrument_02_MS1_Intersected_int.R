@@ -50,7 +50,7 @@ init <- function() {
     
 
     
-    ggplot(plotdata_Intersected, aes(Intensity)) + 
+    ggplot(plotdata, aes(Intensity)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=100) + 
       coord_flip() + 
