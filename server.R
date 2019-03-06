@@ -291,14 +291,14 @@ shinyServer(function(input, output, session) {
                                        guess_max=1e5))
         
         # rename columns (replace whitespace or special characters with '.')
-        .dat <- .dat %>% rename_all(make.names)
+        .dat <- .dat %>% dplyr::rename_all(make.names)
         
         # apply column aliases
         .dat <- apply_aliases(.dat)
         
         if('Raw.file' %in% colnames(.dat)) {
           # Remove any rows where "Total" is a raw file (e.g., summary.txt)
-          .dat <- .dat %>% filter(!Raw.file == 'Total')
+          .dat <- .dat %>% dplyr::filter(!Raw.file == 'Total')
           
           # coerce raw file names to a factor
           .dat$Raw.file <- factor(.dat$Raw.file)
@@ -448,7 +448,9 @@ shinyServer(function(input, output, session) {
             
             # store the folder it came from as the name of the raw file
             names(raw_file) <- first(unique(
-              f_data[[file$name]] %>% filter(`Raw.file` == raw_file) %>% pull(Folder.Name)
+              f_data[[file$name]] %>% 
+                dplyr::filter(`Raw.file` == raw_file) %>% 
+                dplyr::pull(Folder.Name)
             ))
             
             .raw_files <- c(.raw_files, raw_file)
@@ -644,7 +646,7 @@ shinyServer(function(input, output, session) {
         # Filter for experiments as specified by user
         if(!is.null(input$Exp_Sets)) {
           f_data[[file$name]] <- f_data[[file$name]] %>%
-            filter(Raw.file %in% input$Exp_Sets)
+            dplyr::filter(Raw.file %in% input$Exp_Sets)
         }
         
         # drop filtered-out levels
@@ -657,25 +659,25 @@ shinyServer(function(input, output, session) {
       if('Leading.razor.protein' %in% colnames(f_data[[file$name]])) {
         if(!is.null(config[['remove_contam']])) {
           f_data[[file$name]] <- f_data[[file$name]] %>% 
-            filter(!grepl(config[['remove_contam']], Leading.razor.protein))
+            dplyr::filter(!grepl(config[['remove_contam']], Leading.razor.protein))
         }
         if(!is.null(config[['remove_decoy']])) {
           f_data[[file$name]] <- f_data[[file$name]] %>% 
-            filter(!grepl(config[['remove_decoy']], Leading.razor.protein))
+            dplyr::filter(!grepl(config[['remove_decoy']], Leading.razor.protein))
         }
       }
       
       # Filter by PEP
       if('PEP' %in% colnames(f_data[[file$name]])) {
         f_data[[file$name]] <- f_data[[file$name]] %>%
-          filter(PEP < input$pep_thresh | is.na(PEP))
+          dplyr::filter(PEP < input$pep_thresh | is.na(PEP))
       }
       
       # Filter by PIF
       if('PIF' %in% colnames(f_data[[file$name]])) {
         # filter on PIF only if the value is not NA
         f_data[[file$name]] <- f_data[[file$name]] %>%
-          filter(PIF > input$pif_thresh | is.na(PIF))
+          dplyr::filter(PIF > input$pif_thresh | is.na(PIF))
       }
       
       ## More filters, like Intensity?
