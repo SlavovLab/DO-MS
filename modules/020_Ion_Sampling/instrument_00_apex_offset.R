@@ -33,7 +33,7 @@ init <- function() {
     
     ggplot(plotdata, aes(Precursor.apex.offset.time)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram() + 
+      geom_histogram(bins=30) + 
       coord_flip() + 
       labs(x='Apex Offset (sec)', y='Count') + 
       theme_base(input=input)

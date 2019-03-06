@@ -30,7 +30,7 @@ init <- function() {
     
     ggplot(plotdata, aes(Ion.injection.time)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram() + 
+      geom_histogram(bins=30) + 
       coord_flip() + 
       labs(x='Ion Injection Time (ms)', y='Count') +
       theme_base(input=input)
