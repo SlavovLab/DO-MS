@@ -1,4 +1,4 @@
-version <- '1.0.4'
+version <- '1.0.5'
 
 # check R version. required R >= 3.5.0
 if(as.numeric(R.Version()$minor) < 5) {
@@ -223,6 +223,9 @@ sanitize_text_output <- function(text) {
   
   # replace "\\" with "/" - for LaTeX
   text <- gsub('\\\\', '/', text)
+  
+  # no tildas allowed
+  text <- gsub('\\~', '', text)
   
   # return
   text

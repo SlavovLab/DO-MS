@@ -184,11 +184,14 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
         finally={}
       )
       
-      # if this plot is a text, table, or datatable format, sanitize the text
+      # if this plot is a text, sanitize the text
       if(module$type == 'text') {
         plots[[.m]] <<- sanitize_text_output(plots[[.m]])
       }
-      if(module$type %in% c('table', 'datatable') & 'tbl' %in% class(plots[[.m]])) {
+      # if this plot is a table, sanitize the text in every cell in the table
+      # note: sanitize_text_output ignores non-character values so don't worry about
+      #       inadvertently typecasting doubles or logicals to characters
+      if(module$type %in% c('table', 'datatable')) {
         plots[[.m]] <<- plots[[.m]] %>%
           dplyr::mutate_all(sanitize_text_output) %>%
           dplyr::rename_all(sanitize_text_output)
