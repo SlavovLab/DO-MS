@@ -323,8 +323,29 @@ shinyServer(function(input, output, session) {
         }
         # if parameters.txt file, then cbind instead of rbind
         else if(file$name == 'parameters') {
-          .data[[file$name]] <- cbind(.data[[file$name]], 
-                                      .dat %>% dplyr::select(-1) %>% dplyr::pull())
+          
+          # take only the common rows (instead of the common columns)
+          rows_prev <- .data[[file$name]]$Parameter
+          rows_new <- .dat$Parameter
+          common_rows <- intersect(rows_prev, rows_new)
+          
+          # print warnings about rows being lost
+          diff_rows <- setdiff(rows_prev, rows_new)
+          if(length(diff_rows) > 0) {
+            showNotification(paste0(length(diff_rows), ' parameters in file \"', file$name, '\" are exclusive to some analyses but not others. Eliminating the different parameters'), type='warning')
+            print(paste0(length(diff_rows), ' parameters in file ', file$name, ' are exclusive to some analyses but not others. Eliminating the different parameters: ', paste(diff_rows, collapse=', ')))
+          }
+          
+          .data[[file$name]] <- cbind(
+            # original
+            .data[[file$name]] %>% 
+              dplyr::filter(Parameter %in% common_rows), 
+            # new
+            .dat %>% 
+              dplyr::filter(Parameter %in% common_rows) %>%
+              dplyr::select(-1) %>% 
+              dplyr::pull()
+          )
           # rename column to folder name
           colnames(.data[[file$name]])[ncol(.data[[file$name]])] <- folder$Folder.Name
         }
