@@ -224,6 +224,9 @@ sanitize_text_output <- function(text) {
   # replace "\\" with "/" - for LaTeX
   text <- gsub('\\\\', '/', text)
   
+  # no tildas allowed
+  text <- gsub('\\~', '', text)
+  
   # return
   text
 }
