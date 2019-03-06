@@ -26,7 +26,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins = 49) + 
       coord_flip() +  
-      labs(x='Precursor Ion Fraction (PIF)', y='Count') +
+      labs(x='Precursor Ion Fraction (PIF)', y='Number of Peptides') +
       theme_base(input=input)
   }
   

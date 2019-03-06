@@ -1,8 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'MS1 Intensity for identified ions'
-  help_text <- 'Plotting the MS1 intensity for all identified ions across runs.'
+  box_title <- 'MS1 Intensity for identified ions in common'
+  help_text <- 'Plotting the MS1 intensity for all common identified ions across runs.'
   source_file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -12,6 +12,7 @@ init <- function() {
   .plotdata <- function(data, input) {
     plotdata <- data()[['evidence']][,c('Raw.file', 'Intensity')]
     plotdata$Intensity <- log10(plotdata$Intensity)
+    plotdata$SeqCharge <- paste0(plotdata$Sequence,"_",plotdata$Charge)
     
     # Thresholding data at 1 and 99th percentiles
     ceiling <- quantile(plotdata$Intensity, probs=.99, na.rm = TRUE)
@@ -22,12 +23,32 @@ init <- function() {
     plotdata[plotdata$Intensity >= ceiling, 2] <- ceiling
     plotdata[plotdata$Intensity <= floor, 2] <- floor
     
+    #Assemble list of peptides in each Raw file
+    plotdata$Raw.file <- factor(plotdata$Raw.file)
+    expsInDF <- levels(plotdata$Raw.file)
+    peplist <- list()
+    for (i in 1:length(expsInDF)){
+      peptidesDF <- dplyr::filter(plotdata, Raw.file == expsInDF[i])
+      peptides <- dplyr::select(peptidesDF, SeqCharge)
+      peplist[[i]] <- peptides
+    }
+    
+    #Get intersection of all peptides
+    intersectList <- as.vector(Reduce(intersect, peplist))
+    
+    #Get reduced dataframe for elements that match intersection
+    plotdata_Intersected <- dplyr::filter(plotdata, SeqCharge %in% intersectList$SeqCharge)
+    
+    plotdata <- plotdata_Intersected
+    
     return(plotdata)
   }
   
   .plot <- function(data, input) {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
+    
+
     
     ggplot(plotdata, aes(Intensity)) + 
       facet_wrap(~Raw.file, nrow = 1) + 

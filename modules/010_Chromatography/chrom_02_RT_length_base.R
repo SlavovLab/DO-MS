@@ -38,7 +38,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=120) + 
       coord_flip() + 
-      labs(x='Retention Lengths at base (sec)', y='Count') +
+      labs(x='Retention Lengths at base (sec)', y='Number of Peptides') +
       theme_base(input=input)
   }
   
