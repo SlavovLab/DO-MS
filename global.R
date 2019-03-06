@@ -218,8 +218,16 @@ apply_aliases <- function(dataframe) {
 # sanitize text for display
 # very important for outputs like LaTeX
 sanitize_text_output <- function(text) {
+  
+  # if its a factor, then turn it into a string
+  if(class(text) == 'factor') {
+    text <- as.character(text)
+  }
+  
   # only operate on strings
-  if(class(text) != 'character') return(text)
+  if(class(text) != 'character') {
+    return(text)
+  }
   
   # replace "\\" with "/" - for LaTeX
   text <- gsub('\\\\', '/', text)

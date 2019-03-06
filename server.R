@@ -307,7 +307,8 @@ shinyServer(function(input, output, session) {
         # Custom behavior for parameters.txt
         if(file$name == 'parameters') {
           # store folder name/path as a value in parameters.txt
-          .dat <- rbind(c('Folder Name', folder$Folder.Name), c('Folder Path', folder$Path), .dat)
+          .dat <- rbind(c('Folder Name', folder$Folder.Name), c('Folder Path', folder$Path), .dat, 
+                        stringsAsFactors=FALSE)
           # rename value column to folder name as well
           colnames(.dat)[2] <- folder$Folder.Name
         } else {
@@ -322,7 +323,8 @@ shinyServer(function(input, output, session) {
         }
         # if parameters.txt file, then cbind instead of rbind
         else if(file$name == 'parameters') {
-          .data[[file$name]] <- cbind(.data[[file$name]], .dat[,-1])
+          .data[[file$name]] <- cbind(.data[[file$name]], 
+                                      .dat %>% dplyr::select(-1) %>% dplyr::pull())
           # rename column to folder name
           colnames(.data[[file$name]])[ncol(.data[[file$name]])] <- folder$Folder.Name
         }
@@ -343,7 +345,8 @@ shinyServer(function(input, output, session) {
           }
           
           # merge dataframes, with only common columns between the two frames
-          .data[[file$name]] <- rbind(.data[[file$name]][,common_cols], .dat[,common_cols])
+          .data[[file$name]] <- rbind(.data[[file$name]][,common_cols], .dat[,common_cols], 
+                                      stringsAsFactors=FALSE)
         }
       }
     }
