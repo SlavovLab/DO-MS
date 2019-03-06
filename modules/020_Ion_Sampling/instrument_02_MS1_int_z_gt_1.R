@@ -32,7 +32,7 @@ init <- function() {
     
     ggplot(plotdata, aes(Intensity)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
-      geom_histogram() + 
+      geom_histogram(bins=30) + 
       coord_flip() + 
       labs(x=expression(bold('Log'[10]*' Precursor Intensity')), y='Number of Ions') +
       theme_base(input=input)

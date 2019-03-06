@@ -77,7 +77,11 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     # simple table output, no javascript
     if(module$type == 'table') {
       output[[ns('table')]] <- renderTable({
-        module$plot_func(filtered_data, input)
+        .df <- module$plot_func(filtered_data, input)
+        .df <- .df %>% 
+          dplyr::mutate_all(sanitize_text_output) %>%
+          dplyr::rename_all(sanitize_text_output)
+        .df
       })
       output[[ns('plot.ui')]] <- renderUI({
         tableOutput(ns('table'))
@@ -90,8 +94,13 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
       datatable_options <- module$datatable_options
       if(is.null(datatable_options)) datatable_options <- list() # set to empty if not defined
       
-      output[[ns('table')]] <- renderDataTable({  
-        module$plot_func(filtered_data, input) }, options=datatable_options)
+      output[[ns('table')]] <- renderDataTable({
+        .df <- module$plot_func(filtered_data, input)
+        .df <- .df %>% 
+          dplyr::mutate_all(sanitize_text_output) %>%
+          dplyr::rename_all(sanitize_text_output)
+        .df
+      }, options=datatable_options)
       output[[ns('plot.ui')]] <- renderUI({
         dataTableOutput(ns('table'), width='100%', height='auto')
       })
@@ -99,7 +108,11 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     
     # plain, unformatted text output
     else if (module$type == 'text') {
-      output[[ns('text')]] <- renderText({ module$plot_func(filtered_data, input) })
+      output[[ns('text')]] <- renderText({ 
+        sanitize_text_output(
+          module$plot_func(filtered_data, input)
+        ) 
+      })
       output[[ns('plot.ui')]] <- renderUI({
         verbatimTextOutput(ns('text'))
       })

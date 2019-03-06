@@ -184,6 +184,16 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
         finally={}
       )
       
+      # if this plot is a text, table, or datatable format, sanitize the text
+      if(module$type == 'text') {
+        plots[[.m]] <<- sanitize_text_output(plots[[.m]])
+      }
+      if(module$type %in% c('table', 'datatable') & 'tbl' %in% class(plots[[.m]])) {
+        plots[[.m]] <<- plots[[.m]] %>%
+          dplyr::mutate_all(sanitize_text_output) %>%
+          dplyr::rename_all(sanitize_text_output)
+      }
+      
       # grab module metadata, but exclude function definitions to save space
       meta[[.m]] <<- module[!grepl('Func', names(module))]
       
