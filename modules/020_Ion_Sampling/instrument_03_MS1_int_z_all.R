@@ -12,7 +12,6 @@ init <- function() {
   .plotdata <- function(data, input) {
     plotdata <- data()[['allPeptides']][,c('Raw.file', 'Charge', 'Intensity', 'MS.MS.Count')]
     plotdata$Intensity <- log10(plotdata$Intensity)
-    plotdata$Intensity <- log10(plotdata$Intensity)
     plotdata <- plotdata[plotdata$MS.MS.Count >= 1,]
     
     # Thresholding data at 1 and 99th percentiles
