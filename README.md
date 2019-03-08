@@ -50,6 +50,10 @@ Please see [the Hosting as a Server Wiki page](https://github.com/SlavovLab/DO-M
 
 This application is currently maintained for MaxQuant >= 1.6.0.16. Adapting to other search engines is possible but not provided out-of-the-box. Please see [the Implementing Other Search Engines Wiki page](https://github.com/SlavovLab/DO-MS/wiki/Implementing-Other-Search-Engines) for more details.
 
+## Can I use this for Metabolomics, Lipidomics, etc... ?
+
+While the base library of modules are based around bottom-up proteomics by LC-MS/MS, this project is fundamentally compatible with _any delimited text files_ (CSV, TSV, etc). These implementations will require some programming work, but once it is done DO-MS gives you a extensible framework that can be used over-and-over again to generate shareable reports. See [the Implementing Other Search Engines Wiki page](https://github.com/SlavovLab/DO-MS/wiki/Implementing-Other-Search-Engines) for more details
+
 ## Help!
 
 For any bugs, questions, or feature requests, 
