@@ -19,6 +19,9 @@ download_report <- function(input, output, filtered_data, exp_sets) {
 # helper function, also used by do-ms_cmd.R
 generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=FALSE) {
   
+  # check if pandoc exists
+  rmarkdown::pandoc_available(error=T)
+  
   # init progress bar
   if(progress_bar) {
     progress <- shiny::Progress$new()
