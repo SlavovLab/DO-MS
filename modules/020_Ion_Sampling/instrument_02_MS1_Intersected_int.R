@@ -48,7 +48,7 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-
+    validate(need(nrow(plotdata) > 19, paste0('Less than 20 peptides in common')))
     
     ggplot(plotdata, aes(Intensity)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
