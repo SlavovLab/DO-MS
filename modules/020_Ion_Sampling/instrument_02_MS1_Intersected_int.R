@@ -10,7 +10,7 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[['evidence']][,c('Raw.file', 'Intensity')]
+    plotdata <- data()[['evidence']][,c('Raw.file', 'Intensity','Sequence','Charge')]
     plotdata$Intensity <- log10(plotdata$Intensity)
     plotdata$SeqCharge <- paste0(plotdata$Sequence,"_",plotdata$Charge)
     
