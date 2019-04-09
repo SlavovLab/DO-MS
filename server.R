@@ -500,9 +500,16 @@ shinyServer(function(input, output, session) {
       return(data.frame())
     }
     
+    # apply re-ordering
+    .file_order <- file_order()
+    if(length(.file_order) > 1) {
+      .file_levels <- .file_levels[.file_order]
+      .raw_files <- .raw_files[.file_order]
+    }
+    
     data.frame(
-      `Raw file`=raw_files(),
-      Labels=file_levels()
+      `Raw file`=.raw_files,
+      Labels=.file_levels
     )
   })
   
@@ -510,14 +517,20 @@ shinyServer(function(input, output, session) {
     validate(need(raw_files(), 'Please import data before proceeding'))
     validate(need(file_levels(), 'Please import data before proceeding'))
     exp_name_table()
-  }, selection='none', editable=T, options=list(
+  }, selection='none', editable=T, extensions='RowReorder', options=list(
     pageLength=10,
     dom='ltp',
-    lengthMenu=c(5, 10, 15, 20, 50)
+    lengthMenu=c(5, 10, 15, 20, 50),
+    rowReorder=T,
+    order=list(c(0, 'asc'))
+  ), callback=JS(
+    "table.on('row-reorder', function(e, details, changes) {
+       Shiny.onInputChange('exp_name_table_row_reorder', JSON.stringify(details));
+    });"
   ))
   exp_name_table_proxy <- dataTableProxy('exp_name_table')
   
-  # observe changes to the experiment name table
+  # observe changes to the experiment name table cell contents
   observeEvent(input$exp_name_table_cell_edit, {
     info = input$exp_name_table_cell_edit
     i = info$row
@@ -534,6 +547,49 @@ shinyServer(function(input, output, session) {
     .file_levels <- isolate(file_levels())
     .file_levels[i] <- as.character(v)
     file_levels(.file_levels)
+  })
+  
+  # level ordering
+  file_order <- reactiveVal()
+  
+  # recalculate file levels
+  # only triggers when raw files or format has changed
+  observe({
+    .raw_files <- raw_files()
+    
+    # if raw files (i.e., data) haven't been loaded yet, break
+    if(length(.raw_files) == 0 | is.null(.raw_files)) {
+      return(c())
+    }
+    
+    # by default, go by the default order (alphabetical, ascending)
+    file_order(seq(1, length(.raw_files)))
+  })
+  
+  exp_name_table_proxy2 <- dataTableProxy('exp_name_table')
+  # observe row reordering
+  observeEvent(input$exp_name_table_row_reorder, {
+    info <- input$exp_name_table_row_reorder
+    if(is.null(info) | class(info) != 'character') { return() }
+    
+    info <- read_yaml(text=info)
+    if(length(info) == 0) { return() }
+    
+    .order <- file_order()
+    .new_order <- .order
+    
+    for(i in 1:length(info)) {
+      j <- info[[i]]
+      .new_order[(j$newPosition+1)] <- .order[(j$oldPosition+1)]
+    }
+    
+    # Replace the data object of a table output and avoid regenerating the full table,
+    #.exp_name_table <- isolate(exp_name_table())
+    # don't need DT::coerceValue like they use in example -- this will always be a string
+    #.exp_name_table <- .exp_name_table[order(.new_order),]
+    #DT::replaceData(exp_name_table_proxy2, .exp_name_table, resetPaging = FALSE, rownames = FALSE)
+    
+    file_order(.new_order)
   })
   
   exp_name_format <- reactiveVal(config[['exp_name_format']])
@@ -650,6 +706,7 @@ shinyServer(function(input, output, session) {
         
         # rename the levels of this file
         .levels <- levels(f_data[[file$name]]$Raw.file)
+          
         .labels <- file_levels()
         
         # if labels are still not loaded or defined yet, then default them to the levels
@@ -661,6 +718,13 @@ shinyServer(function(input, output, session) {
         # then take the same subset of the labels vector
         if(length(.labels) > length(.levels)) {
           .labels <- .labels[1:length(.levels)]
+        }
+        
+        # apply re-ordering
+        .file_order <- file_order()
+        if(length(.file_order) > 1) {
+          .levels <- .levels[.file_order]
+          .labels <- .labels[.file_order]
         }
         
         # recalculate file levels
