@@ -136,11 +136,14 @@ for(f in config[['load_input_files']]) {
     
     # read data into temporary data.frame
     .dat <- suppressWarnings(
-      as.data.frame(read_tsv(file=file.path(folder, file[['file']]), progress=FALSE, col_types = cols()))
+      as.data.frame(read_tsv(file=file.path(folder, file[['file']]), progress=FALSE, col_types = cols(), guess_max=1e5))
     )
     
     # rename columns (replace whitespace or special characters with '.')
-    colnames(.dat) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', colnames(.dat))
+    .dat <- .dat %>% dplyr::rename_all(make.names)
+    
+    # apply column aliases
+    .dat <- apply_aliases(.dat)
     
     if('Raw.file' %in% colnames(.dat)) {
       # Remove any rows where "Total" is a raw file (e.g., summary.txt)
@@ -153,7 +156,7 @@ for(f in config[['load_input_files']]) {
     # Custom behavior for parameters.txt
     if(file$name == 'parameters') {
       # store folder name/path as a value in parameters.txt
-      .dat <- rbind(c('Folder Name', basename(folder)), c('Folder Path', folder), .dat)
+      .dat <- rbind(c('Folder Name', basename(folder)), c('Folder Path', folder), .dat, stringsAsFactors=FALSE)
       # rename value column to folder name as well
       colnames(.dat)[2] <- basename(folder)
     } else {
