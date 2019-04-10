@@ -46,6 +46,9 @@ exp_names:
   - '2X'
   - '4X'
   - '10X'
+  
+# custom order for files
+exp_order: [4,2,3,1]
 
 pep_thresh: 0.01
 pif_thresh: 0.7

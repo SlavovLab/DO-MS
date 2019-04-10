@@ -57,6 +57,8 @@ if(!exists('.config')) {
                       help='Exclude raw files matching this regular expression. e.g., "SQC98[ABC]"')
   parser$add_argument('--exp_names', type='character', nargs='+',
                       help='Rename raw files with short names. e.g., "Control 2X 4X 10X"')
+  parser$add_argument('--exp_order', type='integer', nargs='+',
+                      help='Reorder raw files in plots. Files are by default ordered alphabetically, so indices refer to the original order. For example, to get A B C D --> D A C B, put "4 1 3 2"')
   parser$add_argument('--pep_thresh', type='double',
                       help='PEP threshold for identified peptides, remove all below this threshold. e.g., "0.01"')
   
@@ -403,6 +405,17 @@ for(f in config[['load_input_files']]) {
       .labels <- .labels[1:length(.levels)]
     }
     
+    # apply re-ordering
+    .file_order <- config[['exp_order']]
+    if(is.null(.file_order)) {
+      .file_order <- c()
+    }
+    
+    if(length(unique(.file_order)) == length(.levels) & min(.file_order) == 1 & max(.file_order) == length(.levels)) {
+      .levels <- .levels[.file_order]
+      .labels <- .labels[.file_order]
+    }
+    
     # recalculate file levels
     data[[file$name]]$Raw.file <- factor(data[[file$name]]$Raw.file,
                                          levels=.levels, labels=.labels)
@@ -430,6 +443,6 @@ f_data <- function() { data }
 
 generate_report(input, f_data, raw_files, config[['output']], progress_bar=FALSE)
 
-prnt(paste0('Report written to: ', config[['output']]))
+# prnt(paste0('Report written to: ', config[['output']]))
 
 prnt('Done!')

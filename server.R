@@ -552,7 +552,7 @@ shinyServer(function(input, output, session) {
   # level ordering
   file_order <- reactiveVal()
   
-  # recalculate file levels
+  # initialize file ordering
   # only triggers when raw files or format has changed
   observe({
     .raw_files <- raw_files()
