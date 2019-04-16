@@ -42,7 +42,7 @@ init <- function() {
     plotdata <- .plotdata(data, input)
     
     ggplot(plotdata, aes(Raw.file, value, fill=key)) +
-      geom_bar(stat='identity', position='identity') +
+      geom_bar(stat='identity', position='dodge') +
       labs(x='Experiment', y='Fraction', fill='Category') +
       theme_base(input=input, show_legend=T) +
       # keep the legend
