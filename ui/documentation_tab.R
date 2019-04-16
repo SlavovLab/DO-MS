@@ -20,7 +20,7 @@ for(t in 1:length(tabs)) {
   for(m in 1:length(modules_in_tab)) {
     tab_list[[m+2]] <- div(class='documentation-module',
       h4(modules_in_tab[[m]]$box_title),
-      p(paste0('Required file(s): ', modules_in_tab[[m]]$source.file)),
+      p(paste0('Required file(s): ', modules_in_tab[[m]]$source_file)),
       p(modules_in_tab[[m]]$help_text)
     )
   }
