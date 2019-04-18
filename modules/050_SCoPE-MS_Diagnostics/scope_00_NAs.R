@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'Missing data per TMT channel'
-  help_text <- 'Calculating the missing values reporter per run per TMT channel, reported as 0 by MaxQuant.'
+  help_text <- 'Calculating the fraction of missing values per reporter ion per run per TMT channel, reported as 0 by MaxQuant.'
   source_file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -41,7 +41,7 @@ init <- function() {
     row.names(plotdata) <- row_names
     
     rgb.palette <- colorRampPalette(c('blue', 'yellow'), space = 'rgb')
-    levelplot(t(plotdata), aspect='iso', main='Missing data per TMT Channel', 
+    levelplot(t(plotdata), aspect='iso', main='Fraction of Missing data per TMT Channel', 
               scales=list(x=list(rot=45)), xlab='', xaxt='n', ylab='', 
               col.regions=rgb.palette(120), cuts=100, at=seq(0, 1, 0.01))
   }

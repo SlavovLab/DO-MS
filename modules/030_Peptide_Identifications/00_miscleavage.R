@@ -18,6 +18,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    plotdata <- plotdata %>% dplyr::filter(!is.na(Missed.cleavages))
+    
     ggplot(plotdata, aes(Missed.cleavages)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=10) + 

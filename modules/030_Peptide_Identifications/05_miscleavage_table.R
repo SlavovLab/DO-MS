@@ -14,6 +14,7 @@ init <- function() {
     
     # group by raw file and number of missed cleavages, wrangle data
     plotdata <- plotdata %>%
+      dplyr:: filter(!is.na(Missed.cleavages)) %>%
       dplyr::group_by(Raw.file, Missed.cleavages) %>%
       dplyr::tally() %>%
       tidyr::spread(Missed.cleavages, n) %>%
