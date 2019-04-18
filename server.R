@@ -462,6 +462,9 @@ shinyServer(function(input, output, session) {
     .raw_files <- c()
     
     for(file in config[['input_files']]) {
+      # don't do this with MaxQuant's summary.txt file since it has weird behavior
+      if(file$name == 'summary') { next; }
+      
       # for each file, check if it has a raw file column
       if('Raw.file' %in% colnames(f_data[[file$name]])) {
         # get the raw files for this input file
