@@ -1,8 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Missing data per TMT channel'
-  help_text <- 'Calculating the fraction of missing values per reporter ion per run per TMT channel, reported as 0 by MaxQuant.'
+  box_title <- 'Fraction of Missing Data per TMT Channel'
+  help_text <- 'This plot displays the fraction of missing values per reporter ion per run per TMT channel, reported as 0 by MaxQuant.'
   source_file <- 'evidence'
   
   .validate <- function(data, input) {
