@@ -56,6 +56,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     rng <- seq(-5, 0, 1)
     nbins <- 80
     

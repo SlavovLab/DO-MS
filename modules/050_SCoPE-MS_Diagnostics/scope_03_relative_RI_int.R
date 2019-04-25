@@ -39,6 +39,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     unique_labels_size <- length(unique(plotdata$variable))
     TMT_labels <- c('C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11')
     plot_to_labels <- TMT_labels[1:unique_labels_size]

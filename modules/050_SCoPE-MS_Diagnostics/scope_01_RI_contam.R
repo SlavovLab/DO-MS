@@ -40,6 +40,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     ggplot(plotdata, aes(x=Highest_Channel, y=Other_Channels)) + 
       xlab('Highest TMT Channel (log10)') +
       ylab('All Other TMT Channels (log10)') + 

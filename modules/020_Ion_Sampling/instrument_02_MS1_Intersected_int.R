@@ -20,6 +20,7 @@ init <- function() {
     
     plotdata <- dplyr::filter(plotdata, is.finite(Intensity))
     
+    if(nrow(plotdata) > 0){
     plotdata[plotdata$Intensity >= ceiling, 2] <- ceiling
     plotdata[plotdata$Intensity <= floor, 2] <- floor
     
@@ -40,15 +41,17 @@ init <- function() {
     plotdata_Intersected <- dplyr::filter(plotdata, SeqCharge %in% intersectList$SeqCharge)
     
     plotdata <- plotdata_Intersected
-    
+    }
     return(plotdata)
+
   }
   
   .plot <- function(data, input) {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    validate(need(nrow(plotdata) > 19, paste0('Less than 20 peptides in common')))
+    validate(need(nrow(plotdata) > 19, paste0('Less than 20 peptides in common')),
+             need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     ggplot(plotdata, aes(Intensity)) + 
       facet_wrap(~Raw.file, nrow = 1) + 

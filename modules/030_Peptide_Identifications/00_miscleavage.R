@@ -20,6 +20,8 @@ init <- function() {
     
     plotdata <- plotdata %>% dplyr::filter(!is.na(Missed.cleavages))
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     ggplot(plotdata, aes(Missed.cleavages)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=10) + 

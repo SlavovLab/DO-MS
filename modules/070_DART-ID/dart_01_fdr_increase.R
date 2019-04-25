@@ -96,6 +96,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     cb <- c('#20B2CF', '#FF6666', '#888888', '#FFFFFF')
     
     #return(qplot(1, 1))

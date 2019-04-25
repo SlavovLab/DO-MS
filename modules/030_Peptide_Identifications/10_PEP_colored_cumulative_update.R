@@ -30,6 +30,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     # Rank the Experiments by most number of peptides observed
     
     maxnum <- c()

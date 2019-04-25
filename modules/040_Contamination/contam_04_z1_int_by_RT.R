@@ -24,6 +24,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     ggplot(plotdata, aes(x=Retention.time, y=Intensity)) + 
       geom_bar(stat='identity', width=1) + 
       facet_wrap(~Raw.file, nrow=1) + 

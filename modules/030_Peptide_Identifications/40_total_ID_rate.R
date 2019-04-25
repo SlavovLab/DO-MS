@@ -27,19 +27,31 @@ init <- function() {
       dplyr::summarise(ids_0p05=sum(PEP < 0.05),
                        ids_0p01=sum(PEP < 0.01)) %>%
       dplyr::arrange(Raw.file)
-    
+    if(nrow(a) == nrow(b)){
     plotdata <- cbind(a, b[,-1]) %>%
       # gather = dplyr equiv. of reshape2::melt
       tidyr::gather(key, value, -Raw.file) %>%
       # rename levels
       dplyr::mutate(key=factor(key, labels=c('IDs @ PEP < 0.01', 'IDs @ PEP < 0.05', 'PSMs', 'MSMSs')))
-    
+    }else if((nrow(a) > 0) & (nrow(b) == 0)){
+      plotdata <- a %>%
+        tidyr::gather(key, value, -Raw.file) %>%
+        # rename levels
+        dplyr::mutate(key=factor(key, labels=c('PSMs', 'MSMSs')))
+    }else if((nrow(a) == 0) & (nrow(b) > 0)){
+      plotdata <- b %>%
+        tidyr::gather(key, value, -Raw.file) %>%
+        # rename levels
+        dplyr::mutate(key=factor(key, labels=c('IDs @ PEP < 0.01', 'IDs @ PEP < 0.05')))
+    }
     return(plotdata)
   }
   
   .plot <- function(data, input) {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
+    
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     ggplot(plotdata, aes(Raw.file, value, fill=key)) +
       geom_bar(stat='identity', position='dodge') +

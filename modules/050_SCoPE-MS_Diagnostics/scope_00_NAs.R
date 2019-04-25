@@ -35,6 +35,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     # transform data into matrix for levelplot
     row_names <- plotdata$Raw.file
     plotdata <- data.matrix(plotdata[,-1])

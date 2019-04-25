@@ -36,6 +36,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     ggplot(plotdata) +
       geom_point(aes(x=ids, y=new_ids), size=3, color=rgb(0,0,1,0.7)) +
       geom_abline(intercept=0, slope=1, color=rgb(0,0,0,0.5), size=2) +

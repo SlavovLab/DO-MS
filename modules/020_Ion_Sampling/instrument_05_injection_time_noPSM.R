@@ -28,6 +28,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     ggplot(plotdata, aes(Ion.injection.time)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
       geom_histogram(bins=30) + 

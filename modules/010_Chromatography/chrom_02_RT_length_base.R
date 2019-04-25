@@ -33,6 +33,7 @@ init <- function() {
   .plot <- function(data, input) {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     ggplot(plotdata, aes(Retention.length)) + 
       facet_wrap(~Raw.file, nrow = 1) + 

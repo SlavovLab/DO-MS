@@ -30,6 +30,7 @@ init <- function() {
   .plot <- function(data, input) {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     ggplot(plotdata, aes(Precursor.apex.offset.time)) + 
       facet_wrap(~Raw.file, nrow = 1) + 

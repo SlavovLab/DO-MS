@@ -17,9 +17,15 @@ init <- function() {
       dplyr:: filter(!is.na(Missed.cleavages)) %>%
       dplyr::group_by(Raw.file, Missed.cleavages) %>%
       dplyr::tally() %>%
-      tidyr::spread(Missed.cleavages, n) %>%
-      dplyr::mutate(`% Missed cleavages`=(`1` + `2`) / (`0` + `1` + `2`) * 100) %>%
+      tidyr::spread(Missed.cleavages, n)
+    
+      plotdata[is.na(plotdata)] = 0
+      
+      plotdata <- plotdata %>%
+      dplyr::mutate(`% Missed cleavages`=(`1` + 2*`2`) / (`0` + `1` + 2*`2`) * 100) %>%
       dplyr::rename(None='0')
+    
+    
     
     return(plotdata)
   }
@@ -27,6 +33,8 @@ init <- function() {
   .plot <- function(data, input) {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
+    
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     plotdata
   }

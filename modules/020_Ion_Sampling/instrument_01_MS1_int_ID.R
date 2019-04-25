@@ -18,16 +18,17 @@ init <- function() {
     floor <- quantile(plotdata$Intensity, probs=.01, na.rm = TRUE)
     
     plotdata <- dplyr::filter(plotdata, is.finite(Intensity))
-    
+    if(nrow(plotdata) > 0){
     plotdata[plotdata$Intensity >= ceiling, 2] <- ceiling
     plotdata[plotdata$Intensity <= floor, 2] <- floor
-    
+    }
     return(plotdata)
   }
   
   .plot <- function(data, input) {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     ggplot(plotdata, aes(Intensity)) + 
       facet_wrap(~Raw.file, nrow = 1) + 

@@ -28,6 +28,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     ggplot(plotdata) +
       geom_boxplot(aes(Raw.file, residual), outlier.shape=NA) +
       scale_y_continuous(limits=c(-5, 5)) + 

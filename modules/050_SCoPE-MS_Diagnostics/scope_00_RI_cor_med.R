@@ -60,6 +60,8 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
+    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    
     ggplot(plotdata, aes(x=Correlation, y=MedianRI, color=Experiment)) +
       geom_point(size=1.5, alpha=0.5) +
       theme_base(input=input) + 
