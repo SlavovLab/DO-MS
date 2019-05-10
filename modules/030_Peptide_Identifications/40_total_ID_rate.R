@@ -24,8 +24,8 @@ init <- function() {
     b <- data()[['evidence']] %>%
       dplyr::select('Raw.file', 'Sequence', 'PEP') %>%
       dplyr::group_by(Raw.file) %>%
-      dplyr::summarise(ids_0p05=sum(PEP < 0.05),
-                       ids_0p01=sum(PEP < 0.01)) %>%
+      dplyr::summarise(ids_0p05=sum(PEP < 0.05, na.rm=T),
+                       ids_0p01=sum(PEP < 0.01, na.rm=T)) %>%
       dplyr::arrange(Raw.file)
     if(nrow(a) == nrow(b)){
     plotdata <- cbind(a, b[,-1]) %>%
