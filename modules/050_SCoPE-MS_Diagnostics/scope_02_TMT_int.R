@@ -11,25 +11,24 @@ init <- function() {
     # require reporter ion quantification data
     validate(need(any(grepl('Reporter.intensity.corrected', colnames(data()[['evidence']]))), 
                   paste0('Loaded data does not contain reporter ion quantification')))
-    
-    validate(need((length(unique(data()[['evidence']][,'Raw.file'])) == 1),
-                  'Please select a single experiment'))
-    
   }
   
   .plotdata <- function(data, input) {
     
+    TMT_labels <- c('C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11')
+    
     plotdata <- data()[['evidence']] %>% 
-      dplyr::select(starts_with('Reporter.intensity.corrected'))
+      dplyr::select(Raw.file, starts_with('Reporter.intensity.corrected')) %>%
+      # rename TMT channels - match the integer at the end of the column name
+      dplyr::rename_at(vars(starts_with('Reporter.intensity.corrected')),
+                       funs(TMT_labels[as.numeric(str_extract(., '\\d+$'))])) %>%
+      tidyr::gather('Channel', 'Intensity', -c(Raw.file)) %>%
+      # reorder manually instead of alphabetically so it doesn't put 10 and 11 before 2
+      # also reverse so the carriers are at the top
+      dplyr::mutate(Channel=factor(Channel, levels=rev(TMT_labels))) %>%
+      dplyr::mutate(Intensity=log10(Intensity)) %>%
+      dplyr::filter(!is.infinite(Intensity) & !is.na(Intensity))
     
-    plotdata2 <- data()[['evidence']] %>%
-      dplyr::select('Raw.file')
-    exp <- unique(plotdata2$Raw.file)
-    
-    plotdata <- reshape2::melt(plotdata)
-    plotdata$log10tran <- log10(plotdata$value)
-    plotdata$Raw.file <- exp
-      
     return(plotdata)
   }
   
@@ -37,19 +36,23 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    # compute median channel intensities
+    channel_medians <- plotdata %>%
+      group_by(Channel) %>%
+      summarise(m=median(Intensity, na.rm=T))
     
-    unique_labels_size <- length(unique(plotdata$variable))
-    TMT_labels <- c('C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11')
-    plot_to_labels <- TMT_labels[1:unique_labels_size]
+    # map back to plotdata
+    plotdata$median_intensity <- channel_medians[plotdata$Channel,]$m
     
-    ggplot(plotdata, aes(x=variable, y=log10tran)) + 
-      geom_violin(aes(group=variable), alpha=0.6, fill='black', 
-                  kernel='rectangular') +    # passes to stat_density, makes violin rectangular 
-      scale_x_discrete(name='TMT Channel', labels=plot_to_labels) +
-      ggtitle(unique(plotdata$Raw.file)) +
-      xlab('TMT Channel') +             
-      ylab(expression(bold('Log'[10]*' RI Intensity'))) + 
+    ggplot(plotdata) + 
+      geom_violin(aes(x=Channel, y=Intensity, group=Channel, fill=Channel), alpha=0.6,
+                  kernel='gaussian') +    # passes to stat_density, makes violin rectangular 
+      geom_point(aes(x=Channel, y=median_intensity), color='red', shape=3, size=2) +
+      facet_wrap(~Raw.file, nrow = 1) + 
+      coord_flip() +
+      scale_fill_discrete(guide=F) +
+      scale_x_discrete(name='TMT Channel') +
+      labs(title=NULL, x='TMT Channel', y=expression(bold('Log'[10]*' RI Intensity'))) +
       theme_bw() + # make white background on plot
       theme_base(input=input)
   }
