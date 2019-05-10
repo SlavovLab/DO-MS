@@ -33,9 +33,12 @@ init <- function() {
     validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     ggplot(plotdata, aes(Precursor.apex.offset.time)) + 
-      facet_wrap(~Raw.file, nrow = 1) + 
+      facet_wrap(~Raw.file, nrow=1) + 
       geom_histogram(bins=30) + 
+      geom_vline(xintercept=0, color='red') +
       coord_flip() + 
+      annotate(geom='text', label='Early', x=Inf, y=Inf, hjust=1.2, vjust=-0.5, size=5, angle=90) +
+      annotate(geom='text', label='Late', x=-Inf, y=Inf, hjust=-0.2, vjust=-0.5, size=5, angle=90) +
       labs(x='Apex Offset (sec)', y='Number of Ions') + 
       theme_base(input=input)
   }
