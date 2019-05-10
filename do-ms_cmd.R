@@ -90,6 +90,15 @@ if(is.null(input_folders)) stop('"input_folders" missing. Please provide list of
 if(length(input_folders) == 0) stop('No input folders specified in the "input_folders" list. Please provide list of folders to import and analyze')
 if(class(input_folders) != 'character') stop('Folder paths in "input_folders" list must be strings')
 
+prnt(paste0('Loading input folders: ', paste(input_folders, collapse=', ')))
+
+# make sure all folders exist
+for(folder in input_folders) {
+  if(!dir.exists(folder)) {
+    stop(paste0('Folder \"', folder, '\" does not exist. Please fix the folder path or remove it from the list of input folders.'))
+  }
+}
+
 load_input_files <- config[['load_input_files']]
 if(is.null(load_input_files)) stop('"input_files" missing. Please provide list of files to load from each folder')
 if(length(load_input_files) == 0) stop('No input files specified in the "input_files" list. Please provide list of files to load from each folder')
@@ -198,6 +207,14 @@ for(f in config[['load_input_files']]) {
 
 prnt('Finished loading folders')
 
+# sometimes all folders might exist, but none of the specified files are in them
+# if all entries of the data list are empty, then let's crash out here
+if(all(
+  sapply(names(data), function(x) { is.null(data[[x]]) }) 
+)) {
+  stop('None of the folders in the input list have the specified output files. Please make sure that all folders provided have search engine output files.')
+}
+
 
 # load misc files ---------------------------------------------------------
 
@@ -302,6 +319,9 @@ raw_files <- c()
 
 for(f in config[['load_input_files']]) {
   file <- config[['input_files']][[f]]
+  
+  # don't do this with MaxQuant's summary.txt file since it has weird behavior
+  if(file$name == 'summary') { next; }
   
   # for each file, check if it has a raw file column
   if('Raw.file' %in% colnames(data[[file$name]])) {
