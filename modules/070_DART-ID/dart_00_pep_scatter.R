@@ -12,8 +12,8 @@ init <- function() {
     
     # ensure that table has the DART-ID PEP
     validate(need(
-      'pep_updated' %in% colnames(data()[['evidence']]), 
-      paste0('Provide evidence.txt from DART-ID output, with updated PEP column')
+      'dart_PEP' %in% colnames(data()[['evidence']]), 
+      paste0('Provide evidence.txt from DART-ID output, with updated dart_PEP column')
     ))
   }
   
@@ -22,12 +22,12 @@ init <- function() {
     conf_limit <- 1e-8
     
     ev.f <- data()[['evidence']] %>%
-      dplyr::select(c('Sequence', 'PEP', 'pep_new')) %>%
-      dplyr::filter(!is.na(pep_new)) %>%
-      dplyr::filter(PEP > 0 & pep_new > 0 & PEP > conf_limit & pep_new > conf_limit) %>%
-      dplyr::mutate_at(c('PEP', 'pep_new'), funs(ifelse(. > 1, 1, .))) %>%
+      dplyr::select(c('Sequence', 'PEP', 'dart_PEP')) %>%
+      dplyr::filter(!PEP == dart_PEP) %>%
+      dplyr::filter(PEP > 0 & dart_PEP > 0 & PEP > conf_limit & dart_PEP > conf_limit) %>%
+      dplyr::mutate_at(c('PEP', 'dart_PEP'), funs(ifelse(. > 1, 1, .))) %>%
       dplyr::mutate(pep_log=log10(PEP),
-                    pep_new_log=log10(pep_new))
+                    pep_new_log=log10(dart_PEP))
     
     return(ev.f)
   }
@@ -61,7 +61,7 @@ init <- function() {
     rng <- seq(-5, 0, 1)
     nbins <- 80
     
-    ggplot(plotdata, aes(x=PEP, y=pep_new)) +
+    ggplot(plotdata, aes(x=PEP, y=dart_PEP)) +
       stat_bin2d(bins=nbins, drop=TRUE, geom='tile', aes(fill=..density..)) +
       geom_abline(slope=1, intercept=0, color='black', size=0.5) +
       geom_vline(xintercept=1e-2, linetype='dotted', color='black', size=0.5) +

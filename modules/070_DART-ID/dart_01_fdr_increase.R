@@ -11,21 +11,22 @@ init <- function() {
     
     # ensure that table has the DART-ID PEP
     validate(need(
-      'pep_updated' %in% colnames(data()[['evidence']]), 
-      paste0('Provide evidence.txt from DART-ID output, with updated PEP column')
+      'dart_PEP' %in% colnames(data()[['evidence']]), 
+      paste0('Provide evidence.txt from DART-ID output, with updated dart_PEP column')
     ))
   }
   
   .plotdata <- function(data, input) {
     ev <- data()[['evidence']] 
     ev <- ev %>%
+      filter(!is.na(PEP) & !is.na(dart_PEP)) %>%
       # ceil PEPs to 1
-      dplyr::mutate_at(c('PEP', 'pep_updated'), funs(ifelse(. > 1, 1, .))) %>%
+      dplyr::mutate_at(c('PEP', 'dart_PEP'), funs(ifelse(. > 1, 1, .))) %>%
       # calculate q-values
       dplyr::mutate(qval=(cumsum(PEP[order(PEP)]) /
                           seq(1, nrow(ev)))[order(order(PEP))],
-                    qval_updated=(cumsum(pep_updated[order(pep_updated)]) /
-                                  seq(1, nrow(ev)))[order(order(pep_updated))])
+                    qval_updated=(cumsum(dart_PEP[order(dart_PEP)]) /
+                                  seq(1, nrow(ev)))[order(order(dart_PEP))])
 
     # flag peptides that don't have a single confident ID across all sets
     new_peptides <- ev %>%

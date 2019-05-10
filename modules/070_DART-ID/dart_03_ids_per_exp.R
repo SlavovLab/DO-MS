@@ -11,8 +11,8 @@ init <- function() {
     
     # ensure that table has the DART-ID residual RT
     validate(need(
-      'pep_updated' %in% colnames(data()[['evidence']]), 
-      paste0('Provide evidence.txt from DART-ID output, with residual RT column \"residual\"')
+      'dart_PEP' %in% colnames(data()[['evidence']]), 
+      paste0('Provide evidence.txt from DART-ID output, with updated dart_PEP column.')
     ))
     
   }
@@ -21,12 +21,12 @@ init <- function() {
     ev <- data()[['evidence']]
     
     plotdata <- ev %>%
-      dplyr::select(c('Raw.file', 'Modified.sequence', 'PEP', 'pep_updated')) %>%
+      dplyr::select(c('Raw.file', 'Modified.sequence', 'PEP', 'dart_PEP')) %>%
       dplyr::group_by(Raw.file) %>%
       dplyr::summarise(
         file=unique(Raw.file),
-        ids=sum(PEP < 0.01),
-        new_ids=sum(pep_updated < 0.01))
+        ids=sum(PEP < 0.01, na.rm=T),
+        new_ids=sum(dart_PEP < 0.01, na.rm=T))
     
     return(plotdata)
   }
