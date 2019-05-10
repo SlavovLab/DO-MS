@@ -639,7 +639,13 @@ shinyServer(function(input, output, session) {
     
     # apply custom string extraction expression to file levels
     if(!is.null(.pattern) & length(.pattern) > 0 & nchar(.pattern) > 0) {
-      .file_levels <- str_extract(.file_levels, .pattern)
+      # account for users inputting bad regexes
+      .file_levels <- tryCatch({ str_extract(.file_levels, .pattern) },
+        error=function(e){
+          showNotification(paste0('Invalid regex: ', e), type='error')
+          .file_levels
+        }
+      )
       # if string extraction failed, then will return NA. set NAs to "default"
       .file_levels[is.na(.file_levels)] <- 'default'
     }
