@@ -1,16 +1,24 @@
+---
+layout: default
+title: Home
+nav_order: 1
+description: "DO-MS: Modular and extensible visualization of mass-spec data"
+permalink: /
+---
+
 # **DO-MS**
+{: .fs-9 }
 
 <u>D</u>ata-Driven <u>O</u>ptimization of <u>M</u>ass <u>S</u>pectrometry Methods
+{: .fs-6 .fw-300}
 
-* [Get started now](#getting-started)
-* [BioRxiv Preprint]({{site.preprint_link}})
-* [GitHub Repository]({{site.github_link}})
+[Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [BioRxiv Preprint]({{site.preprint_link}}){: .btn .fs-5 .mb-4 .mb-md-0 .mr-2 } [GitHub Repository]({{site.github_link}}){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ## Getting Started
 
 Please read our detailed getting started guides:
-* [Getting started on the application](https://slavovlab.github.io/DO-MS/docs/getting-started-application)
-* [Getting started on the command-line](https://slavovlab.github.io/DO-MS/docs/getting-started-command-line)
+* [Getting started on the application]({{site.baseurl}}/docs/getting-started-application)
+* [Getting started on the command-line]({{site.baseurl}}/docs/getting-started-command-line)
 
 ### Requirements
 
@@ -26,11 +34,11 @@ Install this application by downloading it from the [release page](https://githu
 
 The easiest way to run the app is directly through RStudio, by opening the `DO-MS.Rproj` Rproject file
 
-![](https://github.com/SlavovLab/DO-MS/raw/master/docs/assets/images/do-ms-proj.png){: width="70%" .center-image}
+![]({{site.baseurl}}/assets/images/do-ms-proj.png){: width="70%" .center-image}
 
 and clicking the "Run App" button at the top of the application, after opening the `server.R` file. We recommend checking the "Run External" option to open the application in your default browser instead of the RStudio Viewer.
 
-![](https://github.com/SlavovLab/DO-MS/raw/master/docs/assets/images/do-ms-run.png){: width="70%" .center-image}
+![]({{site.baseurl}}/assets/images/do-ms-run.png){: width="70%" .center-image}
 
 You can also start the application by running the `start_server.R` script.
 
@@ -42,23 +50,23 @@ You can automatically generate PDF/HTML reports without having to launch the ser
 $ Rscript do-ms_cmd.R config_file.yaml
 ```
 
-This requires a configuration file, and you can [find an example one here](https://github.com/SlavovLab/DO-MS/blob/master/example/config_file.yaml). See [Automating Report Generation](https://slavovlab.github.io/DO-MS/docs/automation) for more details and instructions.
+This requires a configuration file, and you can [find an example one here](https://github.com/SlavovLab/DO-MS/blob/master/example/config_file.yaml). See [Automating Report Generation]({{site.baseurl}}/docs/automation) for more details and instructions.
 
 ### Customization
 
-DO-MS is designed to be easily user-customizable for in-house proteomics workflows. Please see [Building Your Own Modules](https://slavovlab.github.io/DO-MS/docs/build-your-own) for more details.
+DO-MS is designed to be easily user-customizable for in-house proteomics workflows. Please see [Building Your Own Modules]({{site.baseurl}}/docs/build-your-own) for more details.
 
 ### Hosting as a Server
 
-Please see [Hosting as a Server](https://slavovlab.github.io/DO-MS/docs/hosting-as-server) for more details.
+Please see [Hosting as a Server]({{site.baseurl}}/docs/hosting-as-server) for more details.
 
 ### Search Engines Other Than MaxQuant
 
-This application is currently maintained for MaxQuant >= 1.6.0.16. Adapting to other search engines is possible but not provided out-of-the-box. Please see [Integrating Other Search Engines ](https://slavovlab.github.io/DO-MS/docs/other-search-engines) for more details.
+This application is currently maintained for MaxQuant >= 1.6.0.16. Adapting to other search engines is possible but not provided out-of-the-box. Please see [Integrating Other Search Engines ]({{site.baseurl}}/docs/other-search-engines) for more details.
 
 ### Can I use this for Metabolomics, Lipidomics, etc... ?
 
-While the base library of modules are based around bottom-up proteomics by LC-MS/MS, this project is fundamentally compatible with _any delimited text files_ (CSV, TSV, etc). These implementations will require some programming work, but once it is done DO-MS gives you a extensible framework that can be used over-and-over again to generate shareable reports. See [Integrating Other Search Engines ](https://slavovlab.github.io/DO-MS/docs/other-search-engines) for more details
+While the base library of modules are based around bottom-up proteomics by LC-MS/MS, this project is fundamentally compatible with _any delimited text files_ (CSV, TSV, etc). These implementations will require some programming work, but once it is done DO-MS gives you a extensible framework that can be used over-and-over again to generate shareable reports. See [Integrating Other Search Engines ]({{site.baseurl}}/docs/other-search-engines) for more details
 
 ------------
 
