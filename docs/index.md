@@ -12,7 +12,12 @@ permalink: /
 <u>D</u>ata-Driven <u>O</u>ptimization of <u>M</u>ass <u>S</u>pectrometry Methods
 {: .fs-6 .fw-300}
 
-[Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [BioRxiv Preprint]({{site.preprint_link}}){: .btn .fs-5 .mb-4 .mb-md-0 .mr-2 } [GitHub Repository]({{site.github_link}}){: .btn .fs-5 .mb-4 .mb-md-0 }
+![GitHub release](https://img.shields.io/github/release/SlavovLab/DO-MS.svg)
+![GitHub](https://img.shields.io/github/license/SlavovLab/DO-MS.svg)
+
+[Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [Download](https://github.com/SlavovLab/DO-MS/releases/latest){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [JPR Article](https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039){: .btn .fs-5 .mb-4 .mb-md-0 .mr-2 } [GitHub Repository](https://github.com/SlavovLab/DO-MS){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+![]({{site.baseurl}}/assets/images/TOC_Graphic_noOutline_abstract_v18.png){: width="70%" .center-image}
 
 ## Getting Started
 
@@ -28,7 +33,7 @@ The application suffers from visual glitches when displayed on unsupported older
 
 ### Installation
 
-Install this application by downloading it from the [release page](https://github.com/SlavovLab/DO-MS/releases).
+Install this application by downloading it from the [release page](https://github.com/SlavovLab/DO-MS/releases/latest).
 
 ### Running
 
@@ -76,7 +81,9 @@ While the base library of modules are based around bottom-up proteomics by LC-MS
 DART-ID is a project developed in the [Slavov Laboratory](https://web.northeastern.edu/slavovlab/) at [Northeastern University](https://www.northeastern.edu/) [Bioengineering](http://www.bioe.neu.edu/), and was authored by [Albert Tian Chen](https://atchen.me), [Alexander Franks](http://afranks.com/) (of [UCSB Statistics and Applied Probability](https://www.pstat.ucsb.edu/)), and [Nikolai Slavov](https://web.northeastern.edu/slavovlab/).
 -->
 
-The manuscript for this tool is available on bioRxiv: [{{site.preprint_link}}]({{site.preprint_link}}).
+The manuscript for this tool is published at the Journal of Proteome Research: [https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039](https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039)
+
+The manuscript is also freely available on bioRxiv: [https://www.biorxiv.org/content/10.1101/512152v1](https://www.biorxiv.org/content/10.1101/512152v1).
 
 Contact the authors by email: [nslavov\{at\}northeastern.edu](mailto:nslavov@northeastern.edu).
 
