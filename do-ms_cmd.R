@@ -18,6 +18,15 @@
 ##
 ## check out an example configuration file at example/config_file.yaml
 
+# set CRAN mirror
+
+r = getOption("repos")
+
+if(is.null(r['CRAN'])) {
+  r['CRAN'] = "http://cran.us.r-project.org"
+  options(repos = r)
+}
+
 # load packages, modules, tabs, helper functions --------------------------
 
 source('global.R')
