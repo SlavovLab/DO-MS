@@ -45,10 +45,9 @@ init <- function() {
     ggplot(plotdata, aes(x=Var1, y=Var2, fill=value)) + 
       geom_tile() +
       scale_fill_gradient2(low="blue", mid = "white", high = "red", midpoint = 0.5) +
-      scale_x_discrete(name ='TMT Channel', labels=plot_to_labels) +
-      scale_y_discrete(name ='TMT Channel', labels=plot_to_labels) +
-      xlab('TMT Channel') +             
-      ylab("") + 
+      scale_x_discrete(name='TMT Channel', labels=plot_to_labels) +
+      scale_y_discrete(name='TMT Channel', labels=plot_to_labels) +
+      labs(x='TMT Channel', y=NULL, fill='Correlation') +
       theme_bw() + # make white background on plot
       theme_base(input=input) +
       theme(axis.text.x=element_text(angle=0, hjust=0.5),
