@@ -30,6 +30,8 @@ aux_links:
     - "https://www.biorxiv.org/content/10.1101/512152v1"
   "GitHub Repository":
     - "https://github.com/SlavovLab/DO-MS"
+  "Slavov Lab":
+    - "http://slavovlab.net"
 
 github_link: https://github.com/SlavovLab/DO-MS
 preprint_link: https://www.biorxiv.org/content/10.1101/512152v1
@@ -40,7 +42,7 @@ color_scheme: blue
 
 # Google Analytics Tracking (optional)
 # e.g, UA-1234567-89
-ga_tracking: ~
+ga_tracking: UA-4005755-3
 
 plugins:
   - jekyll-seo-tag
