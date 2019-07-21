@@ -13,12 +13,11 @@ permalink: mass-spec/methods
 
 [Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [Download](https://github.com/SlavovLab/DO-MS/releases/latest){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [JPR Article](https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039){: .btn .fs-5 .mb-4 .mb-md-0 .mr-2 } [GitHub Repository](https://github.com/SlavovLab/DO-MS){: .btn .fs-5 .mb-4 .mb-md-0 }
 
-![]({{site.baseurl}}/assets/images/TOC_Graphic_noOutline_abstract_v18.png){: width="70%" .center-image}
 ------------
 
 
 
-DO-MS supports related methods and technologies developed in the [Slavov Laboratory](http://slavovlab.net). Related methods include:
+DO-MS supports related methods and technologies developed in the [Slavov Laboratory](http://slavovlab.net). These methods include:
 
 * [Single-Cell ProtEomics by Mass Spectrometry (SCoPE-MS)](http://slavovlab.net/2016_SCoPE-MS/index.html)
 * [Single-Cell ProtEomics by Mass Spectrometry (SCoPE2)](http://scope2.slavovlab.net)
