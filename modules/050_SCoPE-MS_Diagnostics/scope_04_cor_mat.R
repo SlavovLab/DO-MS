@@ -19,6 +19,7 @@ init <- function() {
   
   .plotdata <- function(data, input) {
     plotdata <- data()[['evidence']] %>% 
+      dplyr::filter(Type != "MULTI-MATCH") %>%
       dplyr::select(starts_with('Reporter.intensity.corrected'))
     plotdata2 <- data()[['evidence']] %>% 
       dplyr::select('Raw.file', starts_with('Reporter.intensity.corrected'))

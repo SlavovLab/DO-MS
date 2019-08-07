@@ -14,7 +14,9 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[['evidence']][,c('Raw.file', 'Retention.length', 'PEP')]
+    plotdata <- data()[['evidence']][,c('Raw.file', 'Retention.length', 'PEP','Type')]
+    plotdata <- plotdata %>% dplyr::filter(Type != "MULTI-MATCH")
+    plotdata <- plotdata %>% dplyr::select('Raw.file', 'Retention.length', 'PEP')
     plotdata$Retention.length <- plotdata$Retention.length*60
     #plotdata$Retention.length[plotdata$Retention.length > 120] <- 120
     

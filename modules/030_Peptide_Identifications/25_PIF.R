@@ -11,8 +11,10 @@ init <- function() {
   
   .plotdata <- function(data, input) {
     
-    plotdata <- data()[['evidence']][,c('Raw.file', 'PIF')] %>%
+    plotdata <- data()[['evidence']][,c('Raw.file', 'PIF','Type')] %>%
       # restrict to between 0 and 1
+      dplyr::filter(Type != "MULTI-MATCH") %>% 
+      dplyr::select('Raw.file', 'PIF') %>%
       dplyr::mutate_at('PIF', funs(ifelse(. > 1, 1, .), ifelse(. < 0, 0, .)))
     
     return(plotdata)

@@ -19,16 +19,20 @@ init <- function() {
   
   .plotdata <- function(data, input) {
     plotdata <- data()[['evidence']] %>% 
+      dplyr::filter(Type != "MULTI-MATCH") %>% 
       dplyr::select(starts_with('Reporter.intensity.corrected'))
     plotdata2 <- data()[['evidence']] %>%
       dplyr::select('Raw.file')
     exp <- unique(plotdata2$Raw.file)
     
     plotdata <- log10(plotdata)
+
     is.na(plotdata) <- sapply(plotdata, is.infinite)
     
     mean_int <- colMeans(plotdata, na.rm=T)
     plotdata <- plotdata - plotdata[,which.max(mean_int)]
+    #plotdata[plotdata == -Inf] <- -2
+    #is.na(plotdata) <- sapply(plotdata, is.infinite)
     plotdata <- reshape2::melt(plotdata)
     plotdata$Raw.file <- exp
     
@@ -51,7 +55,7 @@ init <- function() {
       scale_x_discrete(name ='TMT Channel', labels=plot_to_labels) +
       xlab('TMT Channel') +             
       ylab(expression(bold('Log'[10]*' RRI Intensity'))) + 
-      scale_y_continuous(limits = c(-2, NA)) +
+      scale_y_continuous(limits = c(-1.9, NA)) +
       theme_bw() + # make white background on plot
       theme_base(input=input) +
       ggtitle(unique(plotdata$Raw.file))

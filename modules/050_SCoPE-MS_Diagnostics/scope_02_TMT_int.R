@@ -18,6 +18,7 @@ init <- function() {
     TMT_labels <- c('C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11')
     
     plotdata <- data()[['evidence']] %>% 
+      dplyr::filter(Type != "MULTI-MATCH") %>%
       dplyr::select(Raw.file, starts_with('Reporter.intensity.corrected')) %>%
       # rename TMT channels - match the integer at the end of the column name
       dplyr::rename_at(vars(starts_with('Reporter.intensity.corrected')),
@@ -27,7 +28,10 @@ init <- function() {
       # also reverse so the carriers are at the top
       dplyr::mutate(Channel=factor(Channel, levels=rev(TMT_labels))) %>%
       dplyr::mutate(Intensity=log10(Intensity)) %>%
-      dplyr::filter(!is.infinite(Intensity) & !is.na(Intensity))
+      #dplyr::filter(!is.infinite(Intensity) & !is.na(Intensity))
+      dplyr::filter(!is.na(Intensity))
+      
+      plotdata$Intensity <- ifelse(is.infinite(plotdata$Intensity),2,plotdata$Intensity) 
     
     return(plotdata)
   }

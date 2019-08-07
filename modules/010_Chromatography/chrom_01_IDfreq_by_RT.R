@@ -10,7 +10,9 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[['evidence']][,c('Raw.file', 'Retention.time', 'PEP')]
+    plotdata <- data()[['evidence']][,c('Raw.file', 'Retention.time', 'PEP','Type')]
+    plotdata <- plotdata %>% dplyr::filter(Type != "MULTI-MATCH")
+    plotdata <- plotdata %>% dplyr::select('Raw.file', 'Retention.time', 'PEP')
     return(plotdata)
   }
   

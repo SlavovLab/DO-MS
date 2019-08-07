@@ -10,8 +10,9 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[['evidence']][,c('Raw.file', 'PEP')]
-
+    plotdata <- data()[['evidence']][,c('Raw.file', 'PEP','Type')]
+    plotdata <- plotdata %>% dplyr::filter(Type != "MULTI-MATCH")
+    plotdata <- plotdata %>% dplyr::select('Raw.file', 'PEP')
     # build log10 PEP vector
     peps <- seq(log10(max(c(min(plotdata$PEP)), 1e-5)), log10(max(plotdata$PEP)), length.out=500)
     peps <- c(log10(.Machine$double.xmin), peps)

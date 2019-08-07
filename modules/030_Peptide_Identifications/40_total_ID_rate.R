@@ -22,7 +22,8 @@ init <- function() {
     
     # IDs at 5e-2 and 1e-2 PEP
     b <- data()[['evidence']] %>%
-      dplyr::select('Raw.file', 'Sequence', 'PEP') %>%
+      dplyr::select('Raw.file', 'Sequence', 'PEP','Type') %>%
+      dplyr::filter(Type != "MULTI-MATCH") %>%
       dplyr::group_by(Raw.file) %>%
       dplyr::summarise(ids_0p05=sum(PEP < 0.05, na.rm=T),
                        ids_0p01=sum(PEP < 0.01, na.rm=T)) %>%

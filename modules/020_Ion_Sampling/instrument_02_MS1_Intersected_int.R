@@ -10,7 +10,9 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[['evidence']][,c('Raw.file', 'Intensity','Sequence','Charge')]
+    plotdata <- data()[['evidence']][,c('Raw.file', 'Intensity','Sequence','Charge','Type')]
+    plotdata <- plotdata %>% dplyr::filter(Type != "MULTI-MATCH")
+    plotdata <- plotdata %>% dplyr::select('Raw.file', 'Intensity','Sequence','Charge')
     plotdata$Intensity <- log10(plotdata$Intensity)
     plotdata$SeqCharge <- paste0(plotdata$Sequence,"_",plotdata$Charge)
     

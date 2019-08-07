@@ -10,11 +10,11 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[['evidence']][,c('Raw.file', 'Missed.cleavages', 'PEP')]
+    plotdata <- data()[['evidence']][,c('Raw.file', 'Missed.cleavages', 'PEP','Type')]
     
     # group by raw file and number of missed cleavages, wrangle data
     plotdata <- plotdata %>%
-      dplyr:: filter(!is.na(Missed.cleavages)) %>%
+      dplyr:: filter(!is.na(Missed.cleavages), Type != "MULTI-MATCH") %>%
       dplyr::group_by(Raw.file, Missed.cleavages) %>%
       dplyr::tally() %>%
       tidyr::spread(Missed.cleavages, n)
@@ -34,7 +34,7 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    validate(need((nrow(plotdata) > 0), paste0('No Rows selected')))
     
     plotdata
   }

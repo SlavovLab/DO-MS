@@ -15,7 +15,7 @@ init <- function() {
   
   .plotdata <- function(data, input) {
     plotdata <- data()[['evidence']]
-    
+    plotdata <- plotdata %>% dplyr::filter(Type != "MULTI-MATCH")
     plotdata <- plotdata %>%
       dplyr::select('Raw.file', starts_with('Reporter.intensity.corrected')) %>%
       dplyr::group_by(Raw.file) %>%
@@ -35,7 +35,7 @@ init <- function() {
     .validate(data, input)
     plotdata <- .plotdata(data, input)
     
-    validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
+    validate(need((nrow(plotdata) >= 1), paste0('No Rows selected')))
     
     # transform data into matrix for levelplot
     row_names <- plotdata$Raw.file

@@ -10,7 +10,9 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[['evidence']][,c('Raw.file', 'Intensity')]
+    plotdata <- data()[['evidence']][,c('Raw.file', 'Intensity','Type')]
+    plotdata <- plotdata %>% dplyr::filter(Type != "MULTI-MATCH")
+    plotdata <- plotdata %>% dplyr::select('Raw.file', 'Intensity')
     plotdata$Intensity <- log10(plotdata$Intensity)
     
     # Thresholding data at 1 and 99th percentiles
