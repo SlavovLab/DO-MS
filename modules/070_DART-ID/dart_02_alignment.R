@@ -12,7 +12,7 @@ init <- function() {
     # ensure that table has the DART-ID residual RT
     validate(need(
       'residual' %in% colnames(data()[['evidence']]), 
-      paste0('Provide evidence.txt from DART-ID output, with residual RT column [residual]')
+      paste0('Provide evidence.txt from DART-ID output, with residual RT column [residual]. Visit https://dart-id.slavovlab.net/ for more information about DART-ID')
     ))
   }
   

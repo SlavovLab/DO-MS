@@ -13,7 +13,7 @@ init <- function() {
     # ensure that table has the DART-ID PEP
     validate(need(
       'dart_PEP' %in% colnames(data()[['evidence']]), 
-      paste0('Provide evidence.txt from DART-ID output, with updated dart_PEP column')
+      paste0('Provide evidence.txt from DART-ID output, with updated dart_PEP column. Visit https://dart-id.slavovlab.net/ for more information about DART-ID')
     ))
   }
   
