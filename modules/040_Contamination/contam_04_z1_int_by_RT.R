@@ -28,7 +28,7 @@ init <- function() {
     
     ggplot(plotdata, aes(x=Retention.time, y=Intensity)) + 
       geom_bar(stat='identity', width=1) + 
-      facet_wrap(~Raw.file, nrow=1) + 
+      facet_wrap(~Raw.file, nrow=1, scales = "free_x") + 
       scale_y_continuous(labels=scales::scientific) +
       coord_flip() + 
       labs(x='Retention Time (min)', y=expression(bold('Summed Precursor Intensity'))) +

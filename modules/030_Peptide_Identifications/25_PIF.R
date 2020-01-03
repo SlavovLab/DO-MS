@@ -27,7 +27,7 @@ init <- function() {
     validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     ggplot(plotdata, aes(PIF)) + 
-      facet_wrap(~Raw.file, nrow = 1) + 
+      facet_wrap(~Raw.file, nrow = 1, scales = "free_x") + 
       geom_histogram(bins = 49) + 
       coord_flip() +  
       labs(x='Precursor Ion Fraction (PIF)', y='Number of Peptides') +

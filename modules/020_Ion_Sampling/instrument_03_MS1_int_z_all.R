@@ -12,7 +12,7 @@ init <- function() {
   .plotdata <- function(data, input) {
     plotdata <- data()[['allPeptides']][,c('Raw.file', 'Charge', 'Intensity', 'MS.MS.Count')]
     plotdata$Intensity <- log10(plotdata$Intensity)
-    plotdata <- plotdata[plotdata$MS.MS.Count >= 1,]
+    #plotdata <- plotdata[plotdata$MS.MS.Count >= 1,]
     
     # Thresholding data at 1 and 99th percentiles
     ceiling <- quantile(plotdata$Intensity, probs=.99, na.rm = TRUE)
@@ -33,7 +33,7 @@ init <- function() {
     validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     ggplot(plotdata, aes(Intensity)) + 
-      facet_wrap(~Raw.file, nrow = 1) + 
+      facet_wrap(~Raw.file, nrow = 1, scales = "free_x") + 
       geom_histogram(bins=30) + 
       coord_flip() + 
       labs(x=expression(bold('Log'[10]*' Precursor Intensity')), y='Number of Ions') +

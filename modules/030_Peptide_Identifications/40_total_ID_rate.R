@@ -56,7 +56,7 @@ init <- function() {
     
     ggplot(plotdata, aes(Raw.file, value, fill=key)) +
       geom_bar(stat='identity', position='dodge') +
-      labs(x='Experiment', y='Fraction', fill='Category') +
+      labs(x='Experiment', y='Count', fill='Category') +
       theme_base(input=input, show_legend=T) +
       # keep the legend
       theme(legend.position='right',

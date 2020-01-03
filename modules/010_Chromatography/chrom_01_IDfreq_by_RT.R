@@ -23,7 +23,7 @@ init <- function() {
     
     maxRT <- max(plotdata$Retention.time)
     ggplot(plotdata, aes(Retention.time)) + 
-      facet_wrap(~Raw.file, nrow = 1) + 
+      facet_wrap(~Raw.file, nrow = 1, scales = "free_x") + 
       geom_histogram(bins=100) + 
       coord_flip() + 
       xlim(10, maxRT) +

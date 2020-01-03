@@ -35,7 +35,7 @@ init <- function() {
     validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     ggplot(plotdata, aes(log_int)) + 
-      facet_wrap(~Raw.file, nrow = 1) + 
+      facet_wrap(~Raw.file, nrow = 1, scales = "free_x") + 
       geom_histogram(bins=100) + 
       coord_flip() + 
       labs(y='Number of Ions', x=expression(bold('Log'[10]*' Intensity'))) +

@@ -38,7 +38,7 @@ init <- function() {
     validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     ggplot(plotdata, aes(Retention.length)) + 
-      facet_wrap(~Raw.file, nrow = 1) + 
+      facet_wrap(~Raw.file, nrow = 1, scales = "free_x") + 
       geom_histogram(bins=120) + 
       coord_flip() + 
       labs(x='Retention Lengths at base (sec)', y='Number of Peptides') +
