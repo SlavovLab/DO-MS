@@ -2,12 +2,12 @@
 layout: default
 title: Related methods
 nav_order: 11
-description: "Methods for single-cell proteomics developed in the Slavov Laboratory, Northeastern University, Boston"
+description: "Methods for for ultrasensitive mass-spec analysis and single-cell proteomics developed in the Slavov Laboratory, Northeastern University, Boston"
 permalink: mass-spec/methods
 
 ---
 
-# Related methods for ultrasensitive mass-spec analysis
+# Methods for ultrasensitive mass-spec analysis
 
 &nbsp;
 
