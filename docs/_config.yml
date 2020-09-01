@@ -26,8 +26,10 @@ search_enabled: true
 
 # Aux links for the upper right navigation
 aux_links:
-  "bioRxiv Preprint":
+  "DO-MS Preprint":
     - "https://www.biorxiv.org/content/10.1101/512152v1"
+  "JPR Article":
+    - "https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039"
   "GitHub Repository":
     - "https://github.com/SlavovLab/DO-MS"
   "Slavov Lab":
