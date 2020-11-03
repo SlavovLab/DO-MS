@@ -1,7 +1,7 @@
 ---
 layout: default
 title: DO-MS Application
-nav_order: 2
+nav_order: 1
 permalink: docs/getting-started-application
 parent: Getting Started
 ---

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: DO-MS Command Line
-nav_order: 3
+nav_order: 2
 permalink: docs/getting-started-command-line
 parent: Getting Started
 ---
