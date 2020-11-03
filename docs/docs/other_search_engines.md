@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Integrating Other Search Engines
+title: Adding Search Engines
 nav_order: 7
 permalink: docs/other-search-engines
 ---
@@ -29,7 +29,7 @@ Adapting the core module technology of this application to the output of other s
 
 If you like the current modules and would like to keep their current display and features, the quickest strategy is to convert your search engine's output into tab-delimited text that shares the same structure (i.e., column names) as MaxQuant's output. This can be done via. our column aliasing system as mentioned above, with a third-party converter, or your own.
 
-Our application mainly uses six tab-delimited files from MaxQuant (for non-DIA searches): 
+Our application mainly uses six tab-delimited files from MaxQuant (for non-DIA searches):
 
 1. `allPeptides`, which describes ions on the MS1 level
 2. `msmsScans`, which describes MS2 scans
@@ -64,7 +64,7 @@ Very little of the static, server code is dependent on the MaxQuant names. The c
 1. In `server.R`, much of the design around selecting, filtering on, and renaming raw files are hard-coded to recognize the "Raw.file" column of MaxQuant output. Simply ensure that your search engine output is outputting the raw file name in each file (most should), and then change the specific "Raw.file" reference in the server code.
 2. In `global.R`, the four files as described in Option 1 above are hardcoded into a list that is then displayed on the import page and available to all of the modules. Simply change the definitions here to the files you want to load from your search engine. There is no limit here, and the only restriction is, as described in point 1, the presence of a raw file column in the text file.
 
-All of the modules provided in the application here reference column names from MaxQuant output files and expect data in the form provided by MaxQuant. For other search engines, the column references may need to just be renamed, but for others they may need a major overhaul. 
+All of the modules provided in the application here reference column names from MaxQuant output files and expect data in the form provided by MaxQuant. For other search engines, the column references may need to just be renamed, but for others they may need a major overhaul.
 
 ### Option 3: Write Your Own (recommended)
 
