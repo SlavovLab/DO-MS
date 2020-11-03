@@ -1,11 +1,12 @@
 ---
 layout: default
-title: Getting Started - Application
+title: DO-MS Application
 nav_order: 2
 permalink: docs/getting-started-application
+parent: Getting Started
 ---
 
-# Getting Started -- DO-MS Application
+# Getting Started -- Interactive DO-MS Application
 
 DO-MS is an application to visualize mass-spec data both in an interactive application and static reports generated via. the command-line. In this document we'll walk you through analyzing an example dataset in the interactive application.
 
@@ -170,4 +171,3 @@ Your report should download to your default download location.
 ![]({{site.baseurl}}/assets/images/report_html.png){: width="70%" .center-image}
 
 All images in the report are embedded in the markup, so feel free to share this single file to your colleagues/collaborators and don't worry about having to include anything else.
-

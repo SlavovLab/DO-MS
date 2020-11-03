@@ -1,11 +1,12 @@
 ---
 layout: default
-title: Getting Started - Command Line
+title: DO-MS Command Line
 nav_order: 3
 permalink: docs/getting-started-command-line
+parent: Getting Started
 ---
 
-# Getting Started -- Command Line
+# Getting Started -- DO-MS Command Line
 
 DO-MS can be run from the command-line to generate reports. Insert DO-MS into your own automated proteomics workflow to get hands-free, easily shareable generated reports.
 
@@ -83,4 +84,3 @@ Output created: ~/Downloads/SQC68_DO-MS_report.html
 [1] "Report written to: ~/Downloads/SQC68_DO-MS_report.html"
 [1] "Done!"
 ```
-
