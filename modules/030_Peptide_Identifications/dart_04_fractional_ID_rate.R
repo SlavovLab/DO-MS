@@ -3,15 +3,15 @@ init <- function() {
   type <- 'plot'
   box_title <- 'Fractional ID Rate'
   help_text <- 'Fractional rate of confident PSMs and PSMs from all MS2 scan events'
-  source_file <- 'evidence, msmsScans'
+  source_file <- 'DART-ID, msmsScans'
   
   .validate <- function(data, input) {
-    validate(need(data()[['evidence']], paste0('Upload evidence.txt')))
+    validate(need(data()[['DART-ID']], paste0('Upload evidence_updated.txt')))
     validate(need(data()[['msmsScans']], paste0('Upload msmsScans.txt')))
     
     # ensure that table has the DART-ID residual RT
     validate(need(
-      'dart_PEP' %in% colnames(data()[['evidence']]), 
+      'dart_PEP' %in% colnames(data()[['DART-ID']]), 
       paste0('Provide evidence.txt from DART-ID output, with updated dart_PEP column. Visit https://dart-id.slavovlab.net/ for more information about DART-ID')
     ))
   }
@@ -27,7 +27,7 @@ init <- function() {
       dplyr::arrange(Raw.file)
     
     # IDs at 1e-2 PEP, 1e-2 DART PEP
-    b <- data()[['evidence']] %>%
+    b <- data()[['DART-ID']] %>%
       dplyr::select('Raw.file', 'Sequence', 'PEP', 'dart_PEP') %>%
       dplyr::group_by(Raw.file) %>%
       dplyr::summarise(ids=sum(PEP < 0.01, na.rm=T),

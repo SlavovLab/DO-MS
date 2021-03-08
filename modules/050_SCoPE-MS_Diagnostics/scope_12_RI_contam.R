@@ -1,7 +1,7 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Reporter Ion Intensities vs. Carrier Intensities'
+  box_title <- 'Single experiment only:\nReporter Ion Intensities vs. Carrier Intensities'
   help_text <- 'Comparing the reporter ion intensities for all TMT channels to the carrier channel, chosen automatically as the most intense channel (median intensity).'
   source_file <- 'msms'
   

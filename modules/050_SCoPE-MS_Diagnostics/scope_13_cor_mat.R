@@ -1,8 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Reporter ion channel correlations'
-  help_text <- 'Plotting all pairwise TMT reporter ion intensity channel correlations (Pearson) for a single run.'
+  box_title <- 'Single experiment only:\nReporter ion channel spearman correlations'
+  help_text <- 'Plotting all pairwise TMT reporter ion intensity channel correlations (Spearman) for a single run.'
   source_file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -25,7 +25,7 @@ init <- function() {
       dplyr::select('Raw.file', starts_with('Reporter.intensity.corrected'))
       exp <- unique(plotdata2$Raw.file)
     
-    plotdata <- cor(plotdata, use="pairwise.complete.obs")
+    plotdata <- cor(plotdata, use="pairwise.complete.obs", method="spearman")
 
     plotdata <- reshape2::melt(plotdata)
     plotdata$Raw.file <- exp

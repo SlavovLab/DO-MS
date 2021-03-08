@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'MS1 Intensity, +1 ions'
-  help_text <- 'Plotting the intensity distribution of +1 ions, a diagnostic of non-peptide contaminants'
+  help_text <- 'Plotting the intensity distribution of +1 ions.'
   source_file <- 'allPeptides'
   
   .validate <- function(data, input) {

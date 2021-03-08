@@ -1,17 +1,17 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Total ID Rate'
-  help_text <- 'Number of MSMS scans, PSMs, and confident PSMs'
-  source_file <- 'evidence, msmsScans'
+  box_title <- 'Fractional ID Rate'
+  help_text <- 'Fractional rate of confident PSMs and PSMs from all MS2 scan events'
+  source_file <- 'DART-ID, msmsScans'
   
   .validate <- function(data, input) {
-    validate(need(data()[['evidence']], paste0('Upload evidence.txt')))
+    validate(need(data()[['DART-ID']], paste0('Upload evidence_updated.txt')))
     validate(need(data()[['msmsScans']], paste0('Upload msmsScans.txt')))
     
     # ensure that table has the DART-ID residual RT
     validate(need(
-      'dart_PEP' %in% colnames(data()[['evidence']]), 
+      'dart_PEP' %in% colnames(data()[['DART-ID']]), 
       paste0('Provide evidence.txt from DART-ID output, with updated dart_PEP column. Visit https://dart-id.slavovlab.net/ for more information about DART-ID')
     ))
   }
@@ -26,8 +26,8 @@ init <- function() {
                        psms=sum(as.character(Sequence) != ' ', na.rm=T)) %>%
       dplyr::arrange(Raw.file)
     
-    # IDs at 5e-2 and 1e-2 PEP
-    b <- data()[['evidence']] %>%
+    # IDs at 1e-2 PEP, 1e-2 DART PEP
+    b <- data()[['DART-ID']] %>%
       dplyr::select('Raw.file', 'Sequence', 'PEP', 'dart_PEP') %>%
       dplyr::group_by(Raw.file) %>%
       dplyr::summarise(ids=sum(PEP < 0.01, na.rm=T),
@@ -35,20 +35,26 @@ init <- function() {
       dplyr::arrange(Raw.file)
     if(nrow(a) == nrow(b)){
       plotdata <- cbind(a, b[,-1]) %>%
+        # get fractional rates, i.e., fraction of MSMS scans
+        dplyr::mutate(psms = psms / scans,
+                      ids = ids / scans,
+                      dart_ids = dart_ids / scans) %>%
         # gather = dplyr equiv. of reshape2::melt
         tidyr::gather(key, value, -Raw.file) %>%
+        # remove msms scans
+        dplyr::filter(key != 'scans') %>%
         # rename levels
-        dplyr::mutate(key=factor(key, labels=c('IDs @ DART PEP < 0.01', 'IDs @ PEP < 0.01', 'PSMs', 'MSMSs')))
+        dplyr::mutate(key=factor(key, labels=c('IDs @ DART PEP < 0.01', 'IDs @ PEP < 0.01', 'PSMs')))
     }else if((nrow(a) > 0) & (nrow(b) == 0)){
       plotdata <- a %>%
         tidyr::gather(key, value, -Raw.file) %>%
         # rename levels
-        dplyr::mutate(key=factor(key, labels=c('PSMs', 'MSMSs')))
+        dplyr::mutate(key=factor(key, labels=c('PSMs')))
     }else if((nrow(a) == 0) & (nrow(b) > 0)){
-      plotdata <- b %>%
+      plotdata <- b %>% 
         tidyr::gather(key, value, -Raw.file) %>%
         # rename levels
-        dplyr::mutate(key=factor(key, labels=c('IDs @ DART PEP < 0.01', 'IDs @ PEP < 0.01')))
+        dplyr::mutate(key=factor(key, labels=c('IDs @ DART PEP < 0.01', 'IDs @ PEP < 0.01', 'PSMs')))
     }
     return(plotdata)
   }

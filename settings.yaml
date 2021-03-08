@@ -34,12 +34,23 @@ input_files:
     file: 'parameters.txt'
     help: 'MaxQuant parameters.txt file'
     default_enabled: true
+  msScans:
+    name: 'msScans'
+    file: 'msScans.txt'
+    help: 'MaxQuant msScans.txt file'
+    default_enabled: true
 
 # Misc. input files to provide upload forms for
 misc_input_files:
   inclusion_list:
     name: 'inclusion_list'
     help: 'Inclusion List .txt file'
+  Labeling_Efficiency_list:
+    name: 'Labeling_Efficiency'
+    help: 'Labeling Efficiency .txt file'
+  dartid_list:
+    name: 'DART-ID'
+    help: 'DART-ID evidence_updated.txt file'
     
 # Allow addition of folders without MaxQuant txt output files?
 allow_all_folders: true

@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'Intensity of z=1 across gradient'
-  help_text <- 'Plotting the intensity of z=1 ions observed. This will give an if you are seeing mostly peptides or non-peptide species and where they occur in the gradient'
+  help_text <- 'Plotting the intensity of z=1 ions observed.'
   source_file <- 'allPeptides'
   
   .validate <- function(data, input) {
@@ -11,6 +11,7 @@ init <- function() {
   
   .plotdata <- function(data, input) {
     plotdata <- data()[['allPeptides']][,c('Raw.file', 'Charge', 'Intensity', 'Retention.time')]
+    plotdata$Intensity <- log10(plotdata$Intensity)
     
     plotdata <- plotdata %>%
       dplyr::filter(Charge == 1) %>%
@@ -31,7 +32,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow=1, scales = "free_x") + 
       scale_y_continuous(labels=scales::scientific) +
       coord_flip() + 
-      labs(x='Retention Time (min)', y=expression(bold('Summed Precursor Intensity'))) +
+      labs(x='Retention Time (min)', y=expression(bold('Summed Precursor Intensity, log10'))) +
       theme_base(input=input) 
   }
   

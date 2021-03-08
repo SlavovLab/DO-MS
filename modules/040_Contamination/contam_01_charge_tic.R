@@ -1,8 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'TIC of ions by charge state'
-  help_text <- 'Plotting the TIC of charge states observed. This will give an idea if you are seeing mostly peptides or non-peptide species'
+  box_title <- 'Summed precursor intensity by charge state'
+  help_text <- 'Plotting the summed precursor intensity by charge state.'
   source_file <- 'allPeptides'
   
   .validate <- function(data, input) {

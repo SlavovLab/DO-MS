@@ -1,8 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Miscleavage rate'
-  help_text <- 'Plotting frequency of peptide miscleavages.'
+  box_title <- 'Miscleavage rate, PEP < 0.01'
+  help_text <- 'Plotting frequency of miscleavages in confidently identified peptides.'
   source_file <- 'evidence'
   
   .validate <- function(data, input) {
@@ -11,6 +11,7 @@ init <- function() {
   
   .plotdata <- function(data, input) {
     plotdata <- data()[['evidence']][,c('Raw.file', 'Missed.cleavages', 'PEP','Type')]
+    plotdata <- plotdata[plotdata$PEP<0.01, ]
     plotdata <- plotdata %>% dplyr::filter(Type != "MULTI-MATCH")
     plotdata <- plotdata %>% dplyr::select('Raw.file', 'Missed.cleavages', 'PEP')
     return(plotdata)
@@ -26,6 +27,7 @@ init <- function() {
     
     ggplot(plotdata, aes(Missed.cleavages)) + 
       facet_wrap(~Raw.file, nrow = 1) + 
+      geom_vline(aes(xintercept = mean(Missed.cleavages)),col='red',size=1) + 
       geom_histogram(bins=10) + 
       coord_flip() + 
       labs(x='Missed Cleavages', y='Count') +

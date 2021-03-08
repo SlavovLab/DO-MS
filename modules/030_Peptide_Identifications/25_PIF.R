@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'Precursor Ion Fraction (PIF)'
-  help_text <- 'The distribution of PIFs for identified peptides across all sets, where PIF is a measure of coisolation (1 = pure, 0 = impure).'
+  help_text <- 'The distribution of PIFs for identified peptides across all experiments, where PIF is a measure of coisolation (1 = pure, 0 = impure).'
   source_file <- 'evidence'
   
   .validate <- function(data, input) {

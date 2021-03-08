@@ -1,8 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Elution profile: FWHM'
-  help_text <- 'Plotting the distrution of elution profile widths at half the maximum intensity value for all observed ions. '
+  box_title <- 'Elution profile: FWHM of most abundant ions'
+  help_text <- 'Plotting the distrutions of elution profile widths at half the maximum intensity value for the top ions with max intensity > 8e5.'
   source_file <- 'allPeptides'
   
   .validate <- function(data, input) {
@@ -18,7 +18,9 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[['allPeptides']][,c('Raw.file', 'Retention.length..FWHM.')]
+    plotdata <- data()[['allPeptides']][,c('Raw.file', 'Retention.length..FWHM.','Intensity')]
+    plotdata <- plotdata[ plotdata$Intensity > 8e5 , ]
+    plotdata<-plotdata[,c('Raw.file', 'Retention.length..FWHM.')]
     plotdata$Retention.length..FWHM.[plotdata$Retention.length..FWHM. > 45] <- 49
     
     # Thresholding data at 1 and 99th percentiles

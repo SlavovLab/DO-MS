@@ -3,16 +3,16 @@ init <- function() {
   type <- 'plot'
   box_title <- 'Error Probability Update'
   help_text <- '2D Densities of PSM error probabilities, given by MaxQuant (Spectra) and DART-ID. Points below the 45 degree line indicate boosted confidence (and lowered error probability), and vice versa for above the 45 degree line. Set the PEP slider to 1 to see all PSMs regardless of initial confidence.'
-  source_file <- 'evidence'
+  source_file <- 'DART-ID'
   
   .validate <- function(data, input) {
     
-    validate(need(data()[['evidence']], paste0('Upload evidence.txt')
+    validate(need(data()[['DART-ID']], paste0('Upload evidence_updated.txt')
     ))
     
     # ensure that table has the DART-ID PEP
     validate(need(
-      'dart_PEP' %in% colnames(data()[['evidence']]), 
+      'dart_PEP' %in% colnames(data()[['DART-ID']]), 
       paste0('Provide evidence.txt from DART-ID output, with updated dart_PEP column. Visit https://dart-id.slavovlab.net/ for more information about DART-ID')
     ))
   }
@@ -21,7 +21,7 @@ init <- function() {
     
     conf_limit <- 1e-8
     
-    ev.f <- data()[['evidence']] %>%
+    ev.f <- data()[['DART-ID']] %>%
       dplyr::select(c('Sequence', 'PEP', 'dart_PEP')) %>%
       dplyr::filter(!PEP == dart_PEP) %>%
       dplyr::filter(PEP > 0 & dart_PEP > 0 & PEP > conf_limit & dart_PEP > conf_limit) %>%

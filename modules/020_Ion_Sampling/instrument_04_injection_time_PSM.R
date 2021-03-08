@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'Injection times, PSM resulting'
-  help_text <- 'Plotting distribution of injection times for MS2 events that did result in a PSM.'
+  help_text <- 'Plotting distribution of MS2 injection times for scans that did result in a PSM.'
   source_file <- 'msmsScans'
   
   .validate <- function(data, input) {

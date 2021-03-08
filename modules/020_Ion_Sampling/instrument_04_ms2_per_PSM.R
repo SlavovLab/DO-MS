@@ -1,26 +1,26 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Injection times, no PSM resulting'
-  help_text <- 'Plotting distribution of MS2 injection times for scans that did not result in a PSM.'
-  source_file <- 'msmsScans'
+  box_title <- 'Number of MS2s per PSM'
+  help_text <- 'Plotting distribution of MS2 scans per PSM.'
+  source_file <- 'evidence'
   
   .validate <- function(data, input) {
-    validate(need(data()[['msmsScans']], paste0('Upload msmsScans.txt')))
+    validate(need(data()[['evidence']], paste0('Upload evidence.txt')))
     
     # MQ: sometimes get this weird parsing error where all sequences are replaced with NAs
     # unless we provide the exact column definitions (which is not viable) we can't recover
     # the lost data. if this happens then this module will cause a global crash and prevent
     # report generation, etc.
     validate(need(
-      any(!is.na(data()[['msmsScans']][,'Sequence'])), 
-      paste0('Parsing of peptide sequences in msmsScans.txt failed.')
+      any(!is.na(data()[['evidence']][,'Sequence'])), 
+      paste0('Parsing of peptide sequences in Sequence.txt failed.')
     ))
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[['msmsScans']][,c('Raw.file', 'Ion.injection.time', 'Sequence')]
-    plotdata <- plotdata[is.na(plotdata$Sequence),]
+    plotdata <- data()[['evidence']]
+    plotdata <- plotdata[!is.na(plotdata$Sequence),]
     return(plotdata)
   }
   
@@ -29,12 +29,12 @@ init <- function() {
     plotdata <- .plotdata(data, input)
     
     validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
-    
-    ggplot(plotdata, aes(Ion.injection.time)) + 
+
+    ggplot(plotdata, aes(MS.MS.count)) + 
       facet_wrap(~Raw.file, nrow = 1, scales = "free_x") + 
       geom_histogram(bins=30) + 
       coord_flip() + 
-      labs(x='Ion Injection Time (ms)', y='Number of Ions') +
+      labs(x='# MS2 per PSM', y='Number of MS2 scans') +
       theme_base(input=input)
   }
   
@@ -50,4 +50,3 @@ init <- function() {
     dynamic_width_base=150
   ))
 }
-

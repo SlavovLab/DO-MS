@@ -3,21 +3,21 @@ init <- function() {
   type <- 'plot'
   box_title <- 'Increase in Confident PSMs'
   help_text <- 'Fold-change increase of PSMs at given confidence thresholds (in this case, FDR thresholds)'
-  source_file <- 'evidence'
+  source_file <- 'DART-ID'
   
   .validate <- function(data, input) {
     
-    validate(need(data()[['evidence']], paste0('Upload evidence.txt')))
+    validate(need(data()[['DART-ID']], paste0('Upload evidence_updated.txt')))
     
     # ensure that table has the DART-ID PEP
     validate(need(
-      'dart_PEP' %in% colnames(data()[['evidence']]), 
+      'dart_PEP' %in% colnames(data()[['DART-ID']]), 
       paste0('Provide evidence.txt from DART-ID output, with updated dart_PEP column.  Visit https://dart-id.slavovlab.net/ for more information about DART-ID')
     ))
   }
   
   .plotdata <- function(data, input) {
-    ev <- data()[['evidence']] 
+    ev <- data()[['DART-ID']] 
     ev <- ev %>%
       filter(!is.na(PEP) & !is.na(dart_PEP)) %>%
       # ceil PEPs to 1

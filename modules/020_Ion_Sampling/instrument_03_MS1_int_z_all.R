@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'MS1 Intensity for all ions'
-  help_text <- 'Plotting the MS1 intensity for all ions observed (not necessarily sent to MS2) across runs.'
+  help_text <- 'Plotting the MS1 intensity for all ions observed (not necessarily sent to MS2).'
   source_file <- 'allPeptides'
   
   .validate <- function(data, input) {

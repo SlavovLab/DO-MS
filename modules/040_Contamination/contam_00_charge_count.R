@@ -2,7 +2,7 @@ init <- function() {
 
   type <- 'plot'
   box_title <- 'Number of ions by charge state'
-  help_text <- 'Plotting the frequency of charge states observed. This will give an if you are seeing mostly peptides or non-peptide species'
+  help_text <- 'Number of ions observed during MS1 scans by charge state'
   source_file <- 'allPeptides'
 
   

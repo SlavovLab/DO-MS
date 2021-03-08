@@ -1,4 +1,4 @@
-version <- '1.0.9'
+version <- '1.0.10'
 
 # check R version. required R >= 3.5.0
 if(as.numeric(R.Version()$major) < 4) {
@@ -13,7 +13,7 @@ library(pacman)
 
 # install/load dependencies
 p_load(shiny, shinyWidgets, shinydashboard, dplyr, tidyr, ggplot2, lattice, knitr, tibble,
-       reshape2, readr, rmarkdown, stats, DT, stringr, yaml, viridisLite)
+       reshape2, readr, rmarkdown, stats, DT, stringr, yaml, viridisLite, ggpubr)
 
 
 print('Checking online for latest version of DO-MS...')
@@ -108,6 +108,10 @@ config[['tab_colors']] <- rep(config[['tab_colors']], 10)
 app_css <- paste(readLines(file.path('resources', 'app.css')), collapse='')
 # load app.js into string
 app_js <- paste(readLines(file.path('resources', 'app.js')), collapse='\n')
+
+substrRight <- function(x){
+  substr(x, 1, nchar(x)-1)
+}
 
 theme_base <- function(input=list(), show_legend=F) {
   # default values
