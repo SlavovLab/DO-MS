@@ -22,8 +22,7 @@ init <- function() {
     
     validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
-    plotdata<-read.delim("/Volumes/GoogleDrive/My Drive/MS/cluster_searches/whs266/msScans.txt")
-    
+
     
     plotdata$flx<-plotdata$Total.ion.current#/plotdata$Ion.injection.time
     
