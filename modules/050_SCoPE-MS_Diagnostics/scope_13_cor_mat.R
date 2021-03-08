@@ -40,7 +40,8 @@ init <- function() {
     validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
     
     unique_labels_size <- length(unique(plotdata$Var1))
-    TMT_labels <- c('C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11')
+    TMT_labels <- c('C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11',
+                    'C12', 'C12', 'C14', 'C15', 'C16')
     plot_to_labels <- TMT_labels[1:unique_labels_size]
     
     ggplot(plotdata, aes(x=Var1, y=Var2, fill=value)) + 
