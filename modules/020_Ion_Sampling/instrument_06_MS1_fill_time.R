@@ -11,7 +11,7 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[['msScans']][,c('Raw.file', 'Ion.injection.time')]
+    plotdata <- data()[['msScans']][,c('Raw.file', 'Ion.injection.time','Total.ion.current')]
     
     return(plotdata)
   }
