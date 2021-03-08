@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'Fractional ID Rate by intensity'
-  help_text <- 'Fractional ID rate by intensity'
+  help_text <- 'Fractional ID rate by binned by MS1 intensity'
   source_file <- 'allPeptides'
   
   .validate <- function(data, input) {
@@ -10,7 +10,7 @@ init <- function() {
   }
   
   .plotdata <- function(data, input) {
-    plotdata <- data()[['allPeptides']][,c('Raw.file')]
+    plotdata <- data()[['allPeptides']]
     return(plotdata)
   }
   
