@@ -16,7 +16,6 @@ p_load(shiny, shinyWidgets, shinydashboard, dplyr, tidyr, ggplot2, lattice, knit
       reshape2, readr, rmarkdown, stats, DT, stringr, yaml, viridisLite, ggpubr)
 
 print('Checking online for latest version of DO-MS...')
-
 # check application version
 # grab release tags from github and compare them to the local version
 tryCatch({
@@ -52,6 +51,7 @@ tryCatch({
 
 # load application settings
 config <- read_yaml('settings.yaml')
+
 
 
 # load tabs first
@@ -241,3 +241,5 @@ sanitize_text_output <- function(text) {
   # return
   text
 }
+
+

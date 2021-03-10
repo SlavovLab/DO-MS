@@ -1,7 +1,10 @@
+
+
 source(file.path('ui', 'documentation_tab.R')) # loads documentation_tab var
 source(file.path('ui', 'report_tab.R')) # loads report_tab var
 source(file.path('ui', 'import_tab.R')) # loads import_tab var
 source(file.path('ui', 'settings_tab.R')) # loads settings
+
 
 # list of menu items for switching tabs
 # add static items for static tabs first
@@ -12,6 +15,8 @@ for(i in 1:length(tabs)) {
   menu_items[[i]] <- menuSubItem(tabs[i], tabName=paste0(gsub('\\s', '-', tabs[i]), '-', i))
 }
 
+
+
 # list of tab items for each tab
 # add static items for static tabs first
 tab_items <- list(
@@ -20,6 +25,8 @@ tab_items <- list(
   documentation_tab,
   settings_tab
 )
+
+
 # add tab item for each tab
 # each tab has a uiOutput (HTML output) that will be
 # defined in server.R
@@ -43,18 +50,22 @@ for(i in 1:length(tabs)) {
                     'background-color: ', config[['tab_colors[i]']], '; color: white; }')
 }
 
-
 ## resolve dependency collisions between shinydashboard and shinyWidgets
 ## we'll use these dependency handles to suppress warnings and then reinject them
 
-# get bootstrap dependency
-bsDep <- shiny::bootstrapLib()
-bsDep$name <- "bootstrap2"
+# # get bootstrap dependency
+#bsDep <- shiny::bootstrapLib()
+#bsDep$name <- "bootstrap2"
+
+bsDep <- findDependencies(
+  bootstrapLib()
+)
+bsDep[[1]]$name <- "bootstrap2"
+
 
 # get pickerInput dependency
 pkDep <- htmltools::findDependencies(shinyWidgets:::attachShinyWidgetsDep(tags$div(), widget = "picker"))
 pkDep[[2]]$name <- "picker2"
-
 
 shinyUI(
   dashboardPage(skin='blue',
@@ -129,7 +140,8 @@ shinyUI(
       htmltools::suppressDependencies("bootstrap"),
       
       # reinject them
-      bsDep, pkDep,
+      pkDep, bsDep,
+      
       
       tags$head(
         tags$style(HTML(app_css)),
@@ -139,3 +151,5 @@ shinyUI(
     )
   )
 )
+
+
