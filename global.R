@@ -13,8 +13,7 @@ library(pacman)
 
 # install/load dependencies
 p_load(shiny, shinyWidgets, shinydashboard, dplyr, tidyr, ggplot2, lattice, knitr, tibble,
-       reshape2, readr, rmarkdown, stats, DT, stringr, yaml, viridisLite, ggpubr)
-
+      reshape2, readr, rmarkdown, stats, DT, stringr, yaml, viridisLite, ggpubr)
 
 print('Checking online for latest version of DO-MS...')
 
@@ -31,7 +30,8 @@ tryCatch({
   tag_versions <- sapply(release_tags, function(tag) { substring(tag$name, 2) })
   
   # get the latest version from the one that would be sorted last
-  latest_version <- rev(sort(tag_versions))[1]
+  #latest_version <- rev(sort(tag_versions))[1]
+  latest_version <- (tag_versions)[1]
   
   # do string order comparison to determine where the current version falls
   if(version == latest_version) {
@@ -49,7 +49,6 @@ tryCatch({
 }, finally={
   
 })
-
 
 # load application settings
 config <- read_yaml('settings.yaml')

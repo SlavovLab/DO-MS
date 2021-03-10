@@ -22,15 +22,17 @@ shinyServer(function(input, output, session) {
   }
   
   
+  
   folders <- reactiveVal(data.frame(
     Folder.Name=as.character(c()),
     Has.Files=as.logical(c()),
     Path=as.character(c())
   ))
   
+
   if(file.exists('folder_list.txt')) {
     .folders <- as.data.frame(read_tsv('folder_list.txt'))
-    
+
     # patch older versions of the folder_list where Has.Files doesn't exist
     if(ncol(.folders) < 3) {
       print('Detected legacy version of folder_list.txt. Patching now...')
@@ -38,7 +40,7 @@ shinyServer(function(input, output, session) {
       # reorder columns
       .folders <- .folders[,c('Folder.Name', 'Has.Files', 'Path')]
     }
-    
+
     folders <- reactiveVal(.folders)
   }
   
@@ -134,6 +136,7 @@ shinyServer(function(input, output, session) {
       folder_files <- list.files(path=folder)
       # require that it has all files
       has_files <- all(sapply(config[['input_files']], function(i) { i$file }) %in% folder_files)
+      
       
       # if the user wants to skip folders without all files present...
       if(!config[['allow_all_folders']] & !has_files) {
