@@ -56,12 +56,11 @@ for(i in 1:length(tabs)) {
 # # get bootstrap dependency
 #bsDep <- shiny::bootstrapLib()
 #bsDep$name <- "bootstrap2"
-
+library(htmltools)
 bsDep <- findDependencies(
   bootstrapLib()
 )
 bsDep[[1]]$name <- "bootstrap2"
-
 
 # get pickerInput dependency
 pkDep <- htmltools::findDependencies(shinyWidgets:::attachShinyWidgetsDep(tags$div(), widget = "picker"))
