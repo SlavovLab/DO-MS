@@ -10,10 +10,10 @@ init <- function() {
     validate(need(data()[['Labeling_Efficiency']], paste0('Upload evidence.txt in labeling efficiency input')))
     
     # require TMT as a variable mod
-    #validate(need(any(grepl('TMT', data()[['Labeling_Efficiency']]$Modifications)), 
-                  #paste0('Loaded data was not searched with TMT as a variable modification')))
-    #validate(need(any(grepl('TMTPro_K_LE', colnames(data()[['Labeling_Efficiency']]))), 
-                #  paste0('Loaded data was not searched with TMT as a variable modification')))
+    validate(need(any(grepl('TMT', data()[['Labeling_Efficiency']]$Modifications)), 
+                  paste0('Loaded data was not searched with TMT as a variable modification')))
+    validate(need(any(grepl('TMTPro_K_LE', colnames(data()[['Labeling_Efficiency']]))), 
+                  paste0('Loaded data was not searched with TMT as a variable modification')))
   }
   
   .plotdata <- function(data, input) {
@@ -26,8 +26,8 @@ init <- function() {
       plotdata$K_count <- stringr::str_count(plotdata$Sequence, "K")
       plotdata$Acetyl_count = stringr::str_count(plotdata$Modifications, "Acetyl (Protein N-term)")
 
-      n_nam<-c("TMT11plex_N_LE", "TMTPro_Nter_LE")
-      k_nam<-c("TMT11plex_K_LE", "TMTPro_K_LE")
+      n_nam<-c("TMT11plex_N_LE", "TMTPro_Nter_LE","Variable_TMTpro16plex.N-term")
+      k_nam<-c("TMT11plex_K_LE", "TMTPro_K_LE","Variable_TMTpro16plex.Lys")
       
       n_ind<-which(colnames(plotdata)%in%n_nam)
       k_ind<-which(colnames(plotdata)%in%k_nam)
