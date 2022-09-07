@@ -19,7 +19,7 @@ permalink: /
 
 ![]({{site.baseurl}}/assets/images/TOC_Graphic_noOutline_abstract_v18.png){: width="70%" .center-image}
 
-## Aim of DO-MS
+## Aim of DO-MS-DIA
 The performance of ultrasensitive liquid chromatography and tandem mass spectrometry (LC-MS/MS) methods, such as [single-cell proteomics by mass spectrometry](https://scope2.slavovlab.net/mass-spec/sensitive-mass-spectrometry-analysis), depends on multiple interdependent parameters. This interdependence makes it challenging to specifically pinpoint the sources of problems in the LC-MS/MS methods. For example, a low signal at the MS2 level can be due to poor LC separation, ionization, apex targeting, ion transfer, or ion detection. DO-MS aims to specifically diagnose such problems by interactively visualizing data from all levels of bottom-up LC-MS/MS analysis.
 
 ## Getting Started
