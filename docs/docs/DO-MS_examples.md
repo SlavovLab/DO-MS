@@ -12,4 +12,4 @@ Bellow are links to example DO-MS Reports
 
 
 1. [Isobaric carrier optimization](https://scope2.slavovlab.net/mass-spec/Isobaric-carrier-optimization#do-ms-reports)
-2. [SCoPE2](https://scope2.slavovlab.net/docs/do-ms)
+2. [Technical improvements of SCoPE2](https://scope2.slavovlab.net/mass-spec/Increased-accuracy-and-throughput)
