@@ -51,7 +51,7 @@ attach_module_outputs <- function(input, output, filtered_data, exp_sets) {
     module$validate_func(filtered_data, input)
     plotdata <- module$plotdata_func(filtered_data, input)
     # TODO: options to configure output format (CSV, delimeters, quotes, etc)
-    write_tsv(plotdata, path=file)
+    write_tsv(plotdata, file=file)
     
     # finish progress bar
     progress$inc(1, detail='')

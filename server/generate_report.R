@@ -95,6 +95,8 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
   
   for(t in 1:length(tabs)) { local({
     
+    
+    
     # need to create copies of these indices in the local environment
     # otherwise, the indices will be frozen for each iteration, only generating the last one
     .t <- t
@@ -112,15 +114,17 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
     for(m in 1:length(modules_in_tab)) { local({
       .m <- m
       module <- modules_in_tab[[.m]]
+
       
       # debugging:
-      # print(paste0('tab ', .t))
-      # print(paste0('module ', .m))
+      print(paste0('tab ', .t))
+      print(paste0('module ', .m))
       
       if(progress_bar) {
         progress$inc(0.45/num_modules, detail=paste0('Adding module ', .m, ' from tab ', .t))
       }
       
+      print('1')
       # create chunk name from module box title
       chunk_name <- module$id
       chunk_name <- gsub('\\s', '_', chunk_name)
@@ -129,7 +133,7 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
       # if dynamic plot width is defined, then inject that into this
       # R-markdown chunk instead
       # because dynamic width is defined in pixels -- need to convert to inches
-      
+      print('2')
       plot_width = NA
       if(!is.null(module$dynamic_width)) {
         num_files <- length(exp_sets)
@@ -148,28 +152,28 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
         # round up to an integer
         plot_width <- ceiling(plot_width)
       }
-      
+      print('3')
       # override existing/default plot width if it is explicitly defined
       if(!is.null(module$report_plot_width)) {
         plot_width <- module$report_plot_width
       }
-      
+      print('4')
       # if plot width was defined, then insert it into the block def
       if(!is.na(plot_width)) { plot_width <- paste0(', fig.width=', plot_width) }
       else { plot_width <- '' }
-      
+      print('5')
       plot_height <- ''
       # override existing/default plot height if it is explicitly defined
       if(!is.null(module$report_plot_height)) {
         plot_height <- paste0(', fig.height=', module$report_plot_height)
       }
-      
+      print('6')
       # prevent further processing with 'results=asis' flag?
       results_flag <- ''
       if(module$type == 'text') {
         results_flag <- ", results='asis'"
       }
-      
+      print('7')
       report <<- paste(report,
                        paste0('### ', module$box_title, ' {.plot-title}'), '',
                        module$help, '',
@@ -181,30 +185,33 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
                               '}'),
                        'options( warn = -1 )',
                        sep='\n')
-      
+      print('8')
       # call helper function to decide what to do with this module + report format
       report <<- paste(report, render_module(.t, .m, module$type, input$report_format), sep='\n')
-      
+      print('9')
       
       # store the output from the module plot function
       plots[[.m]] <<- tryCatch(module$plot_func(filtered_data, input),
         error = function(e) { paste0('Plot failed to render. Reason: ', e) },
         finally={}
       )
-      
+      print('10')
       # if this plot is a text, sanitize the text
       if(module$type == 'text') {
         plots[[.m]] <<- sanitize_text_output(plots[[.m]])
       }
+      print('11')
+      print(module$type %in% c('table', 'datatable'))
+      print(all(class(plots[[.m]]) != 'character'))
       # if this plot is a table, sanitize the text in every cell in the table
       # note: sanitize_text_output ignores non-character values so don't worry about
       #       inadvertently typecasting doubles or logicals to characters
-      if(module$type %in% c('table', 'datatable') & class(plots[[.m]]) != 'character') {
+      if(module$type %in% c('table', 'datatable') & all(class(plots[[.m]]) != 'character')) {
         plots[[.m]] <<- plots[[.m]] %>%
           dplyr::mutate_all(sanitize_text_output) %>%
           dplyr::rename_all(sanitize_text_output)
       }
-      
+      print('12')
       # grab module metadata, but exclude function definitions to save space
       meta[[.m]] <<- module[!grepl('Func', names(module))]
       

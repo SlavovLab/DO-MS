@@ -46,12 +46,9 @@ init <- function() {
     validate(need(nrow(plotdata) > 2, paste0('Less than 2 peptides with labeled and unlabeled precursors')))
     
     ggplot(plotdata, aes(Log2IntRatio)) +
-      #geom_bar(stat='identity') +
       geom_histogram() +
       coord_flip() + 
       facet_wrap(~Raw.file.x, nrow=1) +
-      #scale_x_discrete(labels=c('Unlabeled', 'Labeled')) +
-      #scale_fill_discrete(guide=F) +
       labs(x="Log2(Precursor Intensity Ratio)\n(Labeled / Unlabeled)", y='# Peptides') +
       theme_base(input=input) +
       theme(axis.text.x=element_text(angle=45, hjust=1, vjust=1))

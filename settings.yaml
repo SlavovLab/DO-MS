@@ -3,55 +3,143 @@
 # Global Settings for the DO-MS app and report
 
 # Input files to load from each search output folder
-input_files:
-  evidence:
-    name: 'evidence'
-    file: 'evidence.txt'
-    help: 'MaxQuant evidence.txt file'
-    default_enabled: true
-  msms:
-    name: 'msms'
-    file: 'msms.txt'
-    help: 'MaxQuant msms.txt file'
-    default_enabled: true
-  msmsScans:
-    name: 'msmsScans'
-    file: 'msmsScans.txt'
-    help: 'MaxQuant msmsScans.txt file'
-    default_enabled: true
-  allPeptides:
-    name: 'allPeptides'
-    file: 'allPeptides.txt'
-    help: 'MaxQuant allPeptides.txt file'
-    default_enabled: true
-  summary:
-    name: 'summary'
-    file: 'summary.txt'
-    help: 'MaxQuant summary.txt file'
-    default_enabled: true
-  parameters:
-    name: 'parameters'
-    file: 'parameters.txt'
-    help: 'MaxQuant parameters.txt file'
-    default_enabled: true
-  msScans:
-    name: 'msScans'
-    file: 'msScans.txt'
-    help: 'MaxQuant msScans.txt file'
-    default_enabled: true
 
-# Misc. input files to provide upload forms for
-misc_input_files:
-  inclusion_list:
-    name: 'inclusion_list'
-    help: 'Inclusion List .txt file'
-  Labeling_Efficiency_list:
-    name: 'Labeling_Efficiency'
-    help: 'Labeling Efficiency .txt file'
-  dartid_list:
-    name: 'DART-ID'
-    help: 'DART-ID evidence_updated.txt file'
+do_ms_mode: "dia-nn" #switch between dia-nn and max_quant
+
+dia-nn:
+  mode_name: 'DIA-NN'
+  mode_skin: 'purple'
+      
+  ChemicalLabels:
+      - "(mTRAQ0)"
+      - "(mTRAQ4)"
+      - "(mTRAQ8)"
+          
+  channels:
+    mtraq0:
+      modification: "(mTRAQ0)"
+      name: "d0"
+      
+    mtraq4:
+      modification: "(mTRAQ4)"
+      name: "d4"
+      
+    mtraq8:
+      modification: "(mTRAQ8)"
+      name: "d8"
+      
+      
+  modifications:
+    phospho:
+      unimod: "(UniMod:21)"
+      name: "Phosphorylation"
+      
+    methyl:
+      unimod: "(UniMod:34)"
+      name: "Methylation"
+      
+    acetyl:
+      unimod: "(UniMod:1)"
+      name: "Acetylation"
+      
+  misc_input_files:
+    # None
     
+  input_files:
+    report:
+      name: 'report'
+      file: 'report.tsv'
+      help: 'DIA-NN report.tsv'
+      default_enabled: true
+      
+    ms1_extracted:
+      name: 'ms1_extracted'
+      file: 'report.pr_matrix_channels_ms1_extracted.tsv'
+      help: 'DIA-NN ms1_extracted.tsv'
+      default_enabled: true
+      
+    features:
+      name: 'features'
+      file: 'features.tsv'
+      help: 'feature-detection features.tsv'
+      default_enabled: true
+      
+    fill_times:
+      name: 'fill_times'
+      file: 'fill_times.tsv'
+      help: 'feature-detection fill_times.tsv'
+      default_enabled: true
+      
+    tic:
+      name: 'tic'
+      file: 'tic.tsv'
+      help: 'extracted total ion current tic.tsv'
+      default_enabled: true
+      
+    sn:
+      name: 'sn'
+      file: 'sn.tsv'
+      help: 'extracted signal to noise sn.tsv'
+      default_enabled: true
+      
+  # Retention time filter applied to all statistics displaying retention time information
+  RT.Start: 0
+  RT.End: 90
+    
+max_quant:
+  mode_name: 'Max Quant'
+  mode_skin: 'blue'
+  
+  # Input files to load from each search output folder
+  input_files:
+    evidence:
+      name: 'evidence'
+      file: 'evidence.txt'
+      help: 'MaxQuant evidence.txt file'
+      default_enabled: true
+    msms:
+      name: 'msms'
+      file: 'msms.txt'
+      help: 'MaxQuant msms.txt file'
+      default_enabled: true
+    msmsScans:
+      name: 'msmsScans'
+      file: 'msmsScans.txt'
+      help: 'MaxQuant msmsScans.txt file'
+      default_enabled: true
+    allPeptides:
+      name: 'allPeptides'
+      file: 'allPeptides.txt'
+      help: 'MaxQuant allPeptides.txt file'
+      default_enabled: true
+    summary:
+      name: 'summary'
+      file: 'summary.txt'
+      help: 'MaxQuant summary.txt file'
+      default_enabled: true
+    parameters:
+      name: 'parameters'
+      file: 'parameters.txt'
+      help: 'MaxQuant parameters.txt file'
+      default_enabled: true
+    msScans:
+      name: 'msScans'
+      file: 'msScans.txt'
+      help: 'MaxQuant msScans.txt file'
+      default_enabled: true
+
+  # Misc. input files to provide upload forms for
+  misc_input_files:
+    inclusion_list:
+      name: 'inclusion_list'
+      help: 'Inclusion List .txt file'
+    Labeling_Efficiency_list:
+      name: 'Labeling_Efficiency'
+      help: 'Labeling Efficiency .txt file'
+    dartid_list:
+      name: 'DART-ID'
+      help: 'DART-ID evidence_updated.txt file'
+        
 # Allow addition of folders without MaxQuant txt output files?
 allow_all_folders: true
     
@@ -63,7 +151,7 @@ pif_thresh: 0
 remove_decoy: REV_
 remove_contam: CON_
 
-exp_name_format: 'Exp %f %i'
+exp_name_format: '%e'
 exp_name_pattern: ''
 
 ## Figure rendering options
@@ -72,15 +160,15 @@ ppi: 150
 
 ## download figure settings
 download_figure_units: 'in'
-download_figure_width: 5
+download_figure_width: 6
 download_figure_height: 5
 
 # label font size
-figure_title_font_size: 16
+figure_title_font_size: 12
 # axis tick label font size
-figure_axis_font_size: 12
+figure_axis_font_size: 10
 # facet label font size
-figure_facet_font_size: 12
+figure_facet_font_size: 10
 # line width
 figure_line_width: 1
 # show background grid
@@ -115,8 +203,10 @@ tab_colors: ['#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', '#1B9E77', '
 
 aliases:
   'Raw.file':
+    - Run
     - Raw.File
     - RawFile
   'Retention.time':
+    - RT
     - Retention.Time
     - RetentionTime
