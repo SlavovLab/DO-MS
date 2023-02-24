@@ -1,9 +1,16 @@
 version <- '2.0.b5'
 
-# check R version. required R >= 3.5.0
-# if(as.numeric(R.Version()$major) < 4) {
-#   stop('R Version >= 4.0.0 required. Download the latest version of R from the CRAN page: https://cran.r-project.org/')
-# }
+version <- '1.0.11'
+
+# check R version. required R >= 3.5.0 & R <= 4.0.2
+if(as.numeric(R.Version()$major) < 4) {
+  stop('R Version >= 4.0.0  and <= 4.0.2 required. Download R 4.0.2 from the CRAN page: https://cran.r-project.org/')
+}
+
+# check R version. required R <= 4.0.2
+#if(as.numeric(R.Version()$minor) > 0.2) {
+#  stop('R Version <= 4.0.2 required. Download R 4.0.2 from the CRAN page: https://cran.r-project.org/')
+#}
 
 # first, get pacman
 if(!'pacman' %in% installed.packages()[,'Package']) {

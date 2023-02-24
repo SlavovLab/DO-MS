@@ -148,14 +148,14 @@ shinyUI(
     dashboardSidebar(
       sidebarMenu(
         # Sidebar Menu Options
-        menuItem("Import Data", tabName = "import", icon = icon("upload", lib="glyphicon")),
+        menuItem("Import Data", tabName = "import", icon = icon("upload", lib="glyphicon", verify_fa = FALSE)),
         menuItem("Dashboard", tabName = "dashboard", 
-                 icon = icon("signal", lib = "glyphicon"), startExpanded = TRUE,
+                 icon = icon("signal", lib = "glyphicon", verify_fa = FALSE), startExpanded = TRUE,
           menu_items
         ),
-        menuItem("Generate Report", tabName = "report", icon = icon("file", lib="glyphicon")),
-        menuItem("Documentation", tabName = "documentation", icon = icon("book", lib="glyphicon")),
-        menuItem("Plot Settings", tabName = "settings", icon = icon("cog", lib="glyphicon"))
+        menuItem("Generate Report", tabName = "report", icon = icon("file", lib="glyphicon", verify_fa = FALSE)),
+        menuItem("Documentation", tabName = "documentation", icon = icon("book", lib="glyphicon", verify_fa = FALSE)),
+        menuItem("Plot Settings", tabName = "settings", icon = icon("cog", lib="glyphicon", verify_fa = FALSE))
       ),
       
       tags$hr(),
