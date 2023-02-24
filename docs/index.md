@@ -12,6 +12,7 @@ permalink: /
 <u>D</u>ata-Driven <u>O</u>ptimization of <u>M</u>ass <u>S</u>pectrometry Methods
 {: .fs-6 .fw-300}
 
+![Python Package](https://github.com/SlavovLab/DO-MS-DIA/actions/workflows/python-package.yml/badge.svg)
 ![GitHub release](https://img.shields.io/github/release/SlavovLab/DO-MS.svg)
 ![GitHub](https://img.shields.io/github/license/SlavovLab/DO-MS.svg)
 
@@ -19,26 +20,34 @@ permalink: /
 
 ![]({{site.baseurl}}/assets/images/TOC_Graphic_noOutline_abstract_v18.png){: width="70%" .center-image}
 
-## Aim of DO-MS-DIA
-The performance of ultrasensitive liquid chromatography and tandem mass spectrometry (LC-MS/MS) methods, such as [single-cell proteomics by mass spectrometry](https://scope2.slavovlab.net/mass-spec/sensitive-mass-spectrometry-analysis), depends on multiple interdependent parameters. This interdependence makes it challenging to specifically pinpoint the sources of problems in the LC-MS/MS methods. For example, a low signal at the MS2 level can be due to poor LC separation, ionization, apex targeting, ion transfer, or ion detection. DO-MS aims to specifically diagnose such problems by interactively visualizing data from all levels of bottom-up LC-MS/MS analysis.
+## Aim of DO-MS
+The performance of ultrasensitive liquid chromatography and tandem mass spectrometry (LC-MS/MS) methods, such as [single-cell proteomics by mass spectrometry](https://scope2.slavovlab.net/mass-spec/sensitive-mass-spectrometry-analysis) and [multiplexed data-independent acquisition experiments](https://plexdia.slavovlab.net/), depends on multiple interdependent parameters. This interdependence makes it challenging to specifically pinpoint the sources of problems in the LC-MS/MS methods. 
 
-## Getting Started
+This applies to data-dependent acquisition (DDA) as well as to data-indepent acquisition (DIA) experiments. For example, a low signal at the MS2 level in a DDA experiment can be due to poor LC separation, ionization, apex targeting, ion transfer, or ion detection. DO-MS aims to specifically diagnose such problems by interactively visualizing data from all levels of bottom-up LC-MS/MS analysis.
 
-Please read our detailed getting started guides:
-* [Getting started on the application]({{site.baseurl}}/docs/getting-started-application)
-* [Getting started on the command-line]({{site.baseurl}}/docs/getting-started-command-line)
+|Search Engine   | Orbitrap | TimsTOF | Others |
+|----------------|----------|---------|--------|
+| MaxQuant       |     ✔    |    ✔    |    ✔   |
+| DIA-NN         |     ✔    |    ✔    |    ✔   |
 
-### Requirements
-
-This application has been tested on R >= 3.5.0, OSX 10.14 / Windows 7/8/10. R can be downloaded from the main [R Project page](https://www.r-project.org/) or downloaded with the [RStudio Application](https://www.rstudio.com/products/rstudio/download/). All modules are maintained for MaxQuant >= 1.6.0.16.
-
-The application suffers from visual glitches when displayed on unsupported older browsers (such as IE9 commonly packaged with RStudio on Windows). Please use IE >= 11, Firefox, or Chrome for the best user experience.
 
 ### Installation
 
-Install this application by downloading it from the [release page](https://github.com/SlavovLab/DO-MS/releases/latest).
+Install this application by downloading it from the [release page](https://github.com/SlavovLab/DO-MS/releases/latest) and by following the [installation instructions]({{site.baseurl}}/docs/installation).
 
-### Running
+
+## Getting Started
+Please read our detailed getting started guides:
+* [Getting started with DIA preprocessing]({{site.baseurl}}/docs/getting-started-preprocessing)
+* [Getting started on the application]({{site.baseurl}}/docs/getting-started-application)
+
+
+### Requirements
+This application has been tested on R >= 3.5.0, OSX 10.14 / Windows 7/8/10/11. R can be downloaded from the main [R Project page](https://www.r-project.org/) or downloaded with the [RStudio Application](https://www.rstudio.com/products/rstudio/download/). All modules are maintained for MaxQuant >= 1.6.0.16 and DIA-NN > 1.8.1.
+
+The application suffers from visual glitches when displayed on unsupported older browsers (such as IE9 commonly packaged with RStudio on Windows). Please use IE >= 11, Firefox, or Chrome for the best user experience.
+
+### Running the Interactive Application
 
 The easiest way to run the app is directly through RStudio, by opening the `DO-MS.Rproj` Rproject file
 
@@ -50,16 +59,6 @@ and clicking the "Run App" button at the top of the application, after opening t
 
 You can also start the application by running the `start_server.R` script.
 
-### Automated Report Generation
-
-You can automatically generate PDF/HTML reports without having to launch the server by running the `do-ms_cmd.R` script, like so:
-
-```
-$ Rscript do-ms_cmd.R config_file.yaml
-```
-
-This requires a configuration file, and you can [find an example one here](https://github.com/SlavovLab/DO-MS/blob/master/example/config_file.yaml). See [Automating Report Generation]({{site.baseurl}}/docs/automation) for more details and instructions.
-
 ### Customization
 
 DO-MS is designed to be easily user-customizable for in-house proteomics workflows. Please see [Building Your Own Modules]({{site.baseurl}}/docs/build-your-own) for more details.
@@ -68,9 +67,9 @@ DO-MS is designed to be easily user-customizable for in-house proteomics workflo
 
 Please see [Hosting as a Server]({{site.baseurl}}/docs/hosting-as-server) for more details.
 
-### Search Engines Other Than MaxQuant
+### Supporting other Search Engines
 
-This application is currently maintained for MaxQuant >= 1.6.0.16. Adapting to other search engines is possible but not provided out-of-the-box. Please see [Integrating Other Search Engines ]({{site.baseurl}}/docs/other-search-engines) for more details.
+This application is currently maintained for (MaxQuant)[https://www.nature.com/articles/nbt.1511] >= 1.6.0.16 and  (DIA-NN)[https://www.nature.com/articles/s41592-019-0638-x] >= 1.8. Adapting to other search engines is possible but not provided out-of-the-box. Please see [Integrating Other Search Engines ]({{site.baseurl}}/docs/other-search-engines) for more details.
 
 ### Can I use this for Metabolomics, Lipidomics, etc... ?
 
