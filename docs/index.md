@@ -33,7 +33,8 @@ Install this application by downloading it from the [release page](https://githu
 ## Getting Started
 Please read our detailed getting started guides:
 * [Getting started with DIA preprocessing]({{site.baseurl}}/docs/getting-started-preprocessing)
-* [Getting started on the application]({{site.baseurl}}/docs/getting-started-application)
+* [Getting started with DIA reports]({{site.baseurl}}/docs/getting-started-dia-app)
+* [Getting started with DDA reports]({{site.baseurl}}/docs/getting-started-dda-app)
 
 
 ### Requirements
