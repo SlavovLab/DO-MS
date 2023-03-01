@@ -32,7 +32,7 @@ import_tab <- tabItem(tabName='import', fluidPage(
   
   a(name='folder-select'),
   div(class='import-header', span(class='num', '1'), 
-      h2('Select MaxQuant txt Output Folders')),
+      h2(paste('Select', config[['mode_name']], 'Output Folders'))),
   p(class='import-help', 'Click on a row in the table to select that folder. Click multiple rows to select multiple folders, and use Shift to select a series of folders.'),
   fluidRow(
     column(9, wellPanel(
@@ -69,7 +69,7 @@ import_tab <- tabItem(tabName='import', fluidPage(
       div(class='upload-button-container',
         tags$button(id='confirm_folders',
           class='btn btn-primary action-button shiny-bound-input',
-          icon('file-upload'), 'Load Data')
+          icon('file-upload', verify_fa = FALSE), 'Load Data')
       )
     ),
     column(6,

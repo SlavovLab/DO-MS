@@ -244,7 +244,7 @@ for(i in 1:length(config[['load_misc_input_files']])) {
   prnt(paste0('Loading misc file: ', name))
   
   # read in as data frame (need to convert from tibble)
-  data[[name]] <- as.data.frame(read_tsv(file=path))
+  data[[name]] <- as.data.frame(read_tsv(file=path, col_types = cols()))
   # rename columns (replace whitespace or special characters with '.')
   colnames(data[[name]]) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', 
                                        colnames(data[[name]]))
@@ -363,6 +363,8 @@ for(f in config[['load_input_files']]) {
 # sort the raw files
 raw_files <- sort(raw_files)
 
+
+
   
 # load naming format
 file_levels <- rep(config[['exp_name_format']], length(raw_files))
@@ -377,8 +379,12 @@ file_levels <- str_replace(file_levels, '\\%i', as.character(seq(1, length(raw_f
 # folder name is stored as the names of the raw files vector
 file_levels <- str_replace(file_levels, '\\%f', names(raw_files))
 
+
 # replace %e with the raw file name
 file_levels <- str_replace(file_levels, '\\%e', raw_files)
+print(file_levels)
+
+print(config[['exp_name_pattern']])
 
 # apply custom string extraction expression to file levels
 if(!is.null(config[['exp_name_pattern']])) {
@@ -387,11 +393,13 @@ if(!is.null(config[['exp_name_pattern']])) {
   file_levels[is.na(file_levels)] <- 'default'
 }
 
+print(file_levels)
+
 # apply custom names, as defined in the "exp_names" config field
 if(!is.null(config[['exp_names']]) & length(config[['exp_names']]) > 0) {
   file_levels[1:length(config[['exp_names']])] <- config[['exp_names']]
 }
-
+print(file_levels)
 # ensure there are no duplicate names
 # if so, then append a suffix to duplicate names to prevent refactoring errors
 

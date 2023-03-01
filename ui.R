@@ -66,14 +66,76 @@ bsDep[[1]]$name <- "bootstrap2"
 pkDep <- htmltools::findDependencies(shinyWidgets:::attachShinyWidgetsDep(tags$div(), widget = "picker"))
 pkDep[[2]]$name <- "picker2"
 
+
+global_filters <- list()
+
+if (config[['do_ms_mode']] == 'max_quant'){
+  
+  global_filters <- list(
+    shinyWidgets::sliderTextInput('pep_thresh', 
+      label=tags$div(class='slider-label-header',
+         tags$span(class='slider-title', 'PEP Threshold:'),
+         # tooltip: https://getbootstrap.com/docs/3.3/javascript/#tooltips
+         tags$button(class='btn btn-secondary tooltip-btn', icon('question-sign', lib='glyphicon'),
+           `data-toggle`='tooltip', `data-placement`='right', 
+           title='Filter identified peptides at an identification confidence threshold (Posterior error probability -- PEP). Peptides that have a PEP higher than this value will not be included in the module analyses or visualizations.'
+         )
+      ), 
+      grid = T, choices=c(1e-4, 1e-3, 1e-2, 1e-1, 1), selected=config[['pep_thresh']]),
+    # PIF filter slider
+    shinyWidgets::sliderTextInput('pif_thresh', 
+      label=tags$div(class='slider-label-header',
+         tags$span(class='slider-title', 'PIF Threshold:'),
+         # tooltip: https://getbootstrap.com/docs/3.3/javascript/#tooltips
+         tags$button(class='btn btn-secondary tooltip-btn', icon('question-sign', lib='glyphicon'),
+           `data-toggle`='tooltip', `data-placement`='right', 
+           title='Filter identified peptides at an isolation purity score threshold (Precursor Ion Fraction -- PIF). Peptides that have a PIF lower than this value will not be included in the module analyses or visualizations'
+         )
+      ),
+      grid = T, choices=seq(0, 1, by=0.1), selected=config[['pif_thresh']])
+    
+  )
+} else if (config[['do_ms_mode']] == 'dia-nn'){
+  global_filters <- list(
+    shinyWidgets::sliderTextInput('pep_thresh', 
+      label=tags$div(class='slider-label-header',
+                     tags$span(class='slider-title', 'PEP Threshold:'),
+                     # tooltip: https://getbootstrap.com/docs/3.3/javascript/#tooltips
+                     tags$button(class='btn btn-secondary tooltip-btn', icon('question-sign', lib='glyphicon'),
+                                 `data-toggle`='tooltip', `data-placement`='right', 
+                                 title='Filter identified peptides at an identification confidence threshold (Posterior error probability -- PEP). Peptides that have a PEP higher than this value will not be included in the module analyses or visualizations.'
+                     )
+      ), 
+      grid = T, choices=c(1e-4, 1e-3, 1e-2, 1e-1, 1), selected=config[['pep_thresh']]),
+    shinyWidgets::pickerInput(
+      inputId = "modification",
+      choices = config[['modification_list']]$name,
+      label=tags$div(class='slider-label-header',
+         tags$span(class='slider-title', 'Modification:'),
+         # tooltip: https://getbootstrap.com/docs/3.3/javascript/#tooltips
+         tags$button(class='btn btn-secondary tooltip-btn', icon('question-sign', lib='glyphicon'),
+             `data-toggle`='tooltip', `data-placement`='right', 
+             title='Filter dataset for certain modifications.'
+         )
+      ),
+    )
+    
+  )
+  
+}
+
+
+
 shinyUI(
-  dashboardPage(skin='blue',
+  dashboardPage(skin=config[['mode_skin']],
     dashboardHeader(title = "DO-MS Dashboard",
+                    
                     tags$li(class='dropdown', style='display:flex;flex-direction:row;align-items:center;height:50px', 
                             tags$a(class='github-btn', style='padding:5px;border-radius:10px',
                                    href='https://github.com/SlavovLab/DO-MS/', target='_blank',
                                    tags$img(src='GitHub_Logo_White.png', height='30px')),
-                            tags$span(class='version-string', paste0('Version: ', version)))
+                            tags$span(class='version-string', paste0('Version: ', version)),
+                            tags$span(class='version-string', paste0('Mode: ', config[['mode_name']])))
       # tags$li(class='dropdown',
       # tags$button(type='button', class='btn btn-default', `data-container`='body', `data-toggle`='popover',
       #             `data-placement`='bottom', 
@@ -86,14 +148,14 @@ shinyUI(
     dashboardSidebar(
       sidebarMenu(
         # Sidebar Menu Options
-        menuItem("Import Data", tabName = "import", icon = icon("upload", lib="glyphicon")),
+        menuItem("Import Data", tabName = "import", icon = icon("upload", lib="glyphicon", verify_fa = FALSE)),
         menuItem("Dashboard", tabName = "dashboard", 
-                 icon = icon("signal", lib = "glyphicon"), startExpanded = TRUE,
+                 icon = icon("signal", lib = "glyphicon", verify_fa = FALSE), startExpanded = TRUE,
           menu_items
         ),
-        menuItem("Generate Report", tabName = "report", icon = icon("file", lib="glyphicon")),
-        menuItem("Documentation", tabName = "documentation", icon = icon("book", lib="glyphicon")),
-        menuItem("Plot Settings", tabName = "settings", icon = icon("cog", lib="glyphicon"))
+        menuItem("Generate Report", tabName = "report", icon = icon("file", lib="glyphicon", verify_fa = FALSE)),
+        menuItem("Documentation", tabName = "documentation", icon = icon("book", lib="glyphicon", verify_fa = FALSE)),
+        menuItem("Plot Settings", tabName = "settings", icon = icon("cog", lib="glyphicon", verify_fa = FALSE))
       ),
       
       tags$hr(),
@@ -104,30 +166,13 @@ shinyUI(
       ),
       
       tags$hr(),
+      # global filters for MQ mode
+      global_filters
       
       # PEP filter slider
-      shinyWidgets::sliderTextInput('pep_thresh', 
-        label=tags$div(class='slider-label-header',
-          tags$span(class='slider-title', 'PEP Threshold:'),
-          # tooltip: https://getbootstrap.com/docs/3.3/javascript/#tooltips
-          tags$button(class='btn btn-secondary tooltip-btn', icon('question-sign', lib='glyphicon'),
-                      `data-toggle`='tooltip', `data-placement`='right', 
-                      title='Filter identified peptides at an identification confidence threshold (Posterior error probability -- PEP). Peptides that have a PEP higher than this value will not be included in the module analyses or visualizations.'
-          )
-        ), 
-        grid = T, choices=c(1e-4, 1e-3, 1e-2, 1e-1, 1), selected=config[['pep_thresh']]),
       
-      # PIF filter slider
-      shinyWidgets::sliderTextInput('pif_thresh', 
-        label=tags$div(class='slider-label-header',
-          tags$span(class='slider-title', 'PIF Threshold:'),
-          # tooltip: https://getbootstrap.com/docs/3.3/javascript/#tooltips
-          tags$button(class='btn btn-secondary tooltip-btn', icon('question-sign', lib='glyphicon'),
-                      `data-toggle`='tooltip', `data-placement`='right', 
-                      title='Filter identified peptides at an isolation purity score threshold (Precursor Ion Fraction -- PIF). Peptides that have a PIF lower than this value will not be included in the module analyses or visualizations'
-          )
-        ),
-        grid = T, choices=seq(0, 1, by=0.1), selected=config[['pif_thresh']])
+
+      
     ),
     dashboardBody(
       

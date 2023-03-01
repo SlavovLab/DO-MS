@@ -26,17 +26,15 @@ search_enabled: true
 
 # Aux links for the upper right navigation
 aux_links:
-  "DO-MS Preprint":
-    - "https://www.biorxiv.org/content/10.1101/512152v1"
-  "JPR Article":
-    - "https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039"
+  "BioArxiv Preprint":
+    - "https://www.biorxiv.org/content/10.1101/2023.02.02.526809v1"
   "GitHub Repository":
     - "https://github.com/SlavovLab/DO-MS"
   "Slavov Lab":
     - "http://slavovlab.net"
 
 github_link: https://github.com/SlavovLab/DO-MS
-preprint_link: https://www.biorxiv.org/content/10.1101/512152v1
+preprint_link: https://www.biorxiv.org/content/10.1101/2023.02.02.526809v1
 jpr_link: https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039
 
 # Color scheme currently only supports "dark" or nil (default)

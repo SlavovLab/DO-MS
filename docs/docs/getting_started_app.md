@@ -1,12 +1,12 @@
 ---
 layout: default
-title: Interactive Application
-nav_order: 1
-permalink: docs/getting-started-application
+title: DDA Reports in the App
+nav_order: 3
+permalink: docs/getting-started-dda-app
 parent: Getting Started
 ---
 
-# Getting Started -- Interactive DO-MS Application
+# Getting Started -- DDA Reports in the App
 
 DO-MS is an application to visualize mass-spec data both in an interactive application and static reports generated via. the command-line. In this document we'll walk you through analyzing an example dataset in the interactive application.
 
@@ -31,13 +31,8 @@ The only constraint for data in DO-MS is that it must be from MaxQuant version >
 
 ## Installation
 
-Download the application via. a zip or tar archive from the [GitHub release page](https://github.com/SlavovLab/DO-MS/releases). Unzip the archive, and then open the `DO-MS.Rproj` to load the project into RStudio
-
-![]({{site.baseurl}}/assets/images/do-ms-proj.png){: width="60%" .center-image}
-
-To start the app open `server.R` in RStudio and on the top right corner of the editor click on the "Run App" button. To run the application in your browser (preferred option) rather than in RStudio, click the dropdown menu and select "Run External".
-
-![]({{site.baseurl}}/assets/images/do-ms-run.png){: width="85%" .center-image}
+Please make sure that you installed DO-MS as descibed in the [installation]({{site.baseurl}}/docs/installation) section. 
+<span style="color:red">Note that DO-MS has to be configured for MaxQuant data. [Find out More]({{site.baseurl}}/docs/getting-started)</span> 
 
 ## Data Import
 

@@ -11,6 +11,7 @@ source(file.path('server', 'generate_report.R'))
 
 shinyServer(function(input, output, session) {
   
+  
   if(exists('latest_version')) {
     # in addition to printing the version message, show it as a notification here
     if(version == latest_version) {
@@ -25,16 +26,18 @@ shinyServer(function(input, output, session) {
   
   
   
+  
   folders <- reactiveVal(data.frame(
     Folder.Name=as.character(c()),
     Has.Files=as.logical(c()),
     Path=as.character(c())
   ))
   
+  
 
   if(file.exists('folder_list.txt')) {
-    .folders <- as.data.frame(read_tsv('folder_list.txt'))
-
+    .folders <- as.data.frame(read_tsv('folder_list.txt', col_types = cols()))
+    
     # patch older versions of the folder_list where Has.Files doesn't exist
     if(ncol(.folders) < 3) {
       print('Detected legacy version of folder_list.txt. Patching now...')
@@ -42,7 +45,7 @@ shinyServer(function(input, output, session) {
       # reorder columns
       .folders <- .folders[,c('Folder.Name', 'Has.Files', 'Path')]
     }
-
+ 
     folders <- reactiveVal(.folders)
   }
   
@@ -72,7 +75,7 @@ shinyServer(function(input, output, session) {
   
   # listen to add folder modal completion
   observeEvent(input$add_folders_confirm, {
-    
+   
     # get a copy of the current list of folders
     .folders <- isolate(folders())
     # list of selected files
@@ -168,7 +171,7 @@ shinyServer(function(input, output, session) {
   # react when folders_d (debounced version) is updated
   observe({
     # write folder list to file (overwrite previous)
-    write_tsv(folders_d(), path='folder_list.txt')
+    write_tsv(folders_d(), file='folder_list.txt')
   })
   
   output$data_status <- renderUI({
@@ -293,13 +296,34 @@ shinyServer(function(input, output, session) {
         # since a lot of MS data is very sparse and only using the first 1000
         # rows to guess may guess a column type wrong
         .dat <- as.data.frame(read_tsv(file=file.path(folder$Path, file[['file']]),
-                                       guess_max=1e5))
+                                       guess_max=1e5, col_types = cols()))
+        
+        # Custom behavior for ms1_extracted
+        if(file$name == 'ms1_extracted') {
+          # transform matrix style output to report.tsv style
+          .dat <- ms1_extracted_to_report(.dat)
+        }
+        
+        # Custom behavior for report
+        if((file$name == 'report') && (! is.null(.dat))) {
+          
+          # DIA-NN versions > 1.8.1 beta 12 use a different channel identifier 
+          # for the modified sequence and precursor Id.
+          # This will transform the new sequence format to the old one.
+          .dat <- translate_diann_channel_format(.dat)
+          
+          # Add column for modified precursor without channel
+          .dat <- separate_channel_info(.dat)
+          
+        }
         
         # rename columns (replace whitespace or special characters with '.')
         .dat <- .dat %>% dplyr::rename_all(make.names)
         
         # apply column aliases
         .dat <- apply_aliases(.dat)
+        
+        
         
         if('Raw.file' %in% colnames(.dat)) {
           # Remove any rows where "Total" is a raw file (e.g., summary.txt)
@@ -308,6 +332,8 @@ shinyServer(function(input, output, session) {
           # coerce raw file names to a factor
           .dat$Raw.file <- factor(.dat$Raw.file)
         }
+        
+        
         
         # Custom behavior for parameters.txt
         if(file$name == 'parameters') {
@@ -380,6 +406,7 @@ shinyServer(function(input, output, session) {
     # set the data
     data(.data)
     
+    
     showNotification(paste0('Loading Complete!'), type='message')
   })
   
@@ -441,7 +468,7 @@ shinyServer(function(input, output, session) {
       if(!is.null(.data[[file$name]])) { next }
       
       # read in as data frame (need to convert from tibble)
-      .data[[file$name]] <- as.data.frame(read_tsv(file=.file$datapath))
+      .data[[file$name]] <- as.data.frame(read_tsv(file=.file$datapath, col_types = cols()))
       # rename columns (replace whitespace or special characters with '.')
       colnames(.data[[file$name]]) <- gsub('\\s|\\(|\\)|\\/|\\[|\\]', '.', 
                                            colnames(.data[[file$name]]))
@@ -469,6 +496,7 @@ shinyServer(function(input, output, session) {
     for(file in config[['input_files']]) {
       # don't do this with MaxQuant's summary.txt file since it has weird behavior
       if(file$name == 'summary') { next; }
+      if(file$name == 'features') { next; }
       
       # for each file, check if it has a raw file column
       if('Raw.file' %in% colnames(f_data[[file$name]])) {
@@ -509,10 +537,10 @@ shinyServer(function(input, output, session) {
     }
     
     # apply re-ordering
-    .file_order <- file_order()
-    if(length(.file_order) > 1) {
-      .file_levels <- .file_levels[.file_order]
-      .raw_files <- .raw_files[.file_order]
+    nfile_order <- file_order()
+    if(length(nfile_order) > 1) {
+      .file_levels <- .file_levels[nfile_order]
+      .raw_files <- .raw_files[nfile_order]
     }
     
     data.frame(
@@ -642,6 +670,7 @@ shinyServer(function(input, output, session) {
     # replace %e with the raw file name
     .file_levels <- str_replace(.file_levels, '\\%e', .raw_files)
     
+    print(.pattern)
     # apply custom string extraction expression to file levels
     if(!is.null(.pattern) & length(.pattern) > 0 & nchar(.pattern) > 0) {
       # account for users inputting bad regexes
@@ -706,44 +735,48 @@ shinyServer(function(input, output, session) {
   # debounce (throttle) by 1000ms delay, because this expression is so costly
   filtered_data <- debounce(reactive({
     f_data <- data()
-    
+
     # skip if no data has been loaded yet
     if(is.null(f_data)) return()
     
+    
+    
     for(file in config[['input_files']]) {
       
-      # for each file, check if it has a raw file column
-      if('Raw.file' %in% colnames(f_data[[file$name]])) {
+       if('Raw.file' %in% colnames(f_data[[file$name]]))  {
         
         # make a copy of the raw file column
         f_data[[file$name]]$Raw.file.orig <- f_data[[file$name]]$Raw.file
         
-        # rename the levels of this file
-        .levels <- levels(f_data[[file$name]]$Raw.file)
-          
-        .labels <- file_levels()
+        
+        olevels <- levels(f_data[[file$name]]$Raw.file)
+        nlabels <- file_levels()
+        nlevels <- as.vector(unlist(isolate(raw_files()), use.names=FALSE))
+        
         
         # if labels are still not loaded or defined yet, then default them to the levels
-        if(is.null(.labels) | length(.labels) < 1 | length(.labels) != length(.levels)) {
-          .labels <- .levels
+        if(is.null(nlabels) | length(nlabels) < 1 | length(nlabels) != length(nlevels)) {
+
+          nlabels <- nlevels
         }
         
         # if this file has a subset of raw files
         # then take the same subset of the labels vector
-        if(length(.labels) > length(.levels)) {
-          .labels <- .labels[1:length(.levels)]
+        if(length(nlabels) > length(nlevels)) {
+          nlabels <- nlabels[1:length(nlevels)]
         }
         
         # apply re-ordering
-        .file_order <- file_order()
-        if(length(.file_order) > 1) {
-          .levels <- .levels[.file_order]
-          .labels <- .labels[.file_order]
+        nfile_order <- file_order()
+        if(length(nfile_order) > 1) {
+          nlevels <- nlevels[nfile_order]
+          nlabels <- nlabels[nfile_order]
         }
         
+
         # recalculate file levels
         f_data[[file$name]]$Raw.file <- factor(f_data[[file$name]]$Raw.file,
-                                               levels=.levels, labels=.labels)
+                                               levels=nlevels, labels=nlabels)
         
         # Filter for experiments as specified by user
         if(!is.null(input$Exp_Sets)) {
@@ -757,30 +790,120 @@ shinyServer(function(input, output, session) {
       
       ## Filter observations
       
-      # Filter out decoys and contaminants, if the leading razor protein column exists
-      if('Leading.razor.protein' %in% colnames(f_data[[file$name]])) {
-        if(!is.null(config[['remove_contam']])) {
-          f_data[[file$name]] <- f_data[[file$name]] %>% 
-            dplyr::filter(!grepl(config[['remove_contam']], Leading.razor.protein))
+      if (config[['do_ms_mode']] == 'max_quant'){
+        # Filter out decoys and contaminants, if the leading razor protein column exists
+        if('Leading.razor.protein' %in% colnames(f_data[[file$name]])) {
+          if(!is.null(config[['remove_contam']])) {
+            f_data[[file$name]] <- f_data[[file$name]] %>% 
+              dplyr::filter(!grepl(config[['remove_contam']], Leading.razor.protein))
+          }
+          if(!is.null(config[['remove_decoy']])) {
+            f_data[[file$name]] <- f_data[[file$name]] %>% 
+              dplyr::filter(!grepl(config[['remove_decoy']], Leading.razor.protein))
+          }
         }
-        if(!is.null(config[['remove_decoy']])) {
-          f_data[[file$name]] <- f_data[[file$name]] %>% 
-            dplyr::filter(!grepl(config[['remove_decoy']], Leading.razor.protein))
+        
+        # Filter by PEP
+        if('PEP' %in% colnames(f_data[[file$name]])) {
+          f_data[[file$name]] <- f_data[[file$name]] %>%
+            dplyr::filter(PEP < input$pep_thresh | is.na(PEP))
         }
+        
+        # Filter by PIF
+        if('PIF' %in% colnames(f_data[[file$name]])) {
+        #filter on PIF only if the value is not NA
+            f_data[[file$name]] <- f_data[[file$name]] %>%
+              dplyr::filter(PIF > input$pif_thresh | is.na(PIF))
+        }
+        
+      }
+      else if (config[['do_ms_mode']] == 'dia-nn'){
+        # calculate modification columns
+        
+        # Filter by PEP
+        if('PEP' %in% colnames(f_data[[file$name]])) {
+          f_data[[file$name]] <- f_data[[file$name]] %>%
+            dplyr::filter(PEP < input$pep_thresh | is.na(PEP))
+        }
+        
+        
+        # apply modification filter
+        if('Precursor.Id' %in% colnames(f_data[[file$name]])) {
+          
+          modvec <- c()
+          # create modification columns
+          for(i in 1:length(config[['modifications']])){
+            unimod <- config[['modifications']][[i]]$unimod
+            modvec <- c(modvec, config[['modifications']][[i]]$unimod)
+          
+            f_data[[file$name]][unimod] <- sapply(f_data[[file$name]]['Precursor.Id'], str_count, paste0('\\Q',unimod,'\\E'))
+          }
+          
+          # summarize over all modification columns
+          f_data[[file$name]]['mod_sum'] <- rowSums(f_data[[file$name]][,modvec])
+
+          # filter for modifications
+          modifications <- config[['modification_list']]
+        
+          if (input$modification == "All"){
+            
+          } else if (input$modification == "Unmodified") {
+
+            
+            f_data[[file$name]] <- f_data[[file$name]][f_data[[file$name]]['mod_sum'] < 1,]
+            
+          } else {
+            
+            # Try to resolve unimod key from modifications dataframe
+            
+            
+            modifications_filtered <- modifications[modifications$name == input$modification, ]
+            
+            if (nrow(modifications_filtered) > 0){
+              # contains unimod label for the current modification
+              unimod <- modifications_filtered$unimod[[1]]
+              
+              #filter for all rows, which contain modification
+              f_data[[file$name]] <- f_data[[file$name]][f_data[[file$name]][unimod] > 0,]
+              
+              if (nrow(f_data[[file$name]]) == 0){
+                showNotification(paste("No Precursors found with modification:",input$modification), type='warning')
+              }
+              
+            }
+          }
+        }
+        
+        # apply MBR filter
+        
+        #if(!input$mbr){
+        #  if (file$name == 'report'){
+            
+        #    if ('report-first-pass' %in% names(f_data)){
+              
+        #     f_data[['report']] <- f_data[['report-first-pass']]
+
+        #    } else {
+        #      showNotification("Cant show results without MBR, report-first-pass.tsv was not found.", type='warning')
+        #    }
+        #  }
+
+        #}
+        
       }
       
-      # Filter by PEP
-      if('PEP' %in% colnames(f_data[[file$name]])) {
-        f_data[[file$name]] <- f_data[[file$name]] %>%
-          dplyr::filter(PEP < input$pep_thresh | is.na(PEP))
-      }
+      
+      
+      
       
       # Filter by PIF
-      if('PIF' %in% colnames(f_data[[file$name]])) {
+      #if('PIF' %in% colnames(f_data[[file$name]])) {
         # filter on PIF only if the value is not NA
-        f_data[[file$name]] <- f_data[[file$name]] %>%
-          dplyr::filter(PIF > input$pif_thresh | is.na(PIF))
-      }
+      #  f_data[[file$name]] <- f_data[[file$name]] %>%
+      #    dplyr::filter(PIF > input$pif_thresh | is.na(PIF))
+      #}
+      
+      # filter by modification
       
       ## More filters, like Intensity?
     }
@@ -797,4 +920,6 @@ shinyServer(function(input, output, session) {
   
   # PDF Report Generation
   download_report(input, output, filtered_data, exp_sets)
+  
+  traceback()
 })
