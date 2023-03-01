@@ -71,9 +71,9 @@ init <- function() {
     plotdata <- plotdata %>% 
       mutate(Type=recode(Type, 
                          Identifications.T = "Translated", 
-                         Identifications.O = "Main search"))
+                         Identifications.O = "Main Search"))
     
-    levels_plot = c("Main search", "Translated")
+    levels_plot = c("Translated","Main Search")
     plotdata <- within(plotdata, 
                        Type <- factor(Type, levels=levels_plot))
     

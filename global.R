@@ -1,6 +1,4 @@
-version <- '2.0.b5'
-
-version <- '1.0.11'
+version <- '2.0.5'
 
 # check R version. required R >= 3.5.0 & R <= 4.0.2
 if(as.numeric(R.Version()$major) < 4) {
@@ -21,6 +19,36 @@ library(pacman)
 # install/load dependencies
 p_load(shiny, shinyWidgets, shinydashboard, dplyr, tidyr, ggplot2, lattice, knitr, tibble,
       reshape2, readr, rmarkdown, stats, DT, stringr, yaml, viridisLite, ggpubr, MASS, viridis)
+
+# look for pandoc - moved from start_server.R to gloabl to make sure pandoc is always available
+# stolen from https://github.com/r-lib/rappdirs/blob/master/R/utils.r
+get_os <- function() {
+  if (.Platform$OS.type == "windows") { 
+    "win"
+  } else if (Sys.info()["sysname"] == "Darwin") {
+    "mac" 
+  } else if (.Platform$OS.type == "unix") { 
+    "unix"
+  } else {
+    stop("Unknown OS")
+  }
+}
+os <- get_os()
+
+pandoc_osx <- "/Applications/RStudio.app/Contents/MacOS/quarto/bin/tools"
+pandoc_windows <- "C:\\Program Files\\RStudio\\bin\\pandoc"
+pandoc_linux <- "/usr/lib/rstudio/bin/pandoc"
+
+# try and predict pandoc directories
+if(os == 'mac' & file.exists(pandoc_osx)) {
+  Sys.setenv(RSTUDIO_PANDOC=pandoc_osx)
+} else if (os == 'win' & file.exists(pandoc_windows)) {
+  Sys.setenv(RSTUDIO_PANDOC=pandoc_windows)
+} else if (os == 'unix' & file.exists(pandoc_linux)) {
+  Sys.setenv(RSTUDIO_PANDOC=pandoc_linux)
+} else {
+  print('pandoc could not be found in default directories. If it is not available on the system PATH then PDF report generation will fail.')
+}
 
 print('Checking online for latest version of DO-MS...')
 # check application version

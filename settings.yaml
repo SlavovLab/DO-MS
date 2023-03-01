@@ -1,10 +1,11 @@
 ---
-
 # Global Settings for the DO-MS app and report
 
-# Input files to load from each search output folder
+#Switch between dia-nn and max_quant mode
+# do_ms_mode: "dia-nn"
+# do_ms_mode: "max_quant"
 
-do_ms_mode: "dia-nn" #switch between dia-nn and max_quant
+do_ms_mode: "dia-nn" 
 
 dia-nn:
   mode_name: 'DIA-NN'
@@ -44,7 +45,8 @@ dia-nn:
       
   misc_input_files:
     # None
-    
+  
+  # Input files to load from each search output folder
   input_files:
     report:
       name: 'report'

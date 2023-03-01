@@ -1,0 +1,14 @@
+name: doms
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.8
+  - pip
+  - tqdm
+  - codecov
+  - pandas
+  - numpy
+  - scipy
+  - pip:
+    - pymzml

@@ -14,7 +14,7 @@ init <- function() {
     
     plotdata <- data()[['report']][,c('Raw.file', 'Ms1.Area', 'Precursor.Id', 'Label','Translated.Q.Value')]
     
-    #plotdata <- read_tsv(file='G:/.shortcut-targets-by-id/1uQ4exoKlaZAGnOG1iCJPzYN3ooYYZB7g/MS/Users/GW/test_data/diann_v_16/report.tsv',guess_max=1e5, col_types = cols())
+    #plotdata <- read_tsv(file='/Users/georgwallmann/Library/CloudStorage/OneDrive-Personal/Studium/Northeastern/DO-MS-DIA/supplementary_information/do_ms_testcase/report.tsv',guess_max=1e5, col_types = cols())
     #plotdata <- translate_diann_channel_format(plotdata)
     
     # Add column for modified precursor without channel
@@ -77,13 +77,13 @@ init <- function() {
     plotdata <- plotdata %>% 
       mutate(Type=recode(Type, 
                          Identifications.T = "Translated", 
-                         Identifications.O = "Main search"))
+                         Identifications.O = "Main Search"))
     
-    levels_plot = c("Main search", "Translated")
+    levels_plot = c("Translated","Main Search")
     plotdata <- within(plotdata, 
                        Type <- factor(Type, levels=levels_plot))
     
-
+    
     return(plotdata)
   }
   
@@ -98,7 +98,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1, scales = "free_x")+
       labs(x='', y='Number of Precursors') +
       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
-      theme_diann(input=input, show_legend=T) +
+      #theme_diann(input=input, show_legend=T) +
       theme(legend.position = "bottom")+
       scale_alpha_manual(name="",values=c(0.4,0.8)) +
       scale_fill_manual(values = c(custom_colors[[6]],custom_colors[[1]],custom_colors[[2]],custom_colors[[3]],custom_colors[[6]]), guide = "none")+

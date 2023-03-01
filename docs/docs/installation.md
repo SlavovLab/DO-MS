@@ -2,7 +2,7 @@
 layout: default
 title: Installation
 nav_order: 2
-permalink: docs/getting-started-installation
+permalink: docs/installation
 ---
 
 **Table of Contents**
@@ -24,8 +24,6 @@ permalink: docs/getting-started-installation
 This application has been tested on R >= 3.5.0, OSX >= 10.14 / Windows 7/8/10/11. Make sure you have the mos recent version of R and R Studio installed. R can be downloaded from the main [R Project page](https://www.r-project.org/) or downloaded with the [RStudio Application](https://www.rstudio.com/products/rstudio/download/). All modules are maintained for MaxQuant >= 1.6.0.16.
 
 The application suffers from visual glitches when displayed on unsupported older browsers (such as IE9 commonly packaged with RStudio on Windows). Please use IE >= 11, Firefox, or Chrome for the best user experience.
-
-
 
 ## Running 
 
@@ -57,9 +55,9 @@ conda activate doms
 python pipeline/processing.py -h
 ```
 
-3. For automatic conversion of Thermo Raw files to the open mzML format ThermoRawFileParser (Hulstaert et al. 2020) is required. Download the latest release of the [ThermoRawFileParser](https://github.com/compomics/ThermoRawFileParser) (version v1.4.0 or newer) and note down the location of the ```ThermoRawFileParser.exe``` file. Under OSX and Linux, [Mono](https://www.mono-project.com/download/stable/). Please make sure to use the option ```-m``` with the feature detection which will tell the script to use Mono. 
+3. For automatic conversion of Thermo Raw files to the open mzML format ThermoRawFileParser (Hulstaert et al. 2020) is required. Download the latest release of the [ThermoRawFileParser](https://github.com/compomics/ThermoRawFileParser) (version v1.4.0 or newer) and write down the location of the ```ThermoRawFileParser.exe``` file. Under OSX and Linux, [Mono](https://www.mono-project.com/download/stable/). Please make sure to use the option ```-m``` with the feature detection which will tell the script to use Mono. 
 
-4. For feature detection Dinosaur (Teleman et al. 2016) is used. Download the latest release of the Dinosaur from [Mono](https://github.com/fickludd/dinosaur) and install Java as recommended on your platform. Please note down the location of the ```Dinosaur-xx.jar``` file.
+4. For feature detection Dinosaur (Teleman et al. 2016) is used. Download the latest release of the Dinosaur from [GitHub](https://github.com/fickludd/dinosaur) and install Java as recommended on your platform. Please write down the location of the ```Dinosaur-xx.jar``` file.
 
 5. Optional, create a custom script for your system.
 
@@ -69,9 +67,9 @@ python pipeline/processing.py -h
 
 More information on using the python pipeline is provided [here]({{site.baseurl}}/docs/getting-started-preprocessing).
 
-## Setup Custom Script 
+## Custom Script for Preprocessing 
 
-Using the feature detection requires the correct conda environment, ThermoRawFileParser and Dinosaur location. If the tool is used frequently its more convenient to package the configuration in a script which is added to the system ```PATH```. This will register a local command which can be used everywhere on the system and allows to set default options.
+Using the feature detection requires the correct conda environment, ThermoRawFileParser and Dinosaur location. If the tool is used frequently its more convenient to combine the configuration in a script which is added to the system ```PATH```. This will register a local command which can be used everywhere on the system and allows to set default options.
 
 ### Windows
 
@@ -100,7 +98,6 @@ python C:\Users\xxx\pipeline\processing.py %* ^
 
 
 ### MacOS
-
 
 1. Create a local folder for example ```/Users/xxx/Documents/bin```.
 
