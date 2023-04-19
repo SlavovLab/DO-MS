@@ -87,6 +87,9 @@ DO-MS is distributed by an [MIT license]({{site.github_link}}/blob/master/LICENS
 
 Please feel free to contribute to this project by opening an issue or pull request in the [GitHub repository]({{site.github_link}}).
 
+### Data Availability
+DO-MS reports and example data can be found [Here]({{site.baseurl}}/docs/DO-MS_examples). All Raw Data and search engine results from the DO-MS DIA paper are avilable on MassIVE under the following id: MSV000091733.
+
 -------------
 
 ## Help!
