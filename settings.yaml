@@ -5,7 +5,7 @@
 # do_ms_mode: "dia-nn"
 # do_ms_mode: "max_quant"
 
-do_ms_mode: "dia-nn" 
+do_ms_mode: "max_quant" 
 
 dia-nn:
   mode_name: 'DIA-NN'

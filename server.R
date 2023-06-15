@@ -34,7 +34,7 @@ shinyServer(function(input, output, session) {
   ))
   
   
-
+  
   if(file.exists('folder_list.txt')) {
     .folders <- as.data.frame(read_tsv('folder_list.txt', col_types = cols()))
     
@@ -248,24 +248,24 @@ shinyServer(function(input, output, session) {
       showNotification('No folders selected', type='warning')
       return()
     }
-    
+    print('here1')
     # if no MQ files are selected, break out
     if(length(.input_files) == 0 | is.null(.input_files)) {
       showNotification('No input files selected', type='warning')
       return()
     }
-    
+    print('here2')
     # set selected folders, selected files
     selected_folders(.folders$Folder.Name[selected])
     selected_files(.input_files)
     
     showNotification(paste0('Loading files...'), type='message')
-    
+    print('here3')
     # create progress bar
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message='', value=0)
-    
+    print('here4')
     # each progress step will be per folder, per file.
     progress_step <- (1 / (length(selected) * length(.input_files)))
     
@@ -276,7 +276,7 @@ shinyServer(function(input, output, session) {
     for(file in .input_files) {
       # get the input file object as defined in global.R
       file <- config[['input_files']][[file]]
-      
+      print('here5')
       # loop thru selected folders
       for(s in selected) {
         folder <- .folders[s,]
@@ -284,29 +284,29 @@ shinyServer(function(input, output, session) {
         # update progress bar
         progress$inc(progress_step, 
                      detail=paste0('Reading ', file[['file']], ' from ', folder$Folder.Name))
-        
+        print('here6')
         # if file doesn't exist, skip
         if(!file.exists(file.path(folder$Path, file[['file']]))) {
           showNotification(paste0(file.path(folder$Path, file[['file']]), ' does not exist'), type='error')
           next
         }
-        
+        print('here7')
         # read data into temporary data.frame
         # increase the number of guesses from the default,
         # since a lot of MS data is very sparse and only using the first 1000
         # rows to guess may guess a column type wrong
         .dat <- as.data.frame(read_tsv(file=file.path(folder$Path, file[['file']]),
                                        guess_max=1e5, col_types = cols()))
-        
+        print('here8')
         # Custom behavior for ms1_extracted
         if(file$name == 'ms1_extracted') {
           # transform matrix style output to report.tsv style
           .dat <- ms1_extracted_to_report(.dat)
         }
-        
+        print('here9')
         # Custom behavior for report
         if((file$name == 'report') && (! is.null(.dat))) {
-          
+          print('here10')
           # DIA-NN versions > 1.8.1 beta 12 use a different channel identifier 
           # for the modified sequence and precursor Id.
           # This will transform the new sequence format to the old one.
@@ -314,6 +314,7 @@ shinyServer(function(input, output, session) {
           
           # Add column for modified precursor without channel
           .dat <- separate_channel_info(.dat)
+          
           
         }
         
@@ -352,6 +353,8 @@ shinyServer(function(input, output, session) {
         if(is.null(.data[[file$name]])) {
           .data[[file$name]] <- .dat
         }
+        
+        
         # if parameters.txt file, then cbind instead of rbind
         else if(file$name == 'parameters') {
           
@@ -367,6 +370,7 @@ shinyServer(function(input, output, session) {
             print(paste0(length(diff_rows), ' parameters in file ', file$name, ' are exclusive to some analyses but not others. Eliminating the different parameters: ', paste(diff_rows, collapse=', ')))
           }
           
+          
           .data[[file$name]] <- cbind(
             # original
             .data[[file$name]] %>% 
@@ -377,9 +381,11 @@ shinyServer(function(input, output, session) {
               dplyr::select(-1) %>% 
               dplyr::pull()
           )
+        
           # rename column to folder name
           colnames(.data[[file$name]])[ncol(.data[[file$name]])] <- folder$Folder.Name
         }
+        
         # otherwise, append to existing data.frame
         else {
           

@@ -110,7 +110,7 @@ init <- function() {
     validate(need(nrow(plotdata) > 19, paste0('Less than 20 peptides in common')))
 
     ggplot(plotdata,aes(y = Intensity,x = Frag)) + geom_line()+
-      facet_wrap(~Run, nrow = 1)+ylim(c(-1,1))+
+      facet_wrap(~Run, nrow = 1)+coord_cartesian(ylim = c(-2,2))+
       ylab('log2(Normalized Fragment Intensity)') +xlab('Fragment M/Z')+rremove("legend")  + 
       theme_diann(input=input, show_legend=T)+coord_flip()
 

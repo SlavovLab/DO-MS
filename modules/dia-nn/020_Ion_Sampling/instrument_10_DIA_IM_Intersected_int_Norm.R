@@ -92,7 +92,7 @@ init <- function() {
       facet_wrap(~Raw.file, nrow = 1, scales = "free_x") + 
       geom_histogram(bins=50,  fill=custom_colors[[6]]) + 
       coord_flip() + 
-      labs(x=expression(bold('Ion Mobility Relative to first experiment')), y='Number of Precursors') + 
+      labs(x=expression(bold('Log2(Ion Mobility)')), y='Number of Precursors') + 
       theme_diann(input=input, show_legend=T)
 
   }

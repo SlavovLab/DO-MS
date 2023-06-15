@@ -481,6 +481,8 @@ input <- config
 # as modules are expecting a reactive object not static data
 f_data <- function() { data }
 
+
+Sys.setenv(RSTUDIO_PANDOC="/Applications/RStudio.app/Contents/Resources/app/quarto/bin/tools")
 generate_report(input, f_data, raw_files, config[['output']], progress_bar=FALSE)
 
 # prnt(paste0('Report written to: ', config[['output']]))

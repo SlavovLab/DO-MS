@@ -5,9 +5,8 @@
 
 # paths to folders with MaxQuant txt output
 input_folders:
-  - /path/to/MaxQuant/output/a
-  - /path/to/MaxQuant/output/b
-  - /path/to/MaxQuant/output/c
+  - /Users/andrewleduc/Library/CloudStorage/GoogleDrive-leduc.an@husky.neu.edu/.shortcut-targets-by-id/1uQ4exoKlaZAGnOG1iCJPzYN3ooYYZB7g/MS/QEQC/Evers
+  - /Users/andrewleduc/Library/CloudStorage/GoogleDrive-leduc.an@husky.neu.edu/.shortcut-targets-by-id/1uQ4exoKlaZAGnOG1iCJPzYN3ooYYZB7g/MS/QEQC/Wallers
   
 # files to load from each folder
 load_input_files:
@@ -22,13 +21,13 @@ load_input_files:
 #misc_input_files:
 #  inclusion_list: /path/to/inclusion_list.txt
 
-output: /path/to/report.html
+output: /Users/andrewleduc/Desktop/CMD_line_DOMS.html
 
 ## Filters
 
 # regular expressions to match raw file names against
-include_files: '180614_S'
-exclude_files: '180614_S_A'
+#include_files: '180614_S'
+#exclude_files: '180614_S_A'
 
 # experiment name format string
 # %i -- index of raw file
