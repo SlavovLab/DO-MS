@@ -420,9 +420,9 @@ shinyServer(function(input, output, session) {
     misc_input_forms[[file$name]] <- fileInput(
       file$name, file$help,
       accept = c(
-        "text/csv",
+        "text/csv/tsv",
         "text/comma-separated-values,text/plain",
-        ".csv",'.txt', options(shiny.maxRequestSize=1000*1024^2) 
+        ".csv",'.txt', '.tsv',options(shiny.maxRequestSize=1000*1024^2) 
       )
     )
   }

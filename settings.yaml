@@ -2,10 +2,8 @@
 # Global Settings for the DO-MS app and report
 
 #Switch between dia-nn and max_quant mode
-# do_ms_mode: "dia-nn"
-# do_ms_mode: "max_quant"
-
-do_ms_mode: "dia-nn" 
+do_ms_mode: "dia-nn"
+#do_ms_mode: "max_quant"
 
 dia-nn:
   mode_name: 'DIA-NN'
@@ -44,7 +42,23 @@ dia-nn:
       name: "Acetylation"
       
   misc_input_files:
-    # None
+    allPeptides:
+      name: 'allPeptides'
+      file: 'allPeptides.txt'
+      help: 'MaxQuant allPeptides.txt file'
+      default_enabled: false
+
+    XIC_Reference:
+      name: 'xic_ref'
+      file: 'report.XIC.tsv'
+      help: 'Reference XIC file'
+      default_enabled: false
+
+    XIC_Standard:
+      name: 'xic_standard'
+      file: 'report.XIC.tsv'
+      help: 'Technical Standard XIC file'
+      default_enabled: false
   
   # Input files to load from each search output folder
   input_files:
