@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <-  'Precursors by Quantification Strategy'
-  help_text <- 'Number of precursors found based on quantification startegy. Ms2 precursors are counted based on Precursor.Quantity > 0 and Ms1 precursors are counted based on Ms1.Area > 0.'
+  help_text <- 'Number of precursors found based on quantification startegy. MS2 precursors are counted based on Precursor.Quantity > 0 and MS1 precursors are counted based on Ms1.Area > 0.'
   source_file <- 'report'
   
   .validate <- function(data, input) {

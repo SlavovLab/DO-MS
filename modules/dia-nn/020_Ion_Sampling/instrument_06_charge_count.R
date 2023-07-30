@@ -2,7 +2,7 @@ init <- function() {
 
   type <- 'plot'
   box_title <- 'Number of Precursors by Charge State'
-  help_text <- 'Number of precursors observed during MS1 scans by charge state'
+  help_text <- 'Number of precursors observed during MS1 scans by charge state.'
   source_file <- 'report'
 
   

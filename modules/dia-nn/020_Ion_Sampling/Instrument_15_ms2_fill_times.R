@@ -1,8 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Ms2 Fill Times along Gradient'
-  help_text <- 'The averge fill time is shown in magenta for different bins along the retention time gradient. The standard deviation is depicted as area in blue, scans outside this area are shown as single datapoints.'
+  box_title <- 'MS2 Fill Times along Gradient'
+  help_text <- 'The average fill time is shown in magenta for different bins along the retention time gradient. The standard deviation is depicted as an area in blue, and scans outside this area are shown as single data points.'
   source_file <- 'report'
   
   .validate <- function(data, input) {

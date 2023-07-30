@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'Number of Confident Precursor Identifications'
-  help_text <- 'Plotting the number of precursors identified at each given confidence level.'
+  help_text <- 'Plotting the number of precursors identified as a function of the false discovery rate (FDR).'
   source_file <- 'report'
 
   .validate <- function(data, input) {

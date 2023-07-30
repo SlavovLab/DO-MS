@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'Precursors Identified across Gradient'
-  help_text <- 'Precursor are plotted across the chromatographic gradient.'
+  help_text <- 'Plotting the precursors across the chromatographic gradient.'
   source_file <- 'report'
   
   .validate <- function(data, input) {

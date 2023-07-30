@@ -34,13 +34,19 @@ generate_report <- function(input, filtered_data, exp_sets, file, progress_bar=F
     progress$inc(5/100, detail='Initializing')
   }
   
-  pep_max<-signif(max(filtered_data()[['evidence']][,"PEP"]),2)  
+  pep_max<-signif(max(filtered_data()[['evidence']][,"PEP"]),2)
+  
+  pep_info = ''
+  
+  if ((pep_max <= 1) && (pep_max >= 0)) {
+    pep_info = paste0(" | PEP < ",pep_max)
+  }
   
   report <- paste(
     '---',
     paste0('title: DO-MS Report'
     ),
-    paste0('date: "`r paste0(\'Version: ', version, " | PEP < ",pep_max, ' | \',  format(Sys.time(), \'Generated: %Y-%m-%d    %H:%M:%S\'))`"'),
+    paste0('date: "`r paste0(\'Version: ', version, pep_info, ' | \',  format(Sys.time(), \'Generated: %Y-%m-%d    %H:%M:%S\'))`"'),
     'output:',
 #    paste0('data filtered to PEP < ',
 #           pep_max),
