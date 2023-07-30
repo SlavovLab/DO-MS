@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'table'
   box_title <- 'Miscleavage Rate (percentage), PEP < 0.01'
-  help_text <- 'Miscleavage rate (percentage) for precursors identified with confidence PEP < 0.01'
+  help_text <- 'Miscleavage rate (percentage) for precursors identified with confidence PEP < 0.01.'
   source_file <- 'report'
   
   .validate <- function(data, input) {

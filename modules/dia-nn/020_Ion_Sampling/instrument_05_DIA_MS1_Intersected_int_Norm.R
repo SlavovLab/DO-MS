@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'Normalized MS1 Intensity for Intersected Precursors'
-  help_text <- 'Plotting the MS1 Intensity for intersected precursors summed over all channels. Experiments are normalized to the first experiment. '
+  help_text <- 'Plotting the MS1 intensity for intersected precursors summed over all channels. Experiments are normalized to the first experiment.'
   source_file <- 'report'
   
   .validate <- function(data, input) {

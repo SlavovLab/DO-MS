@@ -1,8 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Ms1 Fill Time Distribution'
-  help_text <- 'Ms1 fill times along gradient'
+  box_title <- 'MS1 Fill Time Distribution'
+  help_text <- 'Histogram showing the distribution of all MS1 fill times.'
   source_file <- 'report'
   
   .validate <- function(data, input) {

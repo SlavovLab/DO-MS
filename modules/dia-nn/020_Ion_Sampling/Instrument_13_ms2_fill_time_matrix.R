@@ -1,8 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Ms2 Fill Time Matrix'
-  help_text <- 'The average Ms2 fill times are shown across the gradient for every distinct Ms2 window.'
+  box_title <- 'MS2 Fill Time Matrix'
+  help_text <- 'The average MS2 fill times are shown across the gradient for every distinct MS2 window.'
   source_file <- 'fill_times'
   
   .validate <- function(data, input) {

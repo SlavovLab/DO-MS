@@ -1,8 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Ms1 total Ion Current along Gradient'
-  help_text <- 'The toal Ion Current (TIC) is shown for bins along the retention time gradient.'
+  box_title <- 'MS1 TIC along Gradient'
+  help_text <- 'The total Ion Current (TIC) is shown for bins along the retention time gradient.'
   source_file <- 'report'
   
   .validate <- function(data, input) {

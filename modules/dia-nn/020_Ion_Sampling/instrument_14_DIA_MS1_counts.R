@@ -1,10 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'Channel wise MS1 Copy Number for Precursors'
-  help_text <- 'Plotting the MS1 copy numbers for all precursors which were associated with one of the defined channels. 
-  The copy numbers are calculated using the signal to noise ratio as described in Derks et al. 2022. By default a resolution of 70,000 is used during preprocessing. It can be changed with the --resolution parameter'
-  source_file <- 'sn'
+  box_title <- 'Channel-wise MS1 Copy Number for Precursors'
+  help_text <- 'Plotting the MS1 copy numbers for all precursors associated with one of the defined channels. The copy numbers are calculated using the signal-to-noise ratio as described in Derks et al. 2022. By default, a resolution of 70,000 is used during preprocessing. It can be changed with the –resolution parameter.'
   
   .validate <- function(data, input) {
     validate(need(data()[['sn']], paste0('Upload report.txt')))

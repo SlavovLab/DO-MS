@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'Channel wise MS1 Intensity for Precursors'
-  help_text <- 'Plotting the MS1 intensity for all precursors which were associated with one of the defined channels.'
+  help_text <- 'Plotting the MS1 intensity for all precursors associated with one of the defined channels.'
   source_file <- 'report'
   
   .validate <- function(data, input) {

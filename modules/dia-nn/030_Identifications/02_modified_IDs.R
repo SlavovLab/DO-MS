@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <-  'Precursors by Modification'
-  help_text <- 'Number of precursors found based on modification types specified'
+  help_text <- 'Number of precursors found based on modification types specified.'
   source_file <- 'report'
   
   .validate <- function(data, input) {
