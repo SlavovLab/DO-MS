@@ -16,7 +16,7 @@ permalink: /
 ![GitHub release](https://img.shields.io/github/release/SlavovLab/DO-MS.svg)
 ![GitHub](https://img.shields.io/github/license/SlavovLab/DO-MS.svg)
 
-[Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [Download](https://github.com/SlavovLab/DO-MS/releases/latest){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [BioArxiv Preprint](https://www.biorxiv.org/content/10.1101/2023.02.02.526809v1){: .btn .fs-5 .mb-4 .mb-md-0 .mr-2 } [GitHub Repository](https://github.com/SlavovLab/DO-MS){: .btn .fs-5 .mb-4 .mb-md-0 }
+[Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [Download](https://github.com/SlavovLab/DO-MS/releases/latest){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [JPR Articles](#research-articles){: .btn .fs-5 .mb-4 .mb-md-0 .mr-2 } [GitHub Repository](https://github.com/SlavovLab/DO-MS){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ![]({{site.baseurl}}/assets/images/do-ms-dia_title_v2.png){: width="90%" .center-image}
 
@@ -24,6 +24,14 @@ permalink: /
 The performance of ultrasensitive liquid chromatography and tandem mass spectrometry (LC-MS/MS) methods, such as [single-cell proteomics by mass spectrometry](https://scope2.slavovlab.net/mass-spec/sensitive-mass-spectrometry-analysis) and [multiplexed data-independent acquisition experiments](https://plexdia.slavovlab.net/), depends on multiple interdependent parameters. This interdependence makes it challenging to specifically pinpoint the sources of problems in the LC-MS/MS methods. 
 
 This applies to data-dependent acquisition (DDA) as well as to data-indepent acquisition (DIA) experiments. For example, a low signal at the MS2 level in a DDA experiment can be due to poor LC separation, ionization, apex targeting, ion transfer, or ion detection. DO-MS aims to specifically diagnose such problems by interactively visualizing data from all levels of bottom-up LC-MS/MS analysis.
+
+### Research articles
+The development and applications of DO-MS were described in two research articles published in the *Journal of Proteome Research*. The first version from 2019 focussed on DDA data and the second version from 2023 focussed on DIA data.
+
+1. Wallmann G., Leduc A., Slavov N. [Data-Driven Optimization of DIA Mass-Spectrometry by DO-MS](https://pubs.acs.org/doi/10.1021/acs.jproteome.3c00177), *J. Proteome Res.*   doi: [10.1021/acs.jproteome.3c00177](https://doi.org/10.1021/acs.jproteome.3c00177) (2023) | [preprint](https://doi.org/10.1101/2023.02.02.526809)   |   [PDF](https://slavovlab.net/Slavov-Lab-Publications/2023_DO-MS_DIA_plexDIA_JPR.pdf)
+
+2. Huffman RG, Specht H, Chen AT, Slavov N. [DO-MS: Data-Driven Optimization of Mass Spectrometry Methods](https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039) *J. of Proteome Res.* doi: [10.1021/acs.jproteome.9b00039](https://doi.org/10.1021/acs.jproteome.9b00039)  (2019) | [preprint](http://dx.doi.org/10.1101/512152)   |   [PDF](https://slavovlab.net/Slavov-Lab-Publications/2019_Huffman_Slavov_DO-MS.pdf) 
+
 
 ### Installation
 
