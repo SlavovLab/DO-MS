@@ -26,8 +26,8 @@ search_enabled: true
 
 # Aux links for the upper right navigation
 aux_links:
-  "BioArxiv Preprint":
-    - "https://www.biorxiv.org/content/10.1101/2023.02.02.526809v1"
+  "JPR Articles":
+    - "https://do-ms.slavovlab.net/#research-articles"
   "GitHub Repository":
     - "https://github.com/SlavovLab/DO-MS"
   "Slavov Lab":
