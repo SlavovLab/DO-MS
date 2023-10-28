@@ -13,6 +13,9 @@ init <- function() {
   .plotdata <- function(data, input) {
     plotdata <- data()[['report']][,c('Raw.file', 'PEP')]
     
+    # Code to remove unselected experiments from showing up in legend
+    plotdata$Raw.file <- droplevels(plotdata$Raw.file)
+    
     plotdata <- plotdata[complete.cases(plotdata[ , 'PEP']),]
     
     # build log10 PEP vector
@@ -50,7 +53,6 @@ init <- function() {
     plotdata <- .plotdata(data, input)
     
     validate(need((nrow(plotdata) > 1), paste0('No Rows selected')))
-    
     # Rank the Experiments by most number of peptides observed
     
     maxnum <- c()
@@ -60,7 +62,6 @@ init <- function() {
       maxnum <- c(maxnum, max(plotdata$cy[plotdata$Raw.file %in% X]) )
       rawnames <- c(rawnames, X)
     }
-    
     names(maxnum) <- rawnames
     rank_exp <- maxnum[order(maxnum, decreasing = T)]
     rank_exp_ord <- seq(1, length(rank_exp),1)
@@ -70,7 +71,7 @@ init <- function() {
     for(X in levels(plotdata$Raw.file)) {
       plotdata$rank_ord[plotdata$Raw.file %in% X] <- rank_exp_ord[X]
     }
-    
+
     cc <- scales::seq_gradient_pal('red', 'blue', 'Lab')(seq(0, 1, length.out=length(rank_exp_ord)))
     
     ggplot(plotdata, aes(x=pep, color=Raw.file, y=cy, group=Raw.file)) + 
