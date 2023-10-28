@@ -2,7 +2,7 @@ init <- function() {
   
   type <- 'plot'
   box_title <- 'Normalized MS1 Intensity for Intersected Precursors'
-  help_text <- 'Plotting the MS1 intensity for intersected precursors summed over all channels. Experiments are normalized to the first experiment.'
+  help_text <- 'Plotting the MS1 Intensity for intersected precursors summed over all channels. Experiments are normalized to the first experiment. '
   source_file <- 'report'
   
   .validate <- function(data, input) {
@@ -71,7 +71,7 @@ init <- function() {
     plotdata.w$baseline <- plotdata.w[,2]
     
     for (j in 2:(baselineInd-1)){
-      plotdata.w[,j] <- log10(plotdata.w[,j])-log10(plotdata.w[,baselineInd])
+      plotdata.w[,j] <- log2(plotdata.w[,j])-log2(plotdata.w[,baselineInd])
 
     }
     
@@ -93,7 +93,7 @@ init <- function() {
       geom_histogram(bins=50,  fill=custom_colors[[6]]) + 
       xlim(c(-3,3))+
       coord_flip() + 
-      labs(x=expression(bold('Log'[10]*' Intensity Relative to first experiment')), y='Number of Precursors') + 
+      labs(x=expression(bold('Log'[2]*' Intensity Relative to first experiment')), y='Number of Precursors') + 
       theme_diann(input=input, show_legend=T)
 
   }
