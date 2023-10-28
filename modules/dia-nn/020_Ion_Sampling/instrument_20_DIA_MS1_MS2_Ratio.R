@@ -1,8 +1,8 @@
 init <- function() {
   
   type <- 'plot'
-  box_title <- 'MS2/MS1 Intensity Ratio per precursor'
-  help_text <- 'Plotting the MS2/MS1 Intensity Ratio for all precursors.'
+  box_title <- 'MS2/MS1 Intensity Ratio for Intersected Precursors'
+  help_text <- 'Plotting the MS2/MS1 Intensity Ratio for Intersected precursors.'
   source_file <- 'report'
   
   .validate <- function(data, input) {
@@ -15,6 +15,22 @@ init <- function() {
     plotdata <- data()[['report']][,c('Raw.file', 'Ms1.Area', 'Precursor.Quantity', 'Precursor.Id')]
     plotdata$Ms1.Area <- as.numeric(plotdata$Ms1.Area)
     plotdata$Precursor.Quantity <- as.numeric(plotdata$Precursor.Quantity)
+    
+    
+    #Assemble list of peptides in each Raw file
+    plotdata$Raw.file <- factor(plotdata$Raw.file)
+    expsInDF <- levels(plotdata$Raw.file)
+    peplist <- list()
+    for (i in 1:length(expsInDF)){
+      peptidesDF <- dplyr::filter(plotdata, Raw.file == expsInDF[i])
+      peptides <- dplyr::select(peptidesDF, Precursor.Id)
+      peplist[[i]] <- peptides
+    }
+    #Get intersection of all peptides
+    intersectList <- as.vector(Reduce(intersect, peplist))
+    #Get reduced dataframe for elements that match intersection
+    plotdata_Intersected <- dplyr::filter(plotdata, Precursor.Id %in% intersectList$Precursor.Id)
+    plotdata <- plotdata_Intersected
     
     plotdata <- plotdata %>% 
       group_by(Raw.file, Precursor.Id) %>% 
