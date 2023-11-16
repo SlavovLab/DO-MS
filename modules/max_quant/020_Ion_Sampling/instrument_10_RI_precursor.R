@@ -44,7 +44,7 @@ init <- function() {
       mutate(RI.Sum = sum(across(starts_with("Reporter.intensity.corrected")), na.rm = T))
     plotdata <- plotdata %>%
       rowwise() %>%
-      mutate(RI.Precursor.Ratio = log10(RI.Sum / Intensity))
+      mutate(RI.Precursor.Ratio = log2(RI.Sum / Intensity))
 
 
     # Thresholding data at 1 and 99th percentiles
@@ -65,13 +65,19 @@ init <- function() {
     plotdata <- .plotdata(data, input)
 
     validate(need((nrow(plotdata) >= 1), paste0('No Rows selected')))
+    
+    medianData = plotdata %>% group_by(Raw.file) %>%
+      summarise(median = median(RI.Precursor.Ratio), .groups = "drop")
 
     ggplot(plotdata, aes(RI.Precursor.Ratio)) + 
       facet_wrap(~Raw.file, nrow = 1, scales = "free_x") + 
       geom_histogram(bins=100) + 
       coord_flip() + 
-      labs(x=expression(bold('Log'[10]*' Ratio')), y='Number of Peptides')
-
+      labs(x=expression(bold('Log'[2]*' Ratio')), y='Number of Peptides') +
+      geom_text(data=medianData, 
+                aes(label=paste0("median: ", round(median,2))), x = -Inf, y = -Inf, colour=custom_colors[[1]],
+                hjust = 0, vjust=0) +
+      geom_vline(data=medianData, aes(xintercept = median),col=custom_colors[[1]],size=1)
   }
 
   return(list(
