@@ -65,7 +65,12 @@ init <- function() {
       geom_histogram(bins=50, fill=custom_colors[[6]]) + 
       coord_flip() + 
       labs(x=expression(bold('Log'[2]*' Precursor Ratio')), y='Number of Precursors') +
-      theme_diann(input=input, show_legend=T)
+      theme_diann(input=input, show_legend=T) +
+      geom_text(data=medianData, 
+                aes(label=paste0("median: ", round(median,2))), x = -Inf, y = -Inf, colour=custom_colors[[1]],
+                hjust = 0, vjust=0) +
+      geom_vline(data=medianData, aes(xintercept = median),col=custom_colors[[1]],size=1)
+    
   }
   
   return(list(
