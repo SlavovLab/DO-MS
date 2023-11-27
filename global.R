@@ -1,4 +1,4 @@
-version <- '2.0.7'
+version <- '2.0.8'
 
 # check R version. required R >= 3.5.0 & R <= 4.0.2
 if(as.numeric(R.Version()$major) < 4) {
