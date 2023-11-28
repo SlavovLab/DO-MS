@@ -21,7 +21,7 @@ permalink: /
 ![]({{site.baseurl}}/assets/images/do-ms-dia_title_v2.png){: width="90%" .center-image}
 
 ## Aim of DO-MS
-The performance of ultrasensitive liquid chromatography and tandem mass spectrometry (LC-MS/MS) methods, such as [single-cell proteomics by mass spectrometry](https://scope2.slavovlab.net/mass-spec/sensitive-mass-spectrometry-analysis) and [multiplexed data-independent acquisition experiments](https://plexdia.slavovlab.net/), depends on multiple interdependent parameters. This interdependence makes it challenging to specifically pinpoint the sources of problems in the LC-MS/MS methods. 
+The performance of ultrasensitive liquid chromatography and tandem mass spectrometry (LC-MS/MS) methods, such as [single-cell proteomics by mass spectrometry](https://scope2.slavovlab.net/mass-spec/sensitive-mass-spectrometry-analysis) and [multiplexed data-independent acquisition experiments](https://plexdia.slavovlab.net/), depends on multiple interdependent parameters. This interdependence makes it challenging to specifically pinpoint the sources of problems in the LC-MS/MS methods.
 
 This applies to data-dependent acquisition (DDA) as well as to data-indepent acquisition (DIA) experiments. For example, a low signal at the MS2 level in a DDA experiment can be due to poor LC separation, ionization, apex targeting, ion transfer, or ion detection. DO-MS aims to specifically diagnose such problems by interactively visualizing data from all levels of bottom-up LC-MS/MS analysis.
 
@@ -30,7 +30,7 @@ The development and applications of DO-MS were described in two research article
 
 1. Wallmann G., Leduc A., Slavov N. [Data-Driven Optimization of DIA Mass-Spectrometry by DO-MS](https://pubs.acs.org/doi/10.1021/acs.jproteome.3c00177), *J. Proteome Res.*   doi: [10.1021/acs.jproteome.3c00177](https://doi.org/10.1021/acs.jproteome.3c00177) (2023) | [preprint](https://doi.org/10.1101/2023.02.02.526809)   |   [PDF](https://slavovlab.net/Slavov-Lab-Publications/2023_DO-MS_DIA_plexDIA_JPR.pdf)
 
-2. Huffman RG, Specht H, Chen AT, Slavov N. [DO-MS: Data-Driven Optimization of Mass Spectrometry Methods](https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039) *J. of Proteome Res.* doi: [10.1021/acs.jproteome.9b00039](https://doi.org/10.1021/acs.jproteome.9b00039)  (2019) | [preprint](http://dx.doi.org/10.1101/512152)   |   [PDF](https://slavovlab.net/Slavov-Lab-Publications/2019_Huffman_Slavov_DO-MS.pdf) 
+2. Huffman RG, Specht H, Chen AT, Slavov N. [DO-MS: Data-Driven Optimization of Mass Spectrometry Methods](https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039) *J. of Proteome Res.* doi: [10.1021/acs.jproteome.9b00039](https://doi.org/10.1021/acs.jproteome.9b00039)  (2019) | [preprint](http://dx.doi.org/10.1101/512152)   |   [PDF](https://slavovlab.net/Slavov-Lab-Publications/2019_Huffman_Slavov_DO-MS.pdf)
 
 
 ### Installation
@@ -72,7 +72,7 @@ Please see [Hosting as a Server]({{site.baseurl}}/docs/hosting-as-server) for mo
 
 ### Supporting other Search Engines
 
-This application is currently maintained for (MaxQuant)[https://www.nature.com/articles/nbt.1511] >= 1.6.0.16 and  (DIA-NN)[https://www.nature.com/articles/s41592-019-0638-x] >= 1.8. Adapting to other search engines is possible but not provided out-of-the-box. Please see [Integrating Other Search Engines ]({{site.baseurl}}/docs/other-search-engines) for more details.
+This application is currently maintained for [MaxQuant](https://www.nature.com/articles/nbt.1511) >= 1.6.0.16 and  [DIA-NN](https://www.nature.com/articles/s41592-019-0638-x) >= 1.8. Adapting to other search engines is possible but not provided out-of-the-box. Please see [Integrating Other Search Engines ]({{site.baseurl}}/docs/other-search-engines) for more details.
 
 ### Can I use this for Metabolomics, Lipidomics, etc... ?
 
@@ -82,8 +82,7 @@ While the base library of modules are based around bottom-up proteomics by LC-MS
 
 ## About the project
 
-The manuscript for this tool is published at the Journal of Proteome Research: [https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039](https://pubs.acs.org/doi/10.1021/acs.jproteome.9b00039)
-The manuscript for the extended version 2.0 can be found on bioArxiv: [https://www.biorxiv.org/content/10.1101/2023.02.02.526809v1](https://www.biorxiv.org/content/10.1101/2023.02.02.526809v1)
+The manuscripts for this tool is published at the *[Journal of Proteome Research](https://do-ms.slavovlab.net/#research-articles)* and  *[bioRxiv](https://do-ms.slavovlab.net/#research-articles)*. The research has been supported by funding from the [NIH Director's Award](https://projectreporter.nih.gov/project_info_description.cfm?aid=9167004&icde=31336575) by an [Allen Distinguished Investigator Award](https://alleninstitute.org/person/nikolai-slavov/) from the Paul G. Allen Frontiers Group.
 
 Contact the authors by email: [nslavov\{at\}northeastern.edu](mailto:nslavov@northeastern.edu).
 
