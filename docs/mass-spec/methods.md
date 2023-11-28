@@ -22,7 +22,8 @@ DO-MS supports related methods and technologies developed in the [Slavov Laborat
 * [Single-Cell ProtEomics by Mass Spectrometry (SCoPE-MS)](https://scp.slavovlab.net/SCoPE-MS)
 * [Single-Cell ProtEomics by Mass Spectrometry (SCoPE2)](https://scope2.slavovlab.net)
 * [Data-driven Alignment of Retention Times for IDentification (DART-ID)](https://dart-id.slavovlab.net)
-* [Prioritized Single-Cell ProtEomics by Mass Spectrometry (pSCoPE)](https://scp.slavovlab.net/pSCoPE) 
+* [Prioritized Single-Cell ProtEomics by Mass Spectrometry (pSCoPE)](https://scp.slavovlab.net/pSCoPE)
+* [Multiplexed DIA (plexDIA) ](https://scp.slavovlab.net/plexDIA)
 
 
 
