@@ -26,14 +26,12 @@ search_enabled: true
 
 # Aux links for the upper right navigation
 aux_links:
-  "DO-MS Articles":
+  "JPR Articles":
     - "https://do-ms.slavovlab.net/#research-articles"
   "GitHub Repository":
     - "https://github.com/SlavovLab/DO-MS"
   "Slavov Lab":
-    - "https://slavovlab.net"
-  "SCP Hub":
-    - "https://scp.slavovlab.net"
+    - "http://slavovlab.net"
 
 github_link: https://github.com/SlavovLab/DO-MS
 preprint_link: https://www.biorxiv.org/content/10.1101/2023.02.02.526809v1

@@ -295,9 +295,17 @@ shinyServer(function(input, output, session) {
         # increase the number of guesses from the default,
         # since a lot of MS data is very sparse and only using the first 1000
         # rows to guess may guess a column type wrong
-        .dat <- as.data.frame(read_tsv(file=file.path(folder$Path, file[['file']]),
-                                       guess_max=1e5, col_types = cols()))
-        
+        # Custom behavior for report
+        if(file$name == 'report') {
+          .dat <- as.data.frame(read_parquet(file=file.path(folder$Path, file[['file']])))
+        }
+
+        else {
+          .dat <- as.data.frame(read_tsv(file=file.path(folder$Path, file[['file']]),
+                                        guess_max=1e5, col_types = cols()))
+        }
+
+
         # Custom behavior for ms1_extracted
         if(file$name == 'ms1_extracted') {
           # transform matrix style output to report.tsv style

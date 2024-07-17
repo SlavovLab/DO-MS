@@ -64,8 +64,8 @@ dia-nn:
   input_files:
     report:
       name: 'report'
-      file: 'report.tsv'
-      help: 'DIA-NN report.tsv'
+      file: 'report.parquet'
+      help: 'DIA-NN report.parquet'
       default_enabled: true
       
     ms1_extracted:

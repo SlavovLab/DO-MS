@@ -1,4 +1,4 @@
-version <- '2.0.8'
+version <- '2.0.9'
 
 # check R version. required R >= 3.5.0 & R <= 4.0.2
 if(as.numeric(R.Version()$major) < 4) {
@@ -15,6 +15,11 @@ if(!'pacman' %in% installed.packages()[,'Package']) {
   install.packages('pacman')
 }
 library(pacman)
+
+if(!'arrow' %in% installed.packages()[,'Package']) {
+  install.packages('arrow')
+}
+library(arrow)
 
 # install/load dependencies
 p_load(shiny, shinyWidgets, shinydashboard, dplyr, tidyr, ggplot2, lattice, knitr, tibble,
