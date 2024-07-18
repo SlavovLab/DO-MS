@@ -15,17 +15,18 @@ init <- function() {
     
     report <- data()[['report']][,c('Raw.file', 'FWHM', 'Precursor.Id')]
     
-    # plotdata <- report[report$FWHM > 0,]
-    plotdata <- report
+    plotdata <- report[report$FWHM > 0,]
+    plotdata$FWHM <- plotdata$FWHM * 60
+
 
     # Thresholding data at 1 and 99th percentiles
-    # ceiling <- quantile(plotdata$FWHM, probs=.95, na.rm = TRUE)
-    # floor <- quantile(plotdata$FWHM, probs=.95, na.rm = TRUE)
+    ceiling <- quantile(plotdata$FWHM, probs=.99, na.rm = TRUE)
+    floor <- quantile(plotdata$FWHM, probs=.01, na.rm = TRUE)
     
-    # plotdata <- dplyr::filter(plotdata, is.finite(FWHM))
+    plotdata <- dplyr::filter(plotdata, is.finite(FWHM))
     
-    # plotdata[plotdata$FWHM >= ceiling, 2] <- ceiling
-    # plotdata[plotdata$FWHM <= floor, 2] <- floor
+    plotdata[plotdata$FWHM >= ceiling, 2] <- ceiling
+    plotdata[plotdata$FWHM <= floor, 2] <- floor
     
     return(plotdata)
   }
@@ -38,11 +39,10 @@ init <- function() {
     
     ggplot(plotdata, aes(x=FWHM)) + 
       facet_wrap(~Raw.file, nrow = 1, scales = "free_x") + 
-      
       stat_bin(aes(y=..count..), size = 0.8, bins=100,position = "identity",geom="step")+
       coord_flip() + 
-      xlim(0, max(plotdata$FWHM) * 0.33) +
-      labs(x='FWHM (min)', y='Number of Precursors') +
+      xlim(mean(plotdata$FWHM) - (sd(plotdata$FWHM)), mean(plotdata$FWHM) + (sd(plotdata$FWHM))) +
+      labs(x='FWHM (secs)', y='Number of Precursors') +
       scale_color_manual(values=c(custom_colors[[1]], custom_colors[[6]]))+
       theme_diann(input=input, show_legend=T)
   }
