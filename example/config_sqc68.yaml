@@ -1,0 +1,87 @@
+## DO-MS command line configuration
+## for use with do-ms_cmd.R
+
+## Input/Output
+
+# paths to folders with MaxQuant txt output
+input_folders:
+  - ~/Downloads/example_data_SQC68
+  
+# files to load from each folder
+load_input_files:
+  - evidence
+  - msms
+  - msmsScans
+  - allPeptides
+  - summary
+  - parameters
+  
+# match up with misc_input_files list in global.R
+#misc_input_files:
+#  inclusion_list: /path/to/inclusion_list.txt
+
+output: ~/Downloads/SQC68_DO-MS_report.html
+
+## Filters
+
+# regular expressions to match raw file names against
+include_files: 'SQC68D[1-3]'
+exclude_files: ~
+
+# experiment name format string
+# %i -- index of raw file
+# %f -- folder name
+# %e -- raw file name
+exp_name_format: '%e'
+
+# optional regular expression pattern to extract
+# from the experiment names after applying the format string
+exp_name_pattern: 'SQC68[A-Z]{1}[0-9]{1}'
+
+# custom names for files
+exp_names:
+  - '250ms IT'
+  - '500ms IT'
+  - '1000ms IT'
+  
+# custom order for files
+exp_order: [1,2,3]
+
+pep_thresh: 1
+pif_thresh: 0
+remove_decoy: REV_
+remove_contam: CON_
+
+## Figure rendering options
+
+ppi: 150
+
+# label font size
+figure_title_font_size: 16
+# axis tick label font size
+figure_axis_font_size: 12
+# facet label font size
+figure_facet_font_size: 12
+# line width
+figure_line_width: 1
+# show background grid
+figure_show_grid: true
+
+## Report options
+
+# choices: pdf, html
+report_format: html
+
+# choices: default, cerulean, flatly, darkly, readable, 
+# spacelab, united, cosmo, lumen, paper, sandstone, simplex, yeti
+# previews: https://bootswatch.com/3/
+report_theme: readable
+
+# figure size (in inches)
+report_figure_width: 5
+report_figure_height: 5
+
+# figure format. choices: pdf, png
+report_figure_format: png
+
+
