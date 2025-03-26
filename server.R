@@ -296,7 +296,7 @@ shinyServer(function(input, output, session) {
         # since a lot of MS data is very sparse and only using the first 1000
         # rows to guess may guess a column type wrong
         # Custom behavior for report
-        if(file$name == 'report') {
+        if(file$file == 'report.parquet') {
           .dat <- as.data.frame(read_parquet(file=file.path(folder$Path, file[['file']])))
         }
 

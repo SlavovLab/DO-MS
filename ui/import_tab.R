@@ -66,17 +66,17 @@ import_tab <- tabItem(tabName='import', fluidPage(
   p(class='import-help', 'Once folders are selected, click "Load Data" to import the files and begin the analysis. The status panel below to the right will update when the data is imported.'),
   fluidRow(
     column(6,
-      div(class='upload-button-container',
-        tags$button(id='confirm_folders',
-          class='btn btn-primary action-button shiny-bound-input',
-          icon('file-upload', verify_fa = FALSE), 'Load Data')
-      )
+           div(class='upload-button-container',
+               actionButton("confirm_folders", 
+                            label = span(icon('file-upload', verify_fa = FALSE), 'Load Data'),
+                            class = 'btn-primary')
+           )
     ),
     column(6,
-      wellPanel(
-        div(class='well-header', h4('Status')),
-        htmlOutput('data_status')
-      )
+           wellPanel(
+             div(class='well-header', h4('Status')),
+             htmlOutput('data_status')
+           )
     )
   ),
   
