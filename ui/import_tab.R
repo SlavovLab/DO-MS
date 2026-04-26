@@ -68,7 +68,7 @@ import_tab <- tabItem(tabName='import', fluidPage(
     column(6,
       div(class='upload-button-container',
         tags$button(id='confirm_folders',
-          class='btn btn-primary action-button shiny-bound-input',
+          class='btn btn-primary action-button',
           icon('file-upload', verify_fa = FALSE), 'Load Data')
       )
     ),
