@@ -7,11 +7,18 @@ init <- function() {
   
   .validate <- function(data, input) {
     validate(need(data()[['evidence']], paste0('Upload evidence.txt')))
+    
+    validate(need(
+      all(c('Retention.time', 'PEP', 'Type') %in% colnames(data()[['evidence']])),
+      'Columns "Retention.time", "PEP", or "Type" not found in evidence.txt.'
+    ))
   }
   
   .plotdata <- function(data, input) {
     plotdata <- data()[['evidence']][,c('Raw.file', 'Retention.time', 'PEP','Type')]
+    print(colnames(data()[['evidence']]))
     plotdata <- plotdata %>% dplyr::filter(Type != "MULTI-MATCH")
+    validate(need((nrow(plotdata) > 0), "No valid data after filtering Type"))
     plotdata <- plotdata %>% dplyr::select('Raw.file', 'Retention.time', 'PEP')
     return(plotdata)
   }
@@ -23,7 +30,7 @@ init <- function() {
     
     maxRT <- max(plotdata$Retention.time)
     ggplot(plotdata, aes(Retention.time)) + 
-      facet_wrap(~Raw.file, nrow = 1, scales = "free_x") + 
+      facet_wrap(~Raw.file, nrow = 1, scales = "free_x") +
       geom_histogram(bins=100) + 
       coord_flip() + 
       xlim(10, maxRT) +
